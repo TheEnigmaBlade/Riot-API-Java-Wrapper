@@ -142,6 +142,8 @@ public abstract class Method
 				throw new RiotApiException("400: Bad request");
 			else if(response.getCode() == 500)
 				throw new RiotApiException("500: Internal server error");
+			else if(response.getCode() == 503)
+				throw new RiotApiException("503: Something is broken");
 			
 			return response;
 		}

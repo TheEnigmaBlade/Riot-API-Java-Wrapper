@@ -56,7 +56,6 @@ public class GameMethod extends Method
 		//Parse response
 		try
 		{
-			//Convert JSON into Champion objects
 			JsonObject root = (JsonObject)response.getValue();
 			
 			//Check summoner IDs to make sure the server isn't crazy

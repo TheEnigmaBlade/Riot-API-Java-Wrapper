@@ -1,5 +1,6 @@
 package net.enigmablade.riotapi.methods;
 
+import java.util.*;
 import net.enigmablade.jsonic.*;
 import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.Requester.*;
@@ -22,6 +23,8 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * 		<li>Get a summoner by name</li>
  * 		<li>Get a summoner by ID</li>
  * 		<li>Get multiple summoner names by ID</li>
+ * 		<li>Get rune pages by summoner ID</li>
+ * 		<li>Get mastery pages by summoner ID</li>
  * 	</ol>
  * </p>
  * @see <a href="https://developer.riotgames.com/api/methods#!/292">Developer site</a>
@@ -174,7 +177,145 @@ public class SummonerMethod extends Method
 		}
 	}
 	
-	//TODO: mastery and rune pages
+	/**
+	 * Returns a list of the summoner's mastery pages.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param summonerId The ID of the summoner.
+	 * @return The list of mastery pages.
+	 * @throws SummonerNotFoundException If the summoner was not found.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<MasteryPage> getSummonerMasteryPages(Region region, long summonerId) throws RiotApiException
+	{
+		//Send request
+		Response response = getMethodResult(region,
+				"{summonerId}/masteries",
+				createArgMap("summonerId", String.valueOf(summonerId)));
+		
+		//Check errors
+		if(response.getCode() == 404)
+			throw new SummonerNotFoundException(region, summonerId);
+		
+		//Parse response
+		try
+		{
+			JsonObject root = (JsonObject)response.getValue();
+			
+			//Check summoner IDs to make sure the server isn't crazy
+			long rootSummonerId = root.getLong("summonerId");
+			if(rootSummonerId != summonerId)
+				throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
+			
+			//Convert mastery page list
+			JsonArray pagesArray = root.getArray("pages");
+			List<MasteryPage> pages = new ArrayList<>(pagesArray.size());
+			for(int p = 0; p < pagesArray.size(); p++)
+			{
+				JsonObject pageObject = pagesArray.getObject(p);
+				
+				//Convert talent list
+				JsonArray talentsArray = pageObject.getArray("talents");
+				List<MasteryPage.Talent> talents = null;
+				if(talentsArray != null)					//Can be null if no masteries are set in the page
+				{
+					talents = new ArrayList<>(talentsArray.size());
+					for(int t = 0; t < talentsArray.size(); t++)
+					{
+						JsonObject talentObject = talentsArray.getObject(t);
+						
+						//Create talent object
+						MasteryPage.Talent talent = new MasteryPage.Talent(talentObject.getInt("id"), talentObject.getString("name"), talentObject.getInt("rank"));
+						talents.add(talent);
+					}
+				}
+				
+				//Create mastery page object
+				MasteryPage page = new MasteryPage(pageObject.getString("name"), talents, pageObject.getBoolean("current"));
+				pages.add(page);
+			}
+			return pages;
+		}
+		catch(JsonException e)
+		{
+			//Shouldn't happen since the JSON is already parsed
+			System.err.println("JSON parse error");
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns a list of the summoner's rune pages.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param summonerId The ID of the summoner.
+	 * @return The list of rune pages.
+	 * @throws SummonerNotFoundException If the summoner was not found.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<RunePage> getSummonerRunePages(Region region, long summonerId) throws RiotApiException
+	{
+		//Send request
+		Response response = getMethodResult(region,
+				"{summonerId}/runes",
+				createArgMap("summonerId", String.valueOf(summonerId)));
+		
+		//Check errors
+		if(response.getCode() == 404)
+			throw new SummonerNotFoundException(region, summonerId);
+		
+		//Parse response
+		try
+		{
+			JsonObject root = (JsonObject)response.getValue();
+			
+			//Check summoner IDs to make sure the server isn't crazy
+			long rootSummonerId = root.getLong("summonerId");
+			if(rootSummonerId != summonerId)
+				throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
+			
+			//Convert rune page list
+			JsonArray pagesArray = root.getArray("pages");
+			List<RunePage> pages = new ArrayList<>(pagesArray.size());
+			for(int p = 0; p < pagesArray.size(); p++)
+			{
+				JsonObject pageObject = pagesArray.getObject(p);
+				
+				//Convert rune slot list
+				JsonArray slotsArray = pageObject.getArray("slots");
+				List<RunePage.Slot> slots = null;
+				if(slotsArray != null)				//Can be null if no runes are set in the page
+				{
+					slots = new ArrayList<>(slotsArray.size());
+					for(int t = 0; t < slotsArray.size(); t++)
+					{
+						JsonObject slotObject = slotsArray.getObject(t);
+						
+						//Create rune object
+						JsonObject runeObject = slotObject.getObject("rune");
+						RunePage.Rune rune = new RunePage.Rune(runeObject.getInt("id"), runeObject.getString("name"), runeObject.getString("description"), runeObject.getInt("tier"));
+						
+						//Create slot object
+						RunePage.Slot slot = new RunePage.Slot(slotObject.getInt("runeSlotId"), rune);
+						slots.add(slot);
+					}
+				}
+				
+				//Create mastery page object
+				RunePage page = new RunePage(pageObject.getLong("id"), pageObject.getString("name"), slots, pageObject.getBoolean("current"));
+				pages.add(page);
+			}
+			return pages;
+		}
+		catch(JsonException e)
+		{
+			//Shouldn't happen since the JSON is already parsed
+			System.err.println("JSON parse error");
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	//Other methods
 	
