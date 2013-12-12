@@ -1,2 +1,8 @@
 /bin
 /src/test
+/export.properties
+/export.xml
+/export_javadoc.xml
+/build.num
+/export
+/doc

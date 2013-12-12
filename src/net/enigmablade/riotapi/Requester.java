@@ -6,10 +6,13 @@ import java.util.*;
 import java.util.concurrent.locks.*;
 import net.enigmablade.jsonic.*;
 
+/**
+ * A utility class to send HTTP get requests. Requests are limited on a per-second basis.
+ * @author Enigma
+ *
+ */
 public class Requester
 {
-	private String apiKey;
-	
 	private int limitPer10Seconds;
 	private long limitWait, lastCall;
 	private Lock rateLock;
@@ -20,17 +23,16 @@ public class Requester
 	
 	private String userAgent;
 	
-	public Requester(String apiKey, String userAgent)
+	public Requester(String userAgent)
 	{
-		this(5, 50, apiKey, userAgent);
+		this(userAgent, 5, 50);
 	}
 	
-	public Requester(int limitPer10Seconds, int limitPer10Minutes, String apiKey, String userAgent)
+	public Requester(String userAgent, int limitPer10Seconds, int limitPer10Minutes)
 	{
+		setUserAgent(userAgent);
 		setLimitPer10Seconds(limitPer10Seconds);
 		setLimitPer10Minutes(limitPer10Minutes);
-		setApiKey(apiKey);
-		setUserAgent(userAgent);
 		
 		rateLock = new ReentrantLock(true);
 		requestQueue = new LinkedList<>();
@@ -164,7 +166,7 @@ public class Requester
 	public void setLimitPer10Seconds(int limitPer10Seconds)
 	{
 		this.limitPer10Seconds = limitPer10Seconds;
-		limitWait = limitPer10Seconds/10*1000;
+		limitWait = (int)(10.0/limitPer10Seconds*1000);
 	}
 	
 	public int getLimitPer10Minutes()
@@ -175,16 +177,6 @@ public class Requester
 	public void setLimitPer10Minutes(int limitPer10Minutes)
 	{
 		this.limitPer10Minutes = limitPer10Minutes;
-	}
-	
-	public String getApiKey()
-	{
-		return apiKey;
-	}
-	
-	public void setApiKey(String apiKey)
-	{
-		this.apiKey = apiKey;
 	}
 	
 	public String getUserAgent()

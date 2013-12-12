@@ -2,22 +2,55 @@ package net.enigmablade.riotapi.methods;
 
 import java.util.*;
 import net.enigmablade.jsonic.*;
-import net.enigmablade.riotapi.*;
-import static net.enigmablade.riotapi.Region.*;
-import net.enigmablade.riotapi.Requester.*;
-import net.enigmablade.riotapi.types.*;
 
+import net.enigmablade.riotapi.*;
+import net.enigmablade.riotapi.Requester.*;
+import net.enigmablade.riotapi.constants.*;
+import net.enigmablade.riotapi.exceptions.*;
+import net.enigmablade.riotapi.types.*;
+import static net.enigmablade.riotapi.constants.Region.*;
+
+/**
+ * <p>The champion method and its supporting operations.<p>
+ * <p>Method support information:
+ * 	<ul>
+ * 		<li><i>Version</i>: 1.1</li>
+ * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
+ * 	</ul>
+ * </p>
+ * <p>Operation information:
+ * 	<ol>
+ * 		<li>Get all champions</li>
+ * 		<li>Get all free champions</i>
+ * 	</ol>
+ * </p>
+ * @see <a href="http://developer.riotgames.com/api/methods#!/291">Developer site</a>
+ * 
+ * @author Enigma
+ */
 public class ChampionMethod extends Method
 {
-	public ChampionMethod(Requester requester)
+	/**
+	 * Create a new champion method instance.
+	 * @param requester The Requester to use to make requests to the server.
+	 * @param apiKey The API key to use for requests.
+	 */
+	public ChampionMethod(Requester requester, String apiKey)
 	{
-		super(requester, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE});
+		super(requester, apiKey, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE});
 	}
 	
+	/**
+	 * Returns a list of all available or free champions and their accompanying information in the given region.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param free Whether or not to return the free champions only.
+	 * @return A list of all available or free champions.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
 	public List<Champion> getChampions(Region region, boolean free) throws RiotApiException
 	{
-		Map<String, String> args = createArgumentMap("freeToPlay", String.valueOf(free));
-		Response response = getMethodResult(region, args);
+		Response response = getMethodResult(region, createArgMap("freeToPlay", String.valueOf(free)));
 		try
 		{
 			//Convert JSON into Champion objects
@@ -44,11 +77,25 @@ public class ChampionMethod extends Method
 		}
 	}
 	
+	/**
+	 * Returns a list of all available champions and their accompanying information in the given region.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @return A list of all available champions.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
 	public List<Champion> getAllChampions(Region region) throws RiotApiException
 	{
 		return getChampions(region, false);
 	}
 	
+	/**
+	 * Returns a list of all free champions (10 total) and their accompanying information in the given region.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @return A list of all available champions.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
 	public List<Champion> getFreeChampions(Region region) throws RiotApiException
 	{
 		return getChampions(region, true);
