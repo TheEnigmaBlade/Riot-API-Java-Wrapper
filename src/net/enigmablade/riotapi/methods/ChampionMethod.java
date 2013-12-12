@@ -96,12 +96,29 @@ public class ChampionMethod extends Method
 	/**
 	 * Returns a list of all free champions (10 total) and their accompanying information in the given region.
 	 * @param region The game region (NA, EUW, EUNE, etc.)
-	 * @return A list of all available champions.
+	 * @return A list of all free champions.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public List<Champion> getFreeChampions(Region region) throws RiotApiException
 	{
 		return getChampions(region, true);
+	}
+	
+	/**
+	 * Returns a list of all disabled champions and their accompanying information in the given region.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @return A list of all disabled champions.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<Champion> getDisabledChampions(Region region) throws RiotApiException
+	{
+		List<Champion> all = getAllChampions(region);
+		List<Champion> disabled = new ArrayList<>();
+		for(Champion c : all)
+			if(!c.isActive())
+				disabled.add(c);
+		return disabled;
 	}
 }

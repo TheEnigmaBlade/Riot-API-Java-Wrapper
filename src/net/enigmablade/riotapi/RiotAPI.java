@@ -1,6 +1,9 @@
 package net.enigmablade.riotapi;
 
+import net.enigmablade.riotapi.constants.*;
+import net.enigmablade.riotapi.exceptions.*;
 import net.enigmablade.riotapi.methods.*;
+import net.enigmablade.riotapi.types.*;
 
 /**
  * <p>Provides access to the Riot API though a number of methods as outlined in <a href="https://developer.riotgames.com/api/methods">the developer documentation</a>.</p>
@@ -91,6 +94,18 @@ public class RiotApi
 		if(summonerMethod == null)
 			summonerMethod = new SummonerMethod(this);
 		return summonerMethod;
+	}
+	
+	//Convenience methods
+	
+	public Summoner getSummoner(Region region, String name) throws RiotApiException
+	{
+		return getSummonerMethod().getSummonerByName(region, name);
+	}
+	
+	public Summoner getSummoner(Region region, long id) throws RiotApiException
+	{
+		return getSummonerMethod().getSummonerById(region, id);
 	}
 	
 	//Data methods

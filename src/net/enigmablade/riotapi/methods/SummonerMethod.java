@@ -19,7 +19,9 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * </p>
  * <p>Operation information:
  * 	<ol>
- * 		<li></li>
+ * 		<li>Get a summoner by name</li>
+ * 		<li>Get a summoner by ID</li>
+ * 		<li>Get multiple summoner names by ID</li>
  * 	</ol>
  * </p>
  * @see <a href="https://developer.riotgames.com/api/methods#!/292">Developer site</a>
@@ -134,7 +136,7 @@ public class SummonerMethod extends Method
 			for(int n = 0; n < summonersArray.size(); n++)
 			{
 				JsonObject summonerObject = summonersArray.getObject(n);
-				summoners[n] = new Summoner(region, summonerObject.getLong("id"), summonerObject.getString("name"));
+				summoners[n] = new Summoner(api, region, summonerObject.getLong("id"), summonerObject.getString("name"));
 			}
 			return summoners;
 		}
@@ -157,7 +159,7 @@ public class SummonerMethod extends Method
 	{
 		try
 		{
-			Summoner summoner = new Summoner(region,
+			Summoner summoner = new Summoner(api, region,
 					summonerObject.getLong("id"), summonerObject.getString("name"),
 					summonerObject.getInt("profileIconId"), summonerObject.getLong("summonerLevel"),
 					summonerObject.getLong("revisionDate"));

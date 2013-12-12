@@ -1,10 +1,15 @@
 package net.enigmablade.riotapi.types;
 
 import java.util.*;
+
+import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.constants.*;
+import net.enigmablade.riotapi.exceptions.*;
 
 public class Summoner
 {
+	private RiotApi api;
+	
 	private long id;
 	private String name;
 	private Region region;
@@ -12,29 +17,33 @@ public class Summoner
 	private long summonerLevel;
 	private Date revisionDate;
 	
-	public Summoner(Region region, String name)
+	public Summoner(RiotApi api, Region region, long id, String name)
 	{
-		this(region, -1, name);
-	}
-
-	public Summoner(Region region, long id)
-	{
-		this(region, id, null);
+		this(api, region, id, name, -1, -1, 0);
 	}
 	
-	public Summoner(Region region, long id, String name)
+	public Summoner(RiotApi api, Region region, long id, String name, int profileIconId, long summonerLevel, long revisionDate)
 	{
-		this(region, id, name, -1, -1, 0);
-	}
-	
-	public Summoner(Region region, long id, String name, int profileIconId, long summonerLevel, long revisionDate)
-	{
+		this.api = api;
+		
 		setRegion(region);
 		setName(name);
 		setId(id);
 		setProfileIconId(profileIconId);
 		setSummonerLevel(summonerLevel);
 		setRevisionDate(revisionDate);
+	}
+	
+	//Convenience methods
+	
+	public List<Game> getMatchHistory() throws RiotApiException
+	{
+		return api.getGameMethod().getRecentGames(region, id);
+	}
+	
+	public Map<String, League> getLeagues() throws RiotApiException
+	{
+		return api.getLeagueMethod().getLeagues(region, id);
 	}
 	
 	//Accessor and modifier methods

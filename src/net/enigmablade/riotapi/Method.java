@@ -15,7 +15,7 @@ import net.enigmablade.riotapi.exceptions.*;
  */
 public abstract class Method
 {
-	private RiotApi api;
+	protected RiotApi api;
 	private boolean skipCache;
 	
 	private String header;
