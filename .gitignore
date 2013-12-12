@@ -6,3 +6,6 @@
 /build.num
 /export
 /doc
+/.settings
+/.classpath
+/.project

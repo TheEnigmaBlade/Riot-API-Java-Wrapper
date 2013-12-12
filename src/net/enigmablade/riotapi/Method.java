@@ -26,7 +26,6 @@ public abstract class Method
 	/**
 	 * Created a new method defined by the given information.
 	 * @param api The API instance being used.
-	 * @param apiKey The API key to use for requests.
 	 * @param header The header of the method. Usually "api" or "api/lol".
 	 * @param method The name of the method. Ex. "champion" or "summoner"
 	 * @param version The version of the method.

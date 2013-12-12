@@ -3,6 +3,8 @@ Java Wrapper for the Riot API
 
 A power and easy-to-use wrapper for the [Riot Developer API](https://developer.riotgames.com/).
 
+Requires Java 7 or higher.
+
 Key Features
 ------------
 
