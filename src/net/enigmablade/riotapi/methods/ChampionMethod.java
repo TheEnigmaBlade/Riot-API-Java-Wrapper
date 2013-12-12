@@ -2,7 +2,6 @@ package net.enigmablade.riotapi.methods;
 
 import java.util.*;
 import net.enigmablade.jsonic.*;
-
 import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
@@ -32,13 +31,14 @@ public class ChampionMethod extends Method
 {
 	/**
 	 * Create a new champion method instance.
-	 * @param requester The Requester to use to make requests to the server.
-	 * @param apiKey The API key to use for requests.
+	 * @param api The API instance being used.
 	 */
-	public ChampionMethod(Requester requester, String apiKey)
+	public ChampionMethod(RiotApi api)
 	{
-		super(requester, apiKey, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE});
 	}
+	
+	//API-defined operation methods
 	
 	/**
 	 * Returns a list of all available or free champions and their accompanying information in the given region.
@@ -51,6 +51,8 @@ public class ChampionMethod extends Method
 	public List<Champion> getChampions(Region region, boolean free) throws RiotApiException
 	{
 		Response response = getMethodResult(region, createArgMap("freeToPlay", String.valueOf(free)));
+		
+		//Parse response
 		try
 		{
 			//Convert JSON into Champion objects
@@ -76,6 +78,8 @@ public class ChampionMethod extends Method
 			return null;
 		}
 	}
+	
+	//Other methods
 	
 	/**
 	 * Returns a list of all available champions and their accompanying information in the given region.

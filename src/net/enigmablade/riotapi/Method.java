@@ -1,8 +1,8 @@
-package net.enigmablade.riotapi.methods;
+package net.enigmablade.riotapi;
 
 import java.io.*;
 import java.util.*;
-import net.enigmablade.riotapi.*;
+
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
@@ -15,8 +15,7 @@ import net.enigmablade.riotapi.exceptions.*;
  */
 public abstract class Method
 {
-	private String apiKey;
-	private Requester requester;
+	private RiotApi api;
 	private boolean skipCache;
 	
 	private String header;
@@ -26,17 +25,16 @@ public abstract class Method
 	
 	/**
 	 * Created a new method defined by the given information.
-	 * @param requester The Requester to use to make requests to the server.
+	 * @param api The API instance being used.
 	 * @param apiKey The API key to use for requests.
 	 * @param header The header of the method. Usually "api" or "api/lol".
 	 * @param method The name of the method. Ex. "champion" or "summoner"
 	 * @param version The version of the method.
 	 * @param supportedRegions The regions supported by the method.
 	 */
-	public Method(Requester requester, String apiKey, String header, String method, String version, Region[] supportedRegions)
+	public Method(RiotApi api, String header, String method, String version, Region[] supportedRegions)
 	{
-		this.requester = requester;
-		this.apiKey = apiKey;
+		this.api = api;
 		skipCache = false;
 		
 		this.header = header;
@@ -132,10 +130,10 @@ public abstract class Method
 		}
 		
 		//Create URL and send the request
-		String url = "http://prod.api.pvp.net/"+header+"/"+region.getApiUsage()+"/v"+version+"/"+method+operation+"?api_key="+apiKey+queryArgsStr.toString();
+		String url = "http://prod.api.pvp.net/"+header+"/"+region.getApiUsage()+"/v"+version+"/"+method+operation+"?api_key="+api.getApiKey()+queryArgsStr.toString();
 		try
 		{
-			Response response = requester.request(url, skipCache);
+			Response response = api.getRequester().request(url, skipCache);
 			if(response == null)	//null if parse exception, highly unlikely
 				throw new RiotApiException("Failed to parse response");
 			

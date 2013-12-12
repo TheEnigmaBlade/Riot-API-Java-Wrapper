@@ -2,7 +2,6 @@ package net.enigmablade.riotapi.methods;
 
 import java.util.*;
 import net.enigmablade.jsonic.*;
-
 import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
@@ -31,13 +30,14 @@ public class LeagueMethod extends Method
 {
 	/**
 	 * Create a new league method instance.
-	 * @param requester The Requester to use to make requests to the server.
-	 * @param apiKey The API key to use for requests.
+	 * @param api The API instance being used.
 	 */
-	public LeagueMethod(Requester requester, String apiKey)
+	public LeagueMethod(RiotApi api)
 	{
-		super(requester, apiKey, "api", "league", "2.1", new Region[]{NA, EUW, EUNE, BR, TR});
+		super(api, "api", "league", "2.1", new Region[]{NA, EUW, EUNE, BR, TR});
 	}
+	
+	//API-defined operation methods
 	
 	/**
 	 * Returns a list of recent games for the given summoner.
@@ -52,6 +52,12 @@ public class LeagueMethod extends Method
 		Response response = getMethodResult(region,
 				"by-summoner/{summonerId}",
 				createArgMap("summonerId", String.valueOf(summonerId)));
+		
+		//Check errors
+		if(response.getCode() == 401)
+			throw new RiotApiException("401: Unauthorized");
+		
+		//Parse response
 		try
 		{
 			//Convert a map of League objects

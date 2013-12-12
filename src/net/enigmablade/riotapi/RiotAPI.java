@@ -47,6 +47,7 @@ public class RiotApi
 	private ChampionMethod championMethod;
 	private GameMethod gameMethod;
 	private LeagueMethod leagueMethod;
+	private SummonerMethod summonerMethod;
 	
 	/**
 	 * Returns the champion method to use for champion calls.
@@ -55,7 +56,7 @@ public class RiotApi
 	public ChampionMethod getChampionMethod()
 	{
 		if(championMethod == null)
-			championMethod = new ChampionMethod(requester, apiKey);
+			championMethod = new ChampionMethod(this);
 		return championMethod;
 	}
 	
@@ -66,7 +67,7 @@ public class RiotApi
 	public GameMethod getGameMethod()
 	{
 		if(gameMethod == null)
-			gameMethod = new GameMethod(requester, apiKey);
+			gameMethod = new GameMethod(this);
 		return gameMethod;
 	}
 	
@@ -77,8 +78,19 @@ public class RiotApi
 	public LeagueMethod getLeagueMethod()
 	{
 		if(leagueMethod == null)
-			leagueMethod = new LeagueMethod(requester, apiKey);
+			leagueMethod = new LeagueMethod(this);
 		return leagueMethod;
+	}
+	
+	/**
+	 * Returns the summoner method to use for game calls.
+	 * @return The summoner method
+	 */
+	public SummonerMethod getSummonerMethod()
+	{
+		if(summonerMethod == null)
+			summonerMethod = new SummonerMethod(this);
+		return summonerMethod;
 	}
 	
 	//Data methods
@@ -90,5 +102,17 @@ public class RiotApi
 	public int getRemainingApiCalls()
 	{
 		return requester.getLimitPer10Minutes()-requester.getRequestsInPast10Minutes();
+	}
+	
+	//Accessor methods
+	
+	protected Requester getRequester()
+	{
+		return requester;
+	}
+	
+	public String getApiKey()
+	{
+		return apiKey;
 	}
 }

@@ -13,6 +13,8 @@ public class Player
 		this.teamId = teamId;
 	}
 	
+	//Accessor methods
+	
 	public long getSummonerId()
 	{
 		return summonerId;

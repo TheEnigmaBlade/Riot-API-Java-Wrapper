@@ -13,6 +13,6 @@ public class RegionNotSupportedException extends RiotApiException
 {
 	public RegionNotSupportedException(String method, Region region, Region[] supportedRegions)
 	{
-		super("Region \""+region.getApiUsage()+"\" is not supported by method \""+method+"\", supported: "+Arrays.toString(supportedRegions));
+		super("Region \""+region+"\" is not supported by method \""+method+"\", supported: "+Arrays.toString(supportedRegions));
 	}
 }

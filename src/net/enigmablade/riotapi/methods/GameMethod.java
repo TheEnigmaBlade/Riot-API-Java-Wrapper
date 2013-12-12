@@ -30,13 +30,14 @@ public class GameMethod extends Method
 {
 	/**
 	 * Create a new game method instance.
-	 * @param requester The Requester to use to make requests to the server.
-	 * @param apiKey The API key to use for requests.
+	 * @param api The API instance being used.
 	 */
-	public GameMethod(Requester requester, String apiKey)
+	public GameMethod(RiotApi api)
 	{
-		super(requester, apiKey, "api/lol", "game", "1.1", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "game", "1.1", new Region[]{NA, EUW, EUNE});
 	}
+	
+	//API-defined operation methods
 	
 	/**
 	 * Returns a list of recent games for the given summoner.
@@ -51,6 +52,8 @@ public class GameMethod extends Method
 		Response response = getMethodResult(region,
 				"by-summoner/{summonerId}/recent",
 				createArgMap("summonerId", String.valueOf(summonerId)));
+		
+		//Parse response
 		try
 		{
 			//Convert JSON into Champion objects

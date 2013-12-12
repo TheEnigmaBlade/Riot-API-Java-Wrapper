@@ -79,6 +79,8 @@ public class Game
 		this.stats = stats;
 	}
 	
+	//Accessor methods
+	
 	public int getChampionId()
 	{
 		return championId;

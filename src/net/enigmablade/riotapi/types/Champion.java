@@ -22,6 +22,8 @@ public class Champion
 		this.botCustomEnabled = botCustomEnabled;
 		this.rankedEnabled = rankedEnabled;
 	}
+	
+	//Accessor methods
 
 	public String getName()
 	{

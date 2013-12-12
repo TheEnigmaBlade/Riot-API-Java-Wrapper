@@ -61,6 +61,8 @@ public class League
 					this.progress[n] = Progress.charToProgress(progress.charAt(n));
 			}
 			
+			//Accessor methods
+			
 			public int getTargetWins()
 			{
 				return targetWins;
@@ -117,6 +119,8 @@ public class League
 			this.lastPlayed = lastPlayed;
 			this.timeUntilDecay = timeUntilDecay;
 		}
+		
+		//Accessor methods
 		
 		public LeagueConstant getTier()
 		{
@@ -213,6 +217,8 @@ public class League
 		this.timestamp = timestamp;
 		this.entries = entries;
 	}
+	
+	//Accessor methods
 	
 	public LeagueConstant getTier()
 	{

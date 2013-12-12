@@ -115,7 +115,6 @@ public class Requester
 	private Response sendRequest(String requestUrl) throws IOException
 	{
 		//Create and connect
-		//URLEncoder.encode(requestUrl, "UTF-8")
 		URL url = new URL(requestUrl);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestMethod("GET");
