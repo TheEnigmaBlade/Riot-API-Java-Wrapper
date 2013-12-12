@@ -17,6 +17,7 @@ public abstract class Method
 {
 	private String apiKey;
 	private Requester requester;
+	private boolean skipCache;
 	
 	private String header;
 	private String version;
@@ -26,7 +27,7 @@ public abstract class Method
 	/**
 	 * Created a new method defined by the given information.
 	 * @param requester The Requester to use to make requests to the server.
-	 * @param apiKey The API key to use for requets.
+	 * @param apiKey The API key to use for requests.
 	 * @param header The header of the method. Usually "api" or "api/lol".
 	 * @param method The name of the method. Ex. "champion" or "summoner"
 	 * @param version The version of the method.
@@ -36,6 +37,7 @@ public abstract class Method
 	{
 		this.requester = requester;
 		this.apiKey = apiKey;
+		skipCache = false;
 		
 		this.header = header;
 		this.method = method;
@@ -133,7 +135,7 @@ public abstract class Method
 		String url = "http://prod.api.pvp.net/"+header+"/"+region.getApiUsage()+"/v"+version+"/"+method+operation+"?api_key="+apiKey+queryArgsStr.toString();
 		try
 		{
-			Response response = requester.request(url);
+			Response response = requester.request(url, skipCache);
 			if(response == null)	//null if parse exception, highly unlikely
 				throw new RiotApiException("Failed to parse response");
 			
@@ -149,6 +151,18 @@ public abstract class Method
 		{
 			throw new RiotApiException("", e);
 		}
+	}
+	
+	//Accessor and modifier methods
+	
+	public boolean isSkippingCache()
+	{
+		return skipCache;
+	}
+	
+	public void setSkipCache(boolean skipCache)
+	{
+		this.skipCache = skipCache;
 	}
 	
 	//Helper methods

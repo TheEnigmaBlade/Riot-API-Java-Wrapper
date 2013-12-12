@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.concurrent.locks.*;
 import net.enigmablade.jsonic.*;
 
+import net.enigmablade.riotapi.util.*;
+
 /**
  * A utility class to send HTTP get requests. Requests are limited on a per-second basis.
  * @author Enigma
@@ -13,6 +15,8 @@ import net.enigmablade.jsonic.*;
  */
 public class Requester
 {
+	private String userAgent;
+	
 	private int limitPer10Seconds;
 	private long limitWait, lastCall;
 	private Lock rateLock;
@@ -21,7 +25,7 @@ public class Requester
 	private Queue<Long> requestQueue;
 	private static final long REQUEST_QUEUE_TIME_LIMIT = 60000;	//10 minutes
 	
-	private String userAgent;
+	private BufferPool<String, Response> cache;
 	
 	public Requester(String userAgent)
 	{
@@ -36,6 +40,8 @@ public class Requester
 		
 		rateLock = new ReentrantLock(true);
 		requestQueue = new LinkedList<>();
+		
+		cache = new BufferPool<>(limitPer10Minutes);
 	}
 	
 	//Functionality methods
@@ -67,14 +73,29 @@ public class Requester
 		return request(requestUrl, false);
 	}
 	
-	public Response request(String requestUrl, boolean speedy) throws IOException
+	public Response request(String requestUrl, boolean skipCache) throws IOException
 	{
-		System.out.println("Sending request: "+requestUrl);
+		return request(requestUrl, skipCache, false);
+	}
+	
+	public Response request(String requestUrl, boolean skipCache, boolean speedy) throws IOException
+	{
+		Response response;
 		
-		Response response = sendLimitedRequest(requestUrl);
+		//Check if it's in the cache
+		if(!skipCache)
+		{
+			response = cache.get(requestUrl);
+			if(response != null)
+				return response;
+		}
+		
+		//Otherwise send the request
+		response = sendLimitedRequest(requestUrl);
 		if(response.getValue() == null)
 			return response;
 		
+		//Parse the request
 		try
 		{
 			JsonObject json = JsonParser.parseObject((String)response.getValue(), speedy);
