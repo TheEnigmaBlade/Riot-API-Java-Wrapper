@@ -42,13 +42,9 @@ public enum GameType
 	 */
 	public static GameType getFromValue(String value)
 	{
-		switch(value)
-		{
-			case "CUSTOM_GAME": return CUSTOM;
-			case "MATCHED_GAME": return MATCHED;
-			case "CO_OP_VS_AI_GAME": return CO_OP_VS_AI;
-			case "TUTORIAL_GAME": return TUTORIAL;
-			default: return UNKNOWN;
-		}
+		for(GameType g : values())
+			if(g.getValue().equals(value))
+				return g;
+		return UNKNOWN;
 	}
 }

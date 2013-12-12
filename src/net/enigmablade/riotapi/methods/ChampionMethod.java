@@ -61,7 +61,7 @@ public class ChampionMethod extends Method
 			{
 				JsonObject cObj = csArray.getObject(n);
 				Champion c = new Champion(cObj.getString("name"), cObj.getLong("id"),
-						cObj.getLong("attackRank").intValue(), cObj.getLong("magicRank").intValue(), cObj.getLong("defenseRank").intValue(), cObj.getLong("difficultyRank").intValue(),
+						cObj.getInt("attackRank"), cObj.getInt("magicRank"), cObj.getInt("defenseRank"), cObj.getInt("difficultyRank"),
 						cObj.getBoolean("active"), cObj.getBoolean("freeToPlay"),
 						cObj.getBoolean("botMmEnabled"), cObj.getBoolean("botEnabled"), cObj.getBoolean("rankedPlayEnabled"));
 				cs.add(c);

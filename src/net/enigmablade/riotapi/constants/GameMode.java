@@ -42,13 +42,9 @@ public enum GameMode
 	 */
 	public static GameMode getFromValue(String value)
 	{
-		switch(value)
-		{
-			case "CLASSIC": return CLASSIC;
-			case "ODIN": return DOMINION;
-			case "ARAM": return ARAM;
-			case "TUTORIAL": return TUTORIAL;
-			default: return UNKNOWN;
-		}
+		for(GameMode g : values())
+			if(g.getValue().equals(value))
+				return g;
+		return UNKNOWN;
 	}
 }

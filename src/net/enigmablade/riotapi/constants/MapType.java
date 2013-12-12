@@ -56,16 +56,9 @@ public enum MapType
 	 */
 	public static MapType getFromId(int id)
 	{
-		switch(id)
-		{
-			case 1: return SUMMONERS_RIFT;
-			case 2: return SUMMONERS_RIFT_AUTUMN;
-			case 10: return TWISTED_TREELINE;
-			case 4: return TWISTED_TREELINE_OLD;
-			case 8: return CRYSTAL_SCAR;
-			case 12: return HOWLING_ABYSS;
-			case 3: return PROVING_GROUNDS;
-			default: return UNKNOWN;
-		}
+		for(MapType m : values())
+			if(m.getId() == id)
+				return m;
+		return UNKNOWN;
 	}
 }

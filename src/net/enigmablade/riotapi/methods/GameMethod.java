@@ -74,7 +74,7 @@ public class GameMethod extends Method
 				for(int p = 0; p < playersArray.size(); p++)
 				{
 					JsonObject playerObject = playersArray.getObject(p);
-					Player player = new Player(playerObject.getLong("summonerId"), playerObject.getLong("championId").intValue(), (int)playerObject.getLong("teamId").intValue());
+					Player player = new Player(playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
 					players.add(player);
 				}
 				
@@ -84,15 +84,15 @@ public class GameMethod extends Method
 				for(int p = 0; p < statsArray.size(); p++)
 				{
 					JsonObject statObject = statsArray.getObject(p);
-					Game.Stat stat = new Game.Stat(statObject.getLong("id").intValue(), statObject.getString("name"), statObject.getLong("value").intValue());
+					Game.Stat stat = new Game.Stat(statObject.getInt("id"), statObject.getString("name"), statObject.getInt("value"));
 					stats.add(stat);
 				}
 				
 				//Create game object
-				Game game = new Game(gameObject.getLong("championId").intValue(), gameObject.getLong("level").intValue(), gameObject.getLong("spell1").intValue(), gameObject.getLong("spell2").intValue(),
+				Game game = new Game(gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
 						gameObject.getLong("createDate"), gameObject.getBoolean("invalid"),
-						gameObject.getLong("gameId"), gameObject.getString("gameMode"), gameObject.getString("gameType"), gameObject.getString("subType"), gameObject.getLong("mapId").intValue(),
-						gameObject.getLong("teamId").intValue(), players, stats);
+						gameObject.getLong("gameId"), gameObject.getString("gameMode"), gameObject.getString("gameType"), gameObject.getString("subType"), gameObject.getInt("mapId"),
+						gameObject.getInt("teamId"), players, stats);
 				games.add(game);
 			}
 			return games;

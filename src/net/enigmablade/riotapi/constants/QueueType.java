@@ -8,39 +8,50 @@ package net.enigmablade.riotapi.constants;
  */
 public enum QueueType
 {
-	UNKNOWN				(-1, "Unknown"),
-	NORMAL_5V5_BLIND	(2,	 "Normal 5v5 Blind Pick"),
-	NORMAL_5V5_DRAFT	(14, "Normal 5v5 Draft Pick"),
-	NORMAL_5V5_COOP		(7,	 "Normal Coop vs AI"),
-	RANKED_5V5_SOLO		(4,	 "Ranked 5v5 Solo"),
-	NORMAL_3V3_BLIND	(8,	 "Normal 3v3 Blind"),
-	NORMAL_3V3_COOP		(52, "Normal 3v3 Coop vs AI"),
-	DOMINION_5V5_BLIND	(16, "Dominion 5v5 Blind Pick"),
-	DOMINION_5V5_DRAFT	(17, "Dominion 5v5 Draft Pick"),
-	DOMINION_5V5_COOP	(25, "Dominion Coop vs AI"),
-	RANKED_TEAM_3V3		(41, "Ranked Team 3v3"),
-	RANKED_TEAM_5V5		(42, "Ranked Team 5v5"),
-	ARAM_5V5			(65, "ARAM"),
-	ARAM_5V5_COOP		(67, "ARAM Coop vs AI");
+	UNKNOWN				(-1, "UNKNOWN",			"Unknown"),
+	NORMAL_5V5_BLIND	(2,	 "",				"Normal 5v5 Blind Pick"),
+	NORMAL_5V5_DRAFT	(14, "",				"Normal 5v5 Draft Pick"),
+	NORMAL_5V5_COOP		(7,	 "",				"Normal Coop vs AI"),
+	RANKED_5V5_SOLO		(4,	 "RANKED_SOLO_5x5",	"Ranked 5v5 Solo"),
+	RANKED_5V5_TEAM		(42, "RANKED_TEAM_5x5",	"Ranked Team 5v5"),
+	NORMAL_3V3_BLIND	(8,	 "", 				"Normal 3v3 Blind"),
+	NORMAL_3V3_COOP		(52, "", 				"Normal 3v3 Coop vs AI"),
+	RANKED_3V3_TEAM		(41, "RANKED_TEAM_3x3",	"Ranked Team 3v3"),
+	DOMINION_5V5_BLIND	(16, "", 				"Dominion 5v5 Blind Pick"),
+	DOMINION_5V5_DRAFT	(17, "", 				"Dominion 5v5 Draft Pick"),
+	DOMINION_5V5_COOP	(25, "", 				"Dominion Coop vs AI"),
+	ARAM_5V5			(65, "", 				"ARAM"),
+	ARAM_5V5_COOP		(67, "", 				"ARAM Coop vs AI");
 	
 	//---//
 	
 	private int id;
+	private String value;
 	private String name;
 	
-	private QueueType(int id, String name)
+	private QueueType(int id, String value, String name)
 	{
 		this.id = id;
+		this.value = value;
 		this.name = name;
 	}
 	
 	/**
 	 * Returns the queue ID to be used in API calls.
-	 * @return
+	 * @return The queue ID.
 	 */
 	public int getId()
 	{
 		return id;
+	}
+	
+	/**
+	 * Returns the queue value to be used in API calls.
+	 * @return The queue value.
+	 */
+	public String getValue()
+	{
+		return value;
 	}
 	
 	/**
@@ -62,22 +73,23 @@ public enum QueueType
 	 */
 	public static QueueType getFromId(int id)
 	{
-		switch(id)
-		{
-			case 2: return NORMAL_5V5_BLIND;
-			case 14: return NORMAL_5V5_DRAFT;
-			case 7: return NORMAL_5V5_COOP;
-			case 4: return RANKED_5V5_SOLO;
-			case 8: return NORMAL_3V3_BLIND;
-			case 52: return NORMAL_3V3_COOP;
-			case 16: return DOMINION_5V5_BLIND;
-			case 17: return DOMINION_5V5_DRAFT;
-			case 25: return DOMINION_5V5_COOP;
-			case 41: return RANKED_TEAM_3V3;
-			case 42: return RANKED_TEAM_5V5;
-			case 65: return ARAM_5V5;
-			case 67: return ARAM_5V5_COOP;
-			default: return UNKNOWN;
-		}
+		for(QueueType q : values())
+			if(q.getId() == id)
+				return q;
+		return UNKNOWN;
+	}
+	
+	/**
+	 * Returns the constant from the given API queue value.
+	 * For example, the queue value 'RANKED_5V5_SOLO' will return the constant RANKED_5V5_SOLO.
+	 * @param value The API queue value.
+	 * @return The constant.
+	 */
+	public static QueueType getFromValue(String value)
+	{
+		for(QueueType q : values())
+			if(q.getValue().equals(value))
+				return q;
+		return UNKNOWN;
 	}
 }
