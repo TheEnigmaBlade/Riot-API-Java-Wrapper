@@ -5,7 +5,7 @@ import java.util.*;
 import net.enigmablade.riotapi.constants.*;
 
 /**
- * Information about a League of Legends game.
+ * Information about a League of Legends game/match.
  * 
  * @author Enigma
  */

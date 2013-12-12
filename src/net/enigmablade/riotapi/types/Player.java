@@ -1,5 +1,10 @@
 package net.enigmablade.riotapi.types;
 
+/**
+ * Information about a player that participated in a game or match.
+ * 
+ * @author Enigma
+ */
 public class Player
 {
 	private long summonerId;

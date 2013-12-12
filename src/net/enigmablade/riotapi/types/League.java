@@ -5,6 +5,7 @@ import net.enigmablade.riotapi.constants.*;
 
 /**
  * Information about a League of Legends league.
+ * Can be a player-based league of a team-based league.
  * 
  * @author Enigma
  */

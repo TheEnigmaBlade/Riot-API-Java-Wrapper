@@ -54,8 +54,8 @@ API Support
 | summoner-v1.1 | /by-name/{name}           | **Yes**   |
 |               | /{id}                     | **Yes**   |
 |               | /{ids}/name               | **Yes**   |
-|               | /{id}/masteries           | No (soon) |
-|               | /{id}/runes               | No (soon) |
+|               | /{id}/masteries           | **Yes**   |
+|               | /{id}/runes               | **Yes**   |
 | team-v2.1     | /by-summoner/{id}         | No (soon) |
 
 Legal stuff

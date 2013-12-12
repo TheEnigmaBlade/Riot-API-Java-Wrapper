@@ -1,5 +1,10 @@
 package net.enigmablade.riotapi.types;
 
+/**
+ * Information about a League of Legends champion.
+ * 
+ * @author Enigma
+ */
 public class Champion
 {
 	private String name;
