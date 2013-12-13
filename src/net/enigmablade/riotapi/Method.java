@@ -139,6 +139,8 @@ public abstract class Method
 			//Errors common to all methods
 			if(response.getCode() == 400)
 				throw new RiotApiException("400: Bad request");
+			else if(response.getCode() == 429)
+				throw new RiotApiException("429: Too many requests");
 			else if(response.getCode() == 500)
 				throw new RiotApiException("500: Internal server error");
 			else if(response.getCode() == 503)
@@ -148,7 +150,7 @@ public abstract class Method
 		}
 		catch(IOException e)
 		{
-			throw new RiotApiException("", e);
+			throw new RiotApiException("Failed to send request", e);
 		}
 	}
 	

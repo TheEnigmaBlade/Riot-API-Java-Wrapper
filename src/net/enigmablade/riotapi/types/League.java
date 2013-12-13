@@ -105,7 +105,7 @@ public class League
 		{
 			this.tier = LeagueConstant.stringToConstant(tier);
 			this.rank = LeagueConstant.stringToConstant(rank);
-			this.queueType = QueueType.getFromValue(queueType);
+			this.queueType = QueueType.getFromLeagueValue(queueType);
 			this.leagueName = leagueName;
 			this.playerOrTeamId = string;
 			this.playerOrTeamName = playerOrTeamName;
@@ -214,7 +214,7 @@ public class League
 	{
 		this.tier = LeagueConstant.stringToConstant(tier);
 		this.name = name;
-		this.queueType = QueueType.getFromValue(queueType);
+		this.queueType = QueueType.getFromLeagueValue(queueType);
 		this.timestamp = timestamp;
 		this.entries = entries;
 	}

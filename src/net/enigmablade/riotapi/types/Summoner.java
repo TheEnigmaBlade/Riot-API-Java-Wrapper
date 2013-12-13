@@ -10,10 +10,8 @@ import net.enigmablade.riotapi.exceptions.*;
  * 
  * @author Enigma
  */
-public class Summoner
+public class Summoner extends ApiType
 {
-	private RiotApi api;
-	
 	private long id;
 	private String name;
 	private Region region;
@@ -47,14 +45,16 @@ public class Summoner
 	 */
 	public Summoner(RiotApi api, Region region, long id, String name, int profileIconId, long summonerLevel, long revisionDate)
 	{
-		this.api = api;
-		
+		super(api);
 		setRegion(region);
 		setName(name);
 		setId(id);
 		setProfileIconId(profileIconId);
 		setSummonerLevel(summonerLevel);
 		setRevisionDate(revisionDate);
+		
+		if(id >= 0 && name != null)
+			setApiUpdated();
 	}
 	
 	//Convenience methods
@@ -66,8 +66,11 @@ public class Summoner
 	 */
 	private void verifyConvenienceState() throws RiotApiException
 	{
-		if(id < 0)
+		if(hasApiUpdated())
+		{
 			api.getSummonerMethod().fillSummoner(this);
+			setApiUpdated();
+		}
 	}
 	
 	/**
@@ -177,8 +180,10 @@ public class Summoner
 		this.region = region;
 	}
 	
-	public long getId()
+	public long getId() throws RiotApiException
 	{
+		if(id < 0)
+			verifyConvenienceState();
 		return id;
 	}
 	
@@ -187,8 +192,10 @@ public class Summoner
 		this.id = id;
 	}
 	
-	public String getName()
+	public String getName() throws RiotApiException
 	{
+		if(name == null)
+			verifyConvenienceState();
 		return name;
 	}
 	
@@ -197,8 +204,9 @@ public class Summoner
 		this.name = name;
 	}
 	
-	public int getProfileIconId()
+	public int getProfileIconId() throws RiotApiException
 	{
+		verifyConvenienceState();
 		return profileIconId;
 	}
 	
@@ -207,8 +215,9 @@ public class Summoner
 		this.profileIconId = profileIconId;
 	}
 	
-	public long getSummonerLevel()
+	public long getSummonerLevel() throws RiotApiException
 	{
+		verifyConvenienceState();
 		return summonerLevel;
 	}
 	
@@ -217,8 +226,9 @@ public class Summoner
 		this.summonerLevel = summonerLevel;
 	}
 	
-	public Date getRevisionDate()
+	public Date getRevisionDate() throws RiotApiException
 	{
+		verifyConvenienceState();
 		return revisionDate;
 	}
 	

@@ -62,7 +62,7 @@ public class ChampionMethod extends Method
 			for(int n = 0; n < csArray.size(); n++)
 			{
 				JsonObject cObj = csArray.getObject(n);
-				Champion c = new Champion(cObj.getString("name"), cObj.getLong("id"),
+				Champion c = new Champion(api, region, cObj.getString("name"), cObj.getLong("id"),
 						cObj.getInt("attackRank"), cObj.getInt("magicRank"), cObj.getInt("defenseRank"), cObj.getInt("difficultyRank"),
 						cObj.getBoolean("active"), cObj.getBoolean("freeToPlay"),
 						cObj.getBoolean("botMmEnabled"), cObj.getBoolean("botEnabled"), cObj.getBoolean("rankedPlayEnabled"));
@@ -120,5 +120,45 @@ public class ChampionMethod extends Method
 			if(!c.isActive())
 				disabled.add(c);
 		return disabled;
+	}
+	
+	//Other methods
+	
+	/**
+	 * Fills missing information in a champion if required, i.e., if the champion name or champion ID is missing.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param champion The champion to fill.
+	 * @return <code>true</code> if information the champion was filled, otherwise <code>false</code>.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public boolean fillChampion(Champion champion, Region region) throws RiotApiException
+	{
+		List<Champion> champions = getAllChampions(region);
+		Champion newChampion = null;
+		for(Champion c : champions)
+			if((champion.getId() >= 0 && c.getId() == champion.getId()) || c.getName().equals(champion.getName()))
+			{
+				newChampion = c;
+				break;
+			}
+		
+		//Fill if required
+		if(newChampion != null)
+		{
+			champion.setName(newChampion.getName());
+			champion.setId(newChampion.getId());
+			champion.setAttackRank(newChampion.getAttackRank());
+			champion.setMagicRank(newChampion.getMagicRank());
+			champion.setDefenseRank(newChampion.getDefenseRank());
+			champion.setDifficultyRank(newChampion.getDifficultyRank());
+			champion.setActive(newChampion.isActive());
+			champion.setFreeToPlay(newChampion.isFreeToPlay());
+			champion.setBotMatchMadeEnabled(newChampion.isBotMatchMadeEnabled());
+			champion.setBotCustomEnabled(newChampion.isBotCustomEnabled());
+			champion.setRankedEnabled(newChampion.isRankedEnabled());
+			return true;
+		}
+		return false;
 	}
 }

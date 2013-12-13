@@ -76,7 +76,7 @@ public class GameMethod extends Method
 				for(int p = 0; p < playersArray.size(); p++)
 				{
 					JsonObject playerObject = playersArray.getObject(p);
-					Player player = new Player(playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
+					Player player = new Player(api, region, playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
 					players.add(player);
 				}
 				

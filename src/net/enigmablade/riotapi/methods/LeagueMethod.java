@@ -14,7 +14,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>Method support information:
  * 	<ul>
  * 		<li><i>Version</i>: 2.1</li>
- * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
+ * 		<li><i>Regions</i>: NA, EUW, EUNE, BR, TR</li>
  * 	</ul>
  * </p>
  * <p>Operation information:

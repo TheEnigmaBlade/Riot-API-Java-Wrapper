@@ -332,7 +332,7 @@ public class SummonerMethod extends Method
 		Summoner newSummoner = null;
 		if(summoner.getName() == null)	//Missing name, have ID
 			newSummoner = getSummonerById(summoner.getRegion(), summoner.getId());
-		else if(summoner.getId() < 0)	//Missing ID, have name
+		else							//Missing ID, have name
 			newSummoner = getSummonerByName(summoner.getRegion(), summoner.getName());
 		
 		//Fill if required

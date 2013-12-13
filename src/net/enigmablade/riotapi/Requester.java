@@ -149,7 +149,7 @@ public class Requester
 			{
 				Thread.sleep(limitWait-timeSinceLast);
 			}
-			catch(InterruptedException e) { /* I don't even know when this is ever thrown... */	}
+			catch(InterruptedException e) { /* I don't even know when this is ever thrown... */ }
 		
 		//Send request
 		Response response = sendRequest(requestUrl);

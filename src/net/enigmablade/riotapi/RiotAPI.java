@@ -1,4 +1,4 @@
-//              Copyright EnigmaBlade.net, 2013
+//            ~ Copyright EnigmaBlade.net, 2013 ~
 // Distributed under the Boost Software License, Version 1.0
 //             See accompanying file LICENSE.txt
 //         or at http://www.boost.org/LICENSE_1_0.txt
@@ -56,6 +56,7 @@ public class RiotApi
 	private GameMethod gameMethod;
 	private LeagueMethod leagueMethod;
 	private SummonerMethod summonerMethod;
+	private StatsMethod statsMethod;
 	
 	/**
 	 * Returns the champion method to use for champion calls.
@@ -101,13 +102,42 @@ public class RiotApi
 		return summonerMethod;
 	}
 	
+	/**
+	 * Returns the stats method to use for game calls.
+	 * @return The stats method
+	 */
+	public StatsMethod getStatsMethod()
+	{
+		if(statsMethod == null)
+			statsMethod = new StatsMethod(this);
+		return statsMethod;
+	}
+	
 	//Convenience methods
 	
+	/**
+	 * Returns the summoner with the given summoner name.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param name The summoner name.
+	 * @return The summoner.
+	 * @throws SummonerNotFoundException If the summoner was not found.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
 	public Summoner getSummoner(Region region, String name) throws RiotApiException
 	{
 		return getSummonerMethod().getSummonerByName(region, name);
 	}
 	
+	/**
+	 * Returns the summoner with the given summoner ID.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param id The summoner id.
+	 * @return The summoner.
+	 * @throws SummonerNotFoundException If the summoner was not found.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
 	public Summoner getSummoner(Region region, long id) throws RiotApiException
 	{
 		return getSummonerMethod().getSummonerById(region, id);
@@ -126,11 +156,19 @@ public class RiotApi
 	
 	//Accessor methods
 	
+	/**
+	 * Returns the Requester being used to send and limit API requests.
+	 * @return The current Requester.
+	 */
 	protected Requester getRequester()
 	{
 		return requester;
 	}
 	
+	/**
+	 * Returns the API key being used for API requests.
+	 * @return The current API key.
+	 */
 	public String getApiKey()
 	{
 		return apiKey;
