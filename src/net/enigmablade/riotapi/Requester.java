@@ -2,10 +2,10 @@ package net.enigmablade.riotapi;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.locks.*;
 import net.enigmablade.jsonic.*;
-
 import net.enigmablade.riotapi.util.*;
 
 /**
@@ -129,7 +129,7 @@ public class Requester
 		
 		//Get response
 		InputStream in = connection.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
 		StringBuffer buffer = new StringBuffer();
 		String line;
 		while((line = reader.readLine()) != null)

@@ -66,10 +66,10 @@ public class Summoner extends ApiType
 	 */
 	private void verifyConvenienceState() throws RiotApiException
 	{
-		if(hasApiUpdated())
+		if(!hasApiUpdated())
 		{
-			api.getSummonerMethod().fillSummoner(this);
 			setApiUpdated();
+			api.getSummonerMethod().fillSummoner(this);
 		}
 	}
 	

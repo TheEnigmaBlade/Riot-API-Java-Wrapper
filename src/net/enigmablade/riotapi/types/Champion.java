@@ -51,10 +51,10 @@ public class Champion extends ApiType
 	 */
 	private void verifyConvenienceState() throws RiotApiException
 	{
-		if(hasApiUpdated())
+		if(!hasApiUpdated())
 		{
-			api.getChampionMethod().fillChampion(this, region);
 			setApiUpdated();
+			api.getChampionMethod().fillChampion(this, region);
 		}
 	}
 	
