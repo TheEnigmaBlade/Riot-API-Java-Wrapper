@@ -54,13 +54,13 @@ API Support
 | game-v1.1     | /by-summoner/{id}/recent  | **Yes**   |
 | league-v2.1   | /by-summoner/{id}         | **Yes**   |
 | stats-v1.1    | /by-summoner/{id}/summary | **Yes**   |
-|               | /by-summoner/{id}/ranked  | **Yes** |
+|               | /by-summoner/{id}/ranked  | **Yes**   |
 | summoner-v1.1 | /by-name/{name}           | **Yes**   |
 |               | /{id}                     | **Yes**   |
 |               | /{ids}/name               | **Yes**   |
 |               | /{id}/masteries           | **Yes**   |
 |               | /{id}/runes               | **Yes**   |
-| team-v2.1     | /by-summoner/{id}         | No (soon) |
+| team-v2.1     | /by-summoner/{id}         | **Yes**   |
 
 ###Object-oriented Usage
 
