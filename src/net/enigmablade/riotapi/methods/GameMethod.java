@@ -72,22 +72,29 @@ public class GameMethod extends Method
 				
 				//Convert player list
 				JsonArray playersArray = gameObject.getArray("fellowPlayers");
-				List<Player> players = new ArrayList<>(playersArray.size());
-				for(int p = 0; p < playersArray.size(); p++)
+				List<Player> players = new ArrayList<>();
+				if(playersArray != null)
 				{
-					JsonObject playerObject = playersArray.getObject(p);
-					Player player = new Player(api, region, playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
-					players.add(player);
+					for(int p = 0; p < playersArray.size(); p++)
+					{
+						JsonObject playerObject = playersArray.getObject(p);
+						Player player = new Player(api, region, playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
+						players.add(player);
+					}
 				}
 				
 				//Convert statistic list
 				JsonArray statsArray = gameObject.getArray("statistics");
-				List<Game.Stat> stats = new ArrayList<>(statsArray.size());
-				for(int p = 0; p < statsArray.size(); p++)
+				Map<String, Game.Stat> stats = new TreeMap<>();
+				if(statsArray != null)
 				{
-					JsonObject statObject = statsArray.getObject(p);
-					Game.Stat stat = new Game.Stat(statObject.getInt("id"), statObject.getString("name"), statObject.getInt("value"));
-					stats.add(stat);
+					for(int p = 0; p < statsArray.size(); p++)
+					{
+						JsonObject statObject = statsArray.getObject(p);
+						String name = statObject.getString("name");
+						Game.Stat stat = new Game.Stat(statObject.getInt("id"), name, statObject.getInt("value"));
+						stats.put(name, stat);
+					}
 				}
 				
 				//Create game object

@@ -11,7 +11,8 @@ public enum Region
 	EUW("euw"),
 	EUNE("eune"),
 	BR("br"),
-	TR("tr");
+	TR("tr"),
+	OCE("oce");
 	
 	//---//
 	

@@ -11,30 +11,31 @@ package net.enigmablade.riotapi.constants;
  */
 public enum QueueType
 {
-	//Constant			ID		League value		Stat value			Name
-	UNKNOWN				(-1,	"UNKNOWN",			"UNKNOWN",			"Unknown"),
-	NORMAL_5V5_BLIND	(2,		"",					"Unranked",			"Normal 5v5 Blind Pick"),
-	NORMAL_5V5_DRAFT	(14,	"",					"Unranked",			"Normal 5v5 Draft Pick"),
-	NORMAL_5V5_COOP		(7,		"",					"Unranked",			"Normal Coop vs AI"),
-	RANKED_5V5_SOLO		(4,		"RANKED_SOLO_5x5",	"RankedSolo5x5",	"Ranked 5v5 Solo"),
-	RANKED_5V5_TEAM		(42,	"RANKED_TEAM_5x5",	"RankedPremade5x5",	"Ranked Team 5v5"),
-	NORMAL_3V3_BLIND	(8,		"", 				"Unranked3x3",		"Normal 3v3 Blind"),
-	NORMAL_3V3_COOP		(52,	"", 				"Unranked3x3",		"Normal 3v3 Coop vs AI"),
-	RANKED_3V3_SOLO		(4,		"",					"RankedPremade3x3",	"Ranked 5v5 Solo"),
-	RANKED_3V3_TEAM		(41,	"RANKED_TEAM_3x3",	"RankedTeam3x3",	"Ranked Team 3v3"),
-	DOMINION_5V5_BLIND	(16,	"", 				"OdinUnranked",		"Dominion 5v5 Blind Pick"),
-	DOMINION_5V5_DRAFT	(17,	"", 				"OdinUnranked",		"Dominion 5v5 Draft Pick"),
-	DOMINION_5V5_COOP	(25,	"", 				"OdinUnranked",		"Dominion Coop vs AI"),
-	ARAM_5V5			(65,	"", 				"AramUnranked5x5",	"ARAM"),
-	ARAM_5V5_COOP		(67,	"", 				"AramUnranked5x5",	"ARAM Coop vs AI");
+	//Constant			ID		League value			Stat value			Ranked	Name
+	UNKNOWN				(-1,	"UNKNOWN",				"UNKNOWN",			false, 	"Unknown"),
+	NORMAL_5V5_BLIND	(2,		"NORMAL",				"Unranked",			false,	"Normal 5v5 Blind Pick"),
+	NORMAL_5V5_DRAFT	(14,	"",						"Unranked",			false,	"Normal 5v5 Draft Pick"),
+	NORMAL_5V5_COOP		(7,		"BOT",					"Unranked",			false,	"Normal Coop vs AI"),
+	RANKED_5V5_SOLO		(4,		"RANKED_SOLO_5x5",		"RankedSolo5x5",	true,	"Ranked 5v5 Solo"),
+	RANKED_5V5_TEAM		(42,	"RANKED_TEAM_5x5",		"RankedPremade5x5",	true,	"Ranked Team 5v5"),
+	NORMAL_3V3_BLIND	(8,		"", 					"Unranked3x3",		false,	"Normal 3v3 Blind"),
+	NORMAL_3V3_COOP		(52,	"", 					"Unranked3x3",		false,	"Normal 3v3 Coop vs AI"),
+	RANKED_3V3_SOLO		(4,		"",						"RankedPremade3x3",	true,	"Ranked 5v5 Solo"),
+	RANKED_3V3_TEAM		(41,	"RANKED_TEAM_3x3",		"RankedTeam3x3",	true,	"Ranked Team 3v3"),
+	DOMINION_5V5_BLIND	(16,	"", 					"OdinUnranked",		false,	"Dominion 5v5 Blind Pick"),
+	DOMINION_5V5_DRAFT	(17,	"", 					"OdinUnranked",		false,	"Dominion 5v5 Draft Pick"),
+	DOMINION_5V5_COOP	(25,	"",						"OdinUnranked",		false,	"Dominion Coop vs AI"),
+	ARAM_5V5			(65,	"ARAM_UNRANKED_5x5",	"AramUnranked5x5",	false,	"ARAM"),
+	ARAM_5V5_COOP		(67,	"",						"AramUnranked5x5",	false,	"ARAM Coop vs AI");
 	
 	//---//
 	
 	private int id;
 	private String leagueValue, statsValue;
+	private boolean ranked;
 	private String name;
 	
-	private QueueType(int id, String leagueValue, String statValue, String name)
+	private QueueType(int id, String leagueValue, String statValue, boolean ranked, String name)
 	{
 		this.id = id;
 		this.leagueValue = leagueValue;
@@ -67,6 +68,15 @@ public enum QueueType
 	public String getStatsValue()
 	{
 		return statsValue;
+	}
+	
+	/**
+	 * Returns whether or not the queue type is a ranked queue.
+	 * @return <code>true</code> if the queue is ranked, otherwise <code>false</code>.
+	 */
+	public boolean isRanked()
+	{
+		return ranked;
 	}
 	
 	/**

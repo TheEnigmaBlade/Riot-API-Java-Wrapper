@@ -90,7 +90,7 @@ public class League
 			}
 		}
 		
-		private LeagueConstant tier, rank;
+		private LeagueConstants tier, rank;
 		private QueueType queueType;
 		private String leagueName;
 		
@@ -103,8 +103,8 @@ public class League
 		
 		public Entry(String tier, String rank, String queueType, String leagueName, String string, String playerOrTeamName, boolean isHotStreak, boolean isFreshBlood, boolean isVeteran, boolean isInactive, int wins, int losses, int leaguePoints, Series series, long lastPlayed, long timeUntilDecay)
 		{
-			this.tier = LeagueConstant.stringToConstant(tier);
-			this.rank = LeagueConstant.stringToConstant(rank);
+			this.tier = LeagueConstants.stringToConstant(tier);
+			this.rank = LeagueConstants.stringToConstant(rank);
 			this.queueType = QueueType.getFromLeagueValue(queueType);
 			this.leagueName = leagueName;
 			this.playerOrTeamId = string;
@@ -123,12 +123,12 @@ public class League
 		
 		//Accessor methods
 		
-		public LeagueConstant getTier()
+		public LeagueConstants getTier()
 		{
 			return tier;
 		}
 		
-		public LeagueConstant getRank()
+		public LeagueConstants getRank()
 		{
 			return rank;
 		}
@@ -204,7 +204,7 @@ public class League
 		}
 	}
 	
-	private LeagueConstant tier;
+	private LeagueConstants tier;
 	private String name;
 	private QueueType queueType;
 	private long timestamp;
@@ -212,7 +212,7 @@ public class League
 	
 	public League(String tier, String name, String queueType, long timestamp, List<Entry> entries)
 	{
-		this.tier = LeagueConstant.stringToConstant(tier);
+		this.tier = LeagueConstants.stringToConstant(tier);
 		this.name = name;
 		this.queueType = QueueType.getFromLeagueValue(queueType);
 		this.timestamp = timestamp;
@@ -221,7 +221,7 @@ public class League
 	
 	//Accessor methods
 	
-	public LeagueConstant getTier()
+	public LeagueConstants getTier()
 	{
 		return tier;
 	}

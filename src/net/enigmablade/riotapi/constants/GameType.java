@@ -25,7 +25,7 @@ public enum GameType
 	
 	/**
 	 * Return the value of the constant for use in API calls.
-	 * @return
+	 * @return The game type's API value.
 	 */
 	public String getValue()
 	{

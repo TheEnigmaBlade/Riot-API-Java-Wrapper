@@ -8,28 +8,39 @@ package net.enigmablade.riotapi.constants;
  */
 public enum GameMode
 {
-	UNKNOWN		("UNKNOWN"),
-	CLASSIC		("CLASSIC"),
-	DOMINION	("ODIN"),
-	ARAM		("ARAM"),
-	TUTORIAL	("TUTORIAL");
+	UNKNOWN		("UNKNOWN",		"Unknown"),
+	CLASSIC		("CLASSIC",		"Classic"),
+	DOMINION	("ODIN",		"Dominion"),
+	ARAM		("ARAM",		"ARAM"),
+	TUTORIAL	("TUTORIAL",	"Tutorial");
 	
 	//---//
 	
 	private String value;
+	private String name;
 	
-	private GameMode(String value)
+	private GameMode(String value, String name)
 	{
 		this.value = value;
+		this.name = name;
 	}
 	
 	/**
-	 * Return the value of the constant for use in API calls.
-	 * @return
+	 * Returns the value of the constant for use in API calls.
+	 * @return The game mode's API value.
 	 */
 	public String getValue()
 	{
 		return value;
+	}
+	
+	/**
+	 * Returns the nice and human-friendly name of the game mode.
+	 * @return The name of the game mode.
+	 */
+	public String getName()
+	{
+		return name;
 	}
 	
 	//Helpers

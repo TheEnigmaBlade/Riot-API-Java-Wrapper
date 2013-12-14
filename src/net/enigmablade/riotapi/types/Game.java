@@ -1,7 +1,6 @@
 package net.enigmablade.riotapi.types;
 
 import java.util.*;
-
 import net.enigmablade.riotapi.constants.*;
 
 /**
@@ -11,7 +10,7 @@ import net.enigmablade.riotapi.constants.*;
  * 
  * @author Enigma
  */
-public class Game
+public class Game implements Comparable<Game>
 {
 	/**
 	 * A simple representation of a game statistic.
@@ -61,9 +60,9 @@ public class Game
 	
 	private int teamId;				//teamId
 	private List<Player> players;	//fellowPlayers
-	private List<Stat> stats;		//statistics
+	private Map<String, Stat> stats;		//statistics
 	
-	public Game(int championId, int level, int spell1, int spell2, long createDate, boolean invalid, long gameId, String gameMode, String gameType, String gameSubType, int mapId, int teamId, List<Player> players, List<Stat> stats)
+	public Game(int championId, int level, int spell1, int spell2, long createDate, boolean invalid, long gameId, String gameMode, String gameType, String gameSubType, int mapId, int teamId, List<Player> players, Map<String, Stat> stats)
 	{
 		this.championId = championId;
 		this.level = level;
@@ -148,8 +147,22 @@ public class Game
 		return teamId;
 	}
 	
-	public List<Stat> getStats()
+	public Map<String, Stat> getStats()
 	{
 		return stats;
+	}
+
+	//Other methods
+	
+	@Override
+	public int compareTo(Game o)
+	{
+		return createDate.compareTo(o.createDate);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Game "+gameId+" ("+createDate+")";
 	}
 }

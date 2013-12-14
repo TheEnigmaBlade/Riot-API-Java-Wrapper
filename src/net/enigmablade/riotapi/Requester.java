@@ -17,6 +17,7 @@ public class Requester
 {
 	private String userAgent;
 	
+	private boolean limiterEnabled = true;
 	private int limitPer10Seconds;
 	private long limitWait, lastCall;
 	private Lock rateLock;
@@ -158,7 +159,7 @@ public class Requester
 		
 		//Wait (if required) for the request time limit
 		long timeSinceLast = System.currentTimeMillis()-lastCall;
-		if(timeSinceLast < limitWait)
+		if(limiterEnabled && timeSinceLast < limitWait)
 			try
 			{
 				Thread.sleep(limitWait-timeSinceLast);
@@ -227,6 +228,11 @@ public class Requester
 	{
 		trimRequestQueue();
 		return requestQueue.size();
+	}
+	
+	public void setRateLimiterEnabled(boolean enabled)
+	{
+		limiterEnabled = enabled;
 	}
 	
 	public void clearCache()

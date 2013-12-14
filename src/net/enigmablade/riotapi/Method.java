@@ -2,7 +2,6 @@ package net.enigmablade.riotapi;
 
 import java.io.*;
 import java.util.*;
-
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
@@ -136,17 +135,22 @@ public abstract class Method
 			if(response == null)	//null if parse exception, highly unlikely
 				throw new RiotApiException("Failed to parse response");
 			
-			//Errors common to all methods
-			if(response.getCode() == 400)
-				throw new RiotApiException("400: Bad request");
-			else if(response.getCode() == 429)
-				throw new RiotApiException("429: Too many requests");
-			else if(response.getCode() == 500)
-				throw new RiotApiException("500: Internal server error");
-			else if(response.getCode() == 503)
-				throw new RiotApiException("503: Something is broken");
+			//Everything is fine and dandy
+			if(response.getCode() == 200)
+				return response;
 			
-			return response;
+			//Errors common to all methods
+			switch(response.getCode())
+			{
+				case 400: throw new RiotApiException("400: Bad request");
+				case 401: throw new RiotApiException("401: Unauthorized");
+				case 429: throw new RiotApiException("429: Too many requests");
+				
+				case 500: throw new RiotApiException("500: Internal server error");
+				case 503: throw new RiotApiException("503: Something is broken");
+				
+				default: throw new RiotApiException("Unknown error code "+response.getCode());
+			}
 		}
 		catch(IOException e)
 		{

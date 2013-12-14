@@ -30,7 +30,7 @@ public enum MapType
 	
 	/**
 	 * Returns the map ID to be used in API calls.
-	 * @return
+	 * @return The map's API ID.
 	 */
 	public int getId()
 	{

@@ -160,6 +160,11 @@ public class RiotApi
 	
 	//Utility methods
 	
+	public void setRequestLimiterEnabled(boolean enabled)
+	{
+		requester.setRateLimiterEnabled(enabled);
+	}
+	
 	/**
 	 * Clears the request cache.
 	 */
