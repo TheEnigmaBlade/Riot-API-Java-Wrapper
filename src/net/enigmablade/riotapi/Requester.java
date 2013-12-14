@@ -10,8 +10,8 @@ import net.enigmablade.riotapi.util.*;
 
 /**
  * A utility class to send HTTP get requests. Requests are limited on a per-second basis.
+ * 
  * @author Enigma
- *
  */
 public class Requester
 {
@@ -26,10 +26,16 @@ public class Requester
 	private static final long REQUEST_QUEUE_TIME_LIMIT = 60000;	//10 minutes
 	
 	private BufferPool<String, Response> cache;
+	private static final int CACHE_AGE_LIMIT = 60000;	//10 minutes
 	
+	/**
+	 * Create a new Requester with the given user agent and default rate limits of
+	 * 10 requests per 10 seconds and 500 requests per 10 minutes;
+	 * @param userAgent The user agent for HTTP requests.
+	 */
 	public Requester(String userAgent)
 	{
-		this(userAgent, 5, 50);
+		this(userAgent, 10, 500);
 	}
 	
 	public Requester(String userAgent, int limitPer10Seconds, int limitPer10Minutes)
@@ -50,11 +56,14 @@ public class Requester
 	{
 		private Object value;
 		private int code;
+		private long made;
 		
 		protected Response(Object value, int code)
 		{
 			this.value = value;
 			this.code = code;
+			
+			made = System.currentTimeMillis();
 		}
 		
 		public Object getValue()
@@ -65,6 +74,11 @@ public class Requester
 		public int getCode()
 		{
 			return code;
+		}
+		
+		public long getMadeTime()
+		{
+			return made;
 		}
 	}
 	
@@ -86,7 +100,8 @@ public class Requester
 		if(!skipCache)
 		{
 			response = cache.get(requestUrl);
-			if(response != null)
+			//Ignore if not in cache or too old
+			if(response != null && System.currentTimeMillis()-response.getMadeTime() < CACHE_AGE_LIMIT)
 				return response;
 		}
 		
@@ -98,8 +113,7 @@ public class Requester
 		//Parse the request
 		try
 		{
-			JsonObject json = JsonParser.parseObject((String)response.getValue(), speedy);
-			response.value = json;
+			response.value = JsonParser.parse((String)response.getValue(), speedy);
 			return response;
 		}
 		catch(JsonParseException e)
@@ -213,5 +227,10 @@ public class Requester
 	{
 		trimRequestQueue();
 		return requestQueue.size();
+	}
+	
+	public void clearCache()
+	{
+		cache.clear();
 	}
 }

@@ -1,7 +1,10 @@
-//            ~ Copyright EnigmaBlade.net, 2013 ~
+//         ~ Copyright Tyler "Enigma" Haines, 2013 ~
 // Distributed under the Boost Software License, Version 1.0
 //             See accompanying file LICENSE.txt
 //         or at http://www.boost.org/LICENSE_1_0.txt
+// -----------------------------------------------------------
+// This statement also applies to the rest of the source files
+// in the net.enigmablade.riotapi package.  I'm just too lazy.
 
 package net.enigmablade.riotapi;
 
@@ -40,8 +43,8 @@ public class RiotApi
 	 * Creates a new instance to access the Riot API with the given API key, user agent, and request rate limits.
 	 * @param apiKey The API key to use.
 	 * @param userAgent The user agent to use.
-	 * @param limitPer10Seconds 
-	 * @param limitPer10Minutes 
+	 * @param limitPer10Seconds The limit for the number of requests per 10 seconds.
+	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes.
 	 */
 	public RiotApi(String apiKey, String userAgent, int limitPer10Seconds, int limitPer10Minutes)
 	{
@@ -57,9 +60,10 @@ public class RiotApi
 	private LeagueMethod leagueMethod;
 	private SummonerMethod summonerMethod;
 	private StatsMethod statsMethod;
+	private TeamMethod teamMethod;
 	
 	/**
-	 * Returns the champion method to use for champion calls.
+	 * Returns the champion method to use for champion operations.
 	 * @return The champion method
 	 */
 	public ChampionMethod getChampionMethod()
@@ -70,7 +74,7 @@ public class RiotApi
 	}
 	
 	/**
-	 * Returns the game method to use for game calls.
+	 * Returns the game method to use for game operations.
 	 * @return The game method
 	 */
 	public GameMethod getGameMethod()
@@ -81,7 +85,7 @@ public class RiotApi
 	}
 	
 	/**
-	 * Returns the league method to use for game calls.
+	 * Returns the league method to use for league operations.
 	 * @return The league method
 	 */
 	public LeagueMethod getLeagueMethod()
@@ -92,7 +96,7 @@ public class RiotApi
 	}
 	
 	/**
-	 * Returns the summoner method to use for game calls.
+	 * Returns the summoner method to use for summoner operations.
 	 * @return The summoner method
 	 */
 	public SummonerMethod getSummonerMethod()
@@ -103,7 +107,7 @@ public class RiotApi
 	}
 	
 	/**
-	 * Returns the stats method to use for game calls.
+	 * Returns the stats method to use for stats operations.
 	 * @return The stats method
 	 */
 	public StatsMethod getStatsMethod()
@@ -111,6 +115,17 @@ public class RiotApi
 		if(statsMethod == null)
 			statsMethod = new StatsMethod(this);
 		return statsMethod;
+	}
+	
+	/**
+	 * Returns the team method to use for team operations.
+	 * @return The team method
+	 */
+	public TeamMethod getTeamMethod()
+	{
+		if(teamMethod == null)
+			teamMethod = new TeamMethod(this);
+		return teamMethod;
 	}
 	
 	//Convenience methods
@@ -141,6 +156,16 @@ public class RiotApi
 	public Summoner getSummoner(Region region, long id) throws RiotApiException
 	{
 		return getSummonerMethod().getSummonerById(region, id);
+	}
+	
+	//Utility methods
+	
+	/**
+	 * Clears the request cache.
+	 */
+	public void clearCache()
+	{
+		requester.clearCache();
 	}
 	
 	//Data methods
