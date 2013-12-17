@@ -2,7 +2,6 @@ package net.enigmablade.riotapi;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.locks.*;
 import net.enigmablade.jsonic.*;
@@ -17,6 +16,7 @@ public class Requester
 {
 	private String userAgent;
 	
+	//Rate limiting
 	private boolean limiterEnabled = true;
 	private int limitPer10Seconds;
 	private long limitWait, lastCall;
@@ -26,21 +26,21 @@ public class Requester
 	private Queue<Long> requestQueue;
 	private static final long REQUEST_QUEUE_TIME_LIMIT = 60000;	//10 minutes
 	
+	//Caching
 	private BufferPool<String, Response> cache;
 	private static final int CACHE_AGE_LIMIT = 60000;	//10 minutes
 	
 	/**
-	 * Create a new Requester with the given user agent and default rate limits of
-	 * 10 requests per 10 seconds and 500 requests per 10 minutes;
+	 * Create a new Requester with the given user agent and rate limits.
 	 * @param userAgent The user agent for HTTP requests.
+	 * @param limitPer10Seconds The limit for the number of requests per 10 seconds. Must be greater than 0.
+	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
 	 */
-	public Requester(String userAgent)
-	{
-		this(userAgent, 10, 500);
-	}
-	
 	public Requester(String userAgent, int limitPer10Seconds, int limitPer10Minutes)
 	{
+		if(limitPer10Seconds <= 0 || limitPer10Minutes <= 0)
+			throw new IllegalArgumentException("Rate limits must be greater than 0.");
+		
 		setUserAgent(userAgent);
 		setLimitPer10Seconds(limitPer10Seconds);
 		setLimitPer10Minutes(limitPer10Minutes);
@@ -133,8 +133,9 @@ public class Requester
 		URL url = new URL(requestUrl);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestMethod("GET");
-		connection.setRequestProperty("User-Agent", userAgent);
 		connection.setRequestProperty("Accept-Charset", "UTF-8");
+		if(userAgent != null)
+			connection.setRequestProperty("User-Agent", userAgent);
 		connection.connect();
 		
 		//Check response code and return if error
@@ -144,12 +145,8 @@ public class Requester
 		
 		//Get response
 		InputStream in = connection.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
-		StringBuffer buffer = new StringBuffer();
-		String line;
-		while((line = reader.readLine()) != null)
-			buffer.append(line);
-		return new Response(buffer.toString(), responseCode);
+		String response = IOUtil.readInputStreamFully(in);
+		return new Response(response, responseCode);
 	}
 	
 	private Response sendLimitedRequest(String requestUrl) throws IOException
@@ -228,6 +225,11 @@ public class Requester
 	{
 		trimRequestQueue();
 		return requestQueue.size();
+	}
+	
+	public long getOldestRequestTime()
+	{
+		return requestQueue.peek();
 	}
 	
 	public void setRateLimiterEnabled(boolean enabled)

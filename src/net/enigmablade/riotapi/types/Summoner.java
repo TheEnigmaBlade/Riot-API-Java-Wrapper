@@ -10,7 +10,7 @@ import net.enigmablade.riotapi.exceptions.*;
  * 
  * @author Enigma
  */
-public class Summoner extends ApiType
+public class Summoner extends DynamicType
 {
 	private long id;
 	private String name;
@@ -54,7 +54,7 @@ public class Summoner extends ApiType
 		setRevisionDate(revisionDate);
 		
 		if(id >= 0 && name != null)
-			setApiUpdated();
+			setDynamicUpdated();
 	}
 	
 	//Convenience methods
@@ -66,9 +66,9 @@ public class Summoner extends ApiType
 	 */
 	private void verifyConvenienceState() throws RiotApiException
 	{
-		if(!hasApiUpdated())
+		if(!hasDynamicUpdated())
 		{
-			setApiUpdated();
+			setDynamicUpdated();
 			api.getSummonerMethod().fillSummoner(this);
 		}
 	}

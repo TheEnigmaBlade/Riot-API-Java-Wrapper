@@ -65,6 +65,9 @@ public class GameMethod extends Method
 			
 			//Convert game list
 			JsonArray gamesArray = root.getArray("games");
+			if(gamesArray == null)								//Might be null if no games have been played
+				return new ArrayList<>(0);
+			
 			List<Game> games = new ArrayList<>(gamesArray.size());
 			for(int g = 0; g < gamesArray.size(); g++)
 			{

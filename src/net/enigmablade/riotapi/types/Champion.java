@@ -9,13 +9,15 @@ import net.enigmablade.riotapi.exceptions.*;
  * 
  * @author Enigma
  */
-public class Champion extends ApiType
+public class Champion extends DynamicType
 {
 	private Region region;
 	
 	private String name;
 	private long id;
 	private int attackRank, magicRank, defenseRank, difficultyRank;
+	
+	//Dynamic data
 	private boolean active, freeToPlay;
 	private boolean botMatchMadeEnabled, botCustomEnabled, rankedEnabled;
 	
@@ -42,18 +44,18 @@ public class Champion extends ApiType
 		this.rankedEnabled = rankedEnabled;
 	}
 	
-	//Convenience methods
+	//Dynamic methods
 	
 	/**
-	 * Verifies required information for convenience methods is available, such as champion ID.
-	 * If not found, makes an API call to get summoner information.
-	 * @throws RiotApiException If there was an exception or error from the server.
+	 * Verifies required information for dynamic information methods is available, such as champion ID.
+	 * If not found, makes an API call to get dynamic champion information.
+	 * @throws RiotApiException If there was an exception or an error from the server.
 	 */
-	private void verifyConvenienceState() throws RiotApiException
+	private void verifyDynamicState() throws RiotApiException
 	{
-		if(!hasApiUpdated())
+		if(!hasDynamicUpdated())
 		{
-			setApiUpdated();
+			setDynamicUpdated();
 			api.getChampionMethod().fillChampion(this, region);
 		}
 	}
@@ -63,68 +65,68 @@ public class Champion extends ApiType
 	public String getName() throws RiotApiException
 	{
 		if(name == null)
-			verifyConvenienceState();
+			verifyDynamicState();
 		return name;
 	}
 	
 	public long getId() throws RiotApiException
 	{
 		if(id < 0)
-			verifyConvenienceState();
+			verifyDynamicState();
 		return id;
 	}
 	
 	public int getAttackRank() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return attackRank;
 	}
 	
 	public int getMagicRank() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return magicRank;
 	}
 	
 	public int getDefenseRank() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return defenseRank;
 	}
 	
 	public int getDifficultyRank() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return difficultyRank;
 	}
 	
 	public boolean isActive() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return active;
 	}
 	
 	public boolean isFreeToPlay() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return freeToPlay;
 	}
 	
 	public boolean isBotMatchMadeEnabled() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return botMatchMadeEnabled;
 	}
 	
 	public boolean isBotCustomEnabled() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return botCustomEnabled;
 	}
 	
 	public boolean isRankedEnabled() throws RiotApiException
 	{
-		verifyConvenienceState();
+		verifyDynamicState();
 		return rankedEnabled;
 	}
 
@@ -181,5 +183,23 @@ public class Champion extends ApiType
 	public void setRankedEnabled(boolean rankedEnabled)
 	{
 		this.rankedEnabled = rankedEnabled;
+	}
+	
+	//Custom object methods
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o == null || !(o instanceof Champion))
+			return false;
+		
+		Champion c = (Champion)o;
+		if(id >= 0  && id == c.id)
+			return true;
+		if(name != null && name.equals(c.name))
+			return true;
+		
+		//Unlikely to ever get to this point, but there's nothing else we can compare
+		return false;
 	}
 }

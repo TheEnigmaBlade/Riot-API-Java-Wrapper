@@ -2,24 +2,24 @@ package net.enigmablade.riotapi.types;
 
 import net.enigmablade.riotapi.*;
 
-public abstract class ApiType
+public abstract class DynamicType
 {
 	protected RiotApi api;
 	private boolean updated;
 	
-	public ApiType(RiotApi api)
+	public DynamicType(RiotApi api)
 	{
 		this.api = api;
 		
 		updated = false;
 	}
 	
-	protected boolean hasApiUpdated()
+	protected boolean hasDynamicUpdated()
 	{
 		return updated;
 	}
 	
-	protected void setApiUpdated()
+	protected void setDynamicUpdated()
 	{
 		updated = true;
 	}

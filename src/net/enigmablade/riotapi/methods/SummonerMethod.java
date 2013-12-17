@@ -56,7 +56,7 @@ public class SummonerMethod extends Method
 	public Summoner getSummonerByName(Region region, String summonerName) throws RiotApiException
 	{
 		//Encode the summoner name for the URL
-		summonerName = RiotApiUtil.encodeForUri(summonerName);
+		summonerName = IOUtil.encodeForUri(summonerName);
 		
 		//Send request
 		Response response = getMethodResult(region,

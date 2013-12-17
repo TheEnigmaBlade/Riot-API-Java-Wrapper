@@ -5,6 +5,7 @@ import java.util.*;
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
+import net.enigmablade.riotapi.util.*;
 
 /**
  * <p>Abstract class to represent a method request that can be sent to the Riot API servers.</p>
@@ -14,6 +15,8 @@ import net.enigmablade.riotapi.exceptions.*;
  */
 public abstract class Method
 {
+	private static final String API_URL_BASE = "http://prod.api.pvp.net/";
+	
 	protected RiotApi api;
 	private boolean skipCache;
 	
@@ -96,44 +99,14 @@ public abstract class Method
 		if(!isRegionSupported(region))
 			throw new RegionNotSupportedException(method, region, supportedRegions);
 		
-		//If not null, prepare for the URL, otherwise it's empty
-		if(operation != null)
-			operation = "/"+operation;
-		else
-			operation = "";
-		
-		//Format path arguments within the operation
-		int start, end;
-		while((start = operation.indexOf('{')) >= 0)
-		{
-			if((end = operation.indexOf('}')) > 0)	//Sanity check
-			{
-				String part1 = operation.substring(0, start);
-				String key = operation.substring(start+1, end);
-				String part2 = operation.substring(end+1, operation.length());
-				
-				StringBuffer buf = new StringBuffer(part1);
-				buf.append(pathArgs.get(key));
-				buf.append(part2);
-				operation = buf.toString();
-			}
-		}
-		
-		//Create string of query arguments (&arg=argv&arg2=arg2v...)
-		StringBuffer queryArgsStr = new StringBuffer();
-		if(queryArgs != null)
-		{
-			for(String key : queryArgs.keySet())
-				queryArgsStr.append('&').append(key).append('=').append(queryArgs.get(key));
-		}
-		
-		//Create URL and send the request
-		String url = "http://prod.api.pvp.net/"+header+"/"+region.getApiUsage()+"/v"+version+"/"+method+operation+"?api_key="+api.getApiKey()+queryArgsStr.toString();
+		//Create request URL
+		String url = buildUrl(region, operation, pathArgs, queryArgs);
 		try
 		{
+			//Send request
 			Response response = api.getRequester().request(url, skipCache);
 			if(response == null)	//null if parse exception, highly unlikely
-				throw new RiotApiException("Failed to parse response");
+				throw new RiotApiException("Uh oh, failed to parse response! That's bad!");
 			
 			//Everything is fine and dandy
 			if(response.getCode() == 200)
@@ -144,12 +117,13 @@ public abstract class Method
 			{
 				case 400: throw new RiotApiException("400: Bad request");
 				case 401: throw new RiotApiException("401: Unauthorized");
-				case 429: throw new RiotApiException("429: Too many requests");
+				case 429: throw new TooManyRequestsException((api.getTimeUntilMoreApiCalls()/1000)+" seconds until more API calls are available");
 				
 				case 500: throw new RiotApiException("500: Internal server error");
 				case 503: throw new RiotApiException("503: Something is broken");
 				
-				default: throw new RiotApiException("Unknown error code "+response.getCode());
+				default: return response;
+					//throw new RiotApiException("Unknown error code "+response.getCode());
 			}
 		}
 		catch(IOException e)
@@ -183,6 +157,36 @@ public abstract class Method
 			if(region == r)
 				return true;
 		return false;
+	}
+	
+	private String buildUrl(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs)
+	{
+		//If not null, prepare for the URL, otherwise it's empty
+		if(operation != null)
+			operation = "/"+operation;
+		else
+			operation = "";
+		
+		//Format path arguments within the operation
+		operation = IOUtil.replaceStringArgs(operation, pathArgs);
+		
+		//Create string of query arguments (&arg=argv&arg2=arg2v...)
+		StringBuffer queryArgsStr = new StringBuffer();
+		if(queryArgs != null)
+		{
+			for(String key : queryArgs.keySet())
+				queryArgsStr.append('&').append(key).append('=').append(queryArgs.get(key));
+		}
+		
+		//Create URL and send the request
+		StringBuilder s = new StringBuilder(API_URL_BASE);	//Domain
+		s.append(header).append('/');						//Header
+		s.append(region.getApiUsage());						//Region
+		s.append("/v").append(version).append('/');			//Version
+		s.append(method).append(operation);					//Operation
+		s.append("?api_key=").append(api.getApiKey());		//API key
+		s.append(queryArgsStr.toString());					//Query args
+		return s.toString();
 	}
 	
 	/**
