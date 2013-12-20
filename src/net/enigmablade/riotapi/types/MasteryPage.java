@@ -43,17 +43,23 @@ public class MasteryPage
 		}
 	}
 	
+	private long id;
 	private String name;
 	private List<Talent> talents;
 	private boolean current;
 	
-	public MasteryPage(String name, List<Talent> talents, boolean current)
+	public MasteryPage(long id, String name, List<Talent> talents, boolean current)
 	{
 		this.name = name;
 		this.talents = talents;
 		if(this.talents == null)
 			this.talents = new ArrayList<>(0);
 		this.current = current;
+	}
+	
+	public long getId()
+	{
+		return id;
 	}
 	
 	public String getName()

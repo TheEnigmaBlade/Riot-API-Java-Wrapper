@@ -143,7 +143,6 @@ public class Team
 		private long id;
 		private GameMode gameMode;
 		private MapType map;
-		private Date date;
 		
 		private int kills, deaths, assists;
 		private boolean win;
@@ -152,12 +151,11 @@ public class Team
 		private String opposingTeamName;
 		private int opposingTeamKills;
 		
-		public Match(long id, String gameMode, int map, long date, int kills, int deaths, int assists, boolean win, boolean invalid, String opposingTeamName, int opposingTeamKills)
+		public Match(long id, String gameMode, int map, int kills, int deaths, int assists, boolean win, boolean invalid, String opposingTeamName, int opposingTeamKills)
 		{
 			this.id = id;
 			this.gameMode = GameMode.getFromValue(gameMode);
 			this.map = MapType.getFromId(map);
-			this.date = new Date(date);
 			this.kills = kills;
 			this.deaths = deaths;
 			this.assists = assists;
@@ -180,11 +178,6 @@ public class Team
 		public MapType getMap()
 		{
 			return map;
-		}
-
-		public Date getDate()
-		{
-			return date;
 		}
 
 		public int getKills()
@@ -272,9 +265,8 @@ public class Team
 	private Date createDate, modifyDate;
 	private Date lastGameDate, lastJoinedRankedTeamQueueDate;
 	private Date lastJoinDate, secondLastJoinDate, thirdLastJoinDate;
-	private long timestamp;
 	
-	public Team(String id, String name, String tag, String status, Roster roster, List<Match> matchHistory, Map<QueueType, Team.QueueStat> stats, MessageOfTheDay messageOfTheDay, long createDate, long modifyDate, long lastGameDate, long lastJoinedRankedTeamQueueDate, long lastJoinDate, long secondLastJoinDate, long thirdLastJoinDate, long timestamp)
+	public Team(String id, String name, String tag, String status, Roster roster, List<Match> matchHistory, Map<QueueType, Team.QueueStat> stats, MessageOfTheDay messageOfTheDay, long createDate, long modifyDate, long lastGameDate, long lastJoinedRankedTeamQueueDate, long lastJoinDate, long secondLastJoinDate, long thirdLastJoinDate)
 	{
 		this.id = id;
 		this.name = name;
@@ -291,7 +283,6 @@ public class Team
 		this.lastJoinDate = new Date(lastJoinDate);
 		this.secondLastJoinDate = new Date(secondLastJoinDate);
 		this.thirdLastJoinDate = new Date(thirdLastJoinDate);
-		this.timestamp = timestamp;
 	}
 	
 	//Accessor methods
@@ -373,10 +364,5 @@ public class Team
 	public Date getThirdLastJoinDate()
 	{
 		return thirdLastJoinDate;
-	}
-	
-	public long getTimestamp()
-	{
-		return timestamp;
 	}
 }

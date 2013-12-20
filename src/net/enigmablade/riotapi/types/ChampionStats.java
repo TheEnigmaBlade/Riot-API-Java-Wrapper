@@ -2,6 +2,8 @@ package net.enigmablade.riotapi.types;
 
 import java.util.*;
 
+import net.enigmablade.riotapi.constants.*;
+
 /**
  * A set of champion stats for a ranked season.
  * 
@@ -9,52 +11,11 @@ import java.util.*;
  */
 public class ChampionStats
 {
-	/**
-	 * A single champion stat.
-	 * 
-	 * @author Enigma
-	 */
-	public static class Stat
-	{
-		private int id;
-		private String name;
-		private int value;
-		private int count;
-		
-		public Stat(int id, String name, int value, int count)
-		{
-			this.id = id;
-			this.name = name;
-			this.value = value;
-			this.count = count;
-		}
-		
-		public int getId()
-		{
-			return id;
-		}
-		
-		public String getName()
-		{
-			return name;
-		}
-		
-		public int getValue()
-		{
-			return value;
-		}
-		
-		public int getCount()
-		{
-			return count;
-		}
-	}
-	
 	private int championId;
 	private String championName;
-	private List<Stat> stats;
+	private Map<String, Integer> stats;
 	
-	public ChampionStats(int championId, String championName, List<Stat> stats)
+	public ChampionStats(int championId, String championName, Map<String, Integer> stats)
 	{
 		this.championId = championId;
 		this.championName = championName;
@@ -71,8 +32,8 @@ public class ChampionStats
 		return championName;
 	}
 	
-	public List<Stat> getStats()
+	public int getAggregatedStat(AggregatedStatType statType)
 	{
-		return stats;
+		return stats.get(statType.getValue());
 	}	
 }

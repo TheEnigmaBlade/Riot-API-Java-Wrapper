@@ -171,7 +171,11 @@ public class RiotApi
 	
 	//Utility methods
 	
-	public void setRequestLimiterEnabled(boolean enabled)
+	/**
+	 * Sets whether or not the time limit on requests is enforced.
+	 * @param enabled Whether or not request limits are enforced.
+	 */
+	public void setApiCallRateLimitEnabled(boolean enabled)
 	{
 		requester.setRateLimiterEnabled(enabled);
 	}
@@ -179,7 +183,7 @@ public class RiotApi
 	/**
 	 * Clears the request cache.
 	 */
-	public void clearCache()
+	public void clearApiCallCache()
 	{
 		requester.clearCache();
 	}
@@ -201,7 +205,7 @@ public class RiotApi
 	 */
 	public long getTimeUntilMoreApiCalls()
 	{
-		return System.currentTimeMillis() - requester.getOldestRequestTime();
+		return System.currentTimeMillis() - (requester.getRequestsInPast10Seconds() > requester.getLimitPer10Seconds() ? requester.getOldestRequestTimeByAge(10000) : requester.getOldestRequestTime());
 	}
 	
 	//Accessor methods

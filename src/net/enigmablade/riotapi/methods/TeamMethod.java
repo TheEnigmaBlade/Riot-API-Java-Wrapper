@@ -2,7 +2,6 @@ package net.enigmablade.riotapi.methods;
 
 import java.util.*;
 import net.enigmablade.jsonic.*;
-
 import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
@@ -14,7 +13,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The team method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 2.1</li>
+ * 		<li><i>Version</i>: 2.2</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE, BR, TR</li>
  * 	</ul>
  * </p>
@@ -35,7 +34,7 @@ public class TeamMethod extends Method
 	 */
 	public TeamMethod(RiotApi api)
 	{
-		super(api, "api", "team", "2.1", new Region[]{NA, EUW, EUNE, BR, TR});
+		super(api, "api/lol", "team", "2.2", new Region[]{NA, EUW, EUNE, BR, TR});
 	}
 	
 	//API-defined operation methods
@@ -46,6 +45,7 @@ public class TeamMethod extends Method
 	 * @param summonerId The ID of the summoner.
 	 * @return A list of recent games (max 10).
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws SummonerNotFoundException If the given summoner was not found, or if the summoner is not in any teams.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public List<Team> getTeams(Region region, long summonerId) throws RiotApiException
@@ -55,8 +55,11 @@ public class TeamMethod extends Method
 				createArgMap("summonerId", String.valueOf(summonerId)));
 		
 		//Check errors
-		if(response.getCode() == 401)
-			throw new RiotApiException("401: Unauthorized");
+		switch(response.getCode())
+		{
+			case 401: throw new RiotApiException("401: Unauthorized");
+			case 404: throw new SummonerNotFoundException(region);
+		}
 		
 		//Parse response
 		try
@@ -69,8 +72,7 @@ public class TeamMethod extends Method
 				JsonObject teamObject = teamsArray.getObject(t);
 				
 				//Get team ID
-				JsonObject idObject = teamObject.getObject("teamId");
-				String id = idObject.getString("fullId");
+				String id = teamObject.getString("fullId");
 				//Convert stats
 				Map<QueueType, Team.QueueStat> stats = parseStats(teamObject.getObject("teamStatSummary"));
 				//Convert roster
@@ -85,8 +87,7 @@ public class TeamMethod extends Method
 						roster, matchHistory, stats, motd,
 						teamObject.getLong("createDate"), teamObject.getLong("modifyDate"),
 						teamObject.getLong("lastGameDate"), teamObject.getLong("lastJoinedRankedTeamQueueDate"),
-						teamObject.getLong("lastJoinDate"), teamObject.getLong("secondLastJoinDate"), teamObject.getLong("thirdLastJoinDate"),
-						teamObject.getLong("timestamp"));
+						teamObject.getLong("lastJoinDate"), teamObject.getLong("secondLastJoinDate"), teamObject.getLong("thirdLastJoinDate"));
 				teams.add(team);
 			}
 			
@@ -100,6 +101,8 @@ public class TeamMethod extends Method
 			return null;
 		}
 	}
+	
+	//Private converter methods
 	
 	/**
 	 * Parse the queue stats portion of a team response.
@@ -171,7 +174,7 @@ public class TeamMethod extends Method
 			
 			//Create match object
 			Team.Match match = new Team.Match(matchObject.getLong("gameId"),
-					matchObject.getString("gameMode"), matchObject.getInt("mapId"), matchObject.getLong("date"),
+					matchObject.getString("gameMode"), matchObject.getInt("mapId"),
 					matchObject.getInt("kills"), matchObject.getInt("deaths"), matchObject.getInt("assists"),
 					matchObject.getBoolean("win"), matchObject.getBoolean("invalid"),
 					matchObject.getString("opposingTeamName"), matchObject.getInt("opposingTeamKills"));

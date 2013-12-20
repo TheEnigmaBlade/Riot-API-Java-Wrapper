@@ -45,30 +45,30 @@ public class Game implements Comparable<Game>
 		}
 	}
 	
-	private int championId;			//championId
-	private int level;				//level
-	private int spell1, spell2;		//spell1, spell2
+	private int championId;				//championId
+	private int level;					//level
+	private int spell1, spell2;			//spell1, spell2
 	
-	private Date createDate;		//createDate
-	private boolean invalid;		//invalid
+	private Date playedDate;			//createDate
+	private boolean invalid;			//invalid
 	
-	private long gameId;			//gameId
-	private GameMode gameMode;		//gameMode
-	private GameType gameType;		//gameType
-	private String gameSubType;		//subType
-	private MapType map;			//mapId
+	private long gameId;				//gameId
+	private GameMode gameMode;			//gameMode
+	private GameType gameType;			//gameType
+	private String gameSubType;			//subType
+	private MapType map;				//mapId
 	
-	private int teamId;				//teamId
-	private List<Player> players;	//fellowPlayers
-	private Map<String, Stat> stats;		//statistics
+	private int teamId;					//teamId
+	private List<Player> players;		//fellowPlayers
+	private Map<String, Stat> stats;	//statistics
 	
-	public Game(int championId, int level, int spell1, int spell2, long createDate, boolean invalid, long gameId, String gameMode, String gameType, String gameSubType, int mapId, int teamId, List<Player> players, Map<String, Stat> stats)
+	public Game(int championId, int level, int spell1, int spell2, long playedDate, boolean invalid, long gameId, String gameMode, String gameType, String gameSubType, int mapId, int teamId, List<Player> players, Map<String, Stat> stats)
 	{
 		this.championId = championId;
 		this.level = level;
 		this.spell1 = spell1;
 		this.spell2 = spell2;
-		this.createDate = new Date(createDate);
+		this.playedDate = new Date(playedDate);
 		this.invalid = invalid;
 		this.gameId = gameId;
 		this.gameMode = GameMode.getFromValue(gameMode);
@@ -87,9 +87,9 @@ public class Game implements Comparable<Game>
 		return championId;
 	}
 	
-	public Date getCreateDate()
+	public Date getPlayedDate()
 	{
-		return createDate;
+		return playedDate;
 	}
 	
 	public List<Player> getPlayers()
@@ -155,14 +155,24 @@ public class Game implements Comparable<Game>
 	//Other methods
 	
 	@Override
+	public boolean equals(Object o)
+	{
+		if(o == null || !(o instanceof Game))
+			return false;
+		return gameId == ((Game)o).gameId;
+	}
+	
+	@Override
 	public int compareTo(Game o)
 	{
-		return createDate.compareTo(o.createDate);
+		if(equals(o))
+			return 0;
+		return playedDate.compareTo(o.playedDate);
 	}
 	
 	@Override
 	public String toString()
 	{
-		return "Game "+gameId+" ("+createDate+")";
+		return "Game "+gameId+" ("+playedDate+")";
 	}
 }

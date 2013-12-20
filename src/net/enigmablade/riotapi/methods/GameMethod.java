@@ -13,7 +13,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The game method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 1.1</li>
+ * 		<li><i>Version</i>: 1.2</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
  * 	</ul>
  * </p>
@@ -34,7 +34,7 @@ public class GameMethod extends Method
 	 */
 	public GameMethod(RiotApi api)
 	{
-		super(api, "api/lol", "game", "1.1", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "game", "1.2", new Region[]{NA, EUW, EUNE});
 	}
 	
 	//API-defined operation methods
@@ -74,31 +74,10 @@ public class GameMethod extends Method
 				JsonObject gameObject = gamesArray.getObject(g);
 				
 				//Convert player list
-				JsonArray playersArray = gameObject.getArray("fellowPlayers");
-				List<Player> players = new ArrayList<>();
-				if(playersArray != null)
-				{
-					for(int p = 0; p < playersArray.size(); p++)
-					{
-						JsonObject playerObject = playersArray.getObject(p);
-						Player player = new Player(api, region, playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
-						players.add(player);
-					}
-				}
+				List<Player> players = convertPlayerList(gameObject.getArray("fellowPlayers"), region);
 				
 				//Convert statistic list
-				JsonArray statsArray = gameObject.getArray("statistics");
-				Map<String, Game.Stat> stats = new TreeMap<>();
-				if(statsArray != null)
-				{
-					for(int p = 0; p < statsArray.size(); p++)
-					{
-						JsonObject statObject = statsArray.getObject(p);
-						String name = statObject.getString("name");
-						Game.Stat stat = new Game.Stat(statObject.getInt("id"), name, statObject.getInt("value"));
-						stats.put(name, stat);
-					}
-				}
+				Map<String, Game.Stat> stats = convertGameStats(gameObject.getArray("statistics"));
 				
 				//Create game object
 				Game game = new Game(gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
@@ -116,5 +95,56 @@ public class GameMethod extends Method
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	//Private converter methods
+	
+	/**
+	 * Private helper to convert a list of players in a game.
+	 * @param playersArray The original list of players.
+	 * @param region The region the players are in.
+	 * @return The new converted list of players.
+	 * @throws JsonException Shouldn't ever happen.
+	 */
+	private List<Player> convertPlayerList(JsonArray playersArray, Region region) throws JsonException
+	{
+		List<Player> players = null;
+		if(playersArray != null)
+		{
+			players = new ArrayList<>(playersArray.size());
+			for(int p = 0; p < playersArray.size(); p++)
+			{
+				JsonObject playerObject = playersArray.getObject(p);
+				Player player = new Player(api, region, playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
+				players.add(player);
+			}
+		}
+		else
+		{
+			players = new ArrayList<>(0);
+		}
+		return players;
+	}
+	
+	/**
+	 * Private helper to convert a list of stats in a game.
+	 * @param statsArray The original list of players.
+	 * @return The new converted list of stats.
+	 * @throws JsonException Shouldn't ever happen.
+	 */
+	private Map<String, Game.Stat> convertGameStats(JsonArray statsArray) throws JsonException
+	{
+		Map<String, Game.Stat> stats = new TreeMap<>();
+		if(statsArray != null)
+		{
+			for(int p = 0; p < statsArray.size(); p++)
+			{
+				JsonObject statObject = statsArray.getObject(p);
+				String name = statObject.getString("name");
+				Game.Stat stat = new Game.Stat(statObject.getInt("id"), name, statObject.getInt("value"));
+				stats.put(name, stat);
+			}
+		}
+		return stats;
 	}
 }

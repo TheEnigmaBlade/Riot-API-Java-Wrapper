@@ -23,12 +23,12 @@ public class Requester
 	private Lock rateLock;
 	
 	private int limitPer10Minutes;
-	private Queue<Long> requestQueue;
-	private static final long REQUEST_QUEUE_TIME_LIMIT = 60000;	//10 minutes
+	private LinkedList<Long> requestQueue;
+	private static final long REQUEST_QUEUE_TIME_LIMIT = 600000;	//10 minutes
 	
 	//Caching
 	private BufferPool<String, Response> cache;
-	private static final int CACHE_AGE_LIMIT = 60000;	//10 minutes
+	private static final int CACHE_AGE_LIMIT = 600000;	//10 minutes
 	
 	/**
 	 * Create a new Requester with the given user agent and rate limits.
@@ -51,14 +51,25 @@ public class Requester
 		cache = new BufferPool<>(limitPer10Minutes);
 	}
 	
-	//Functionality methods
+	//Functionality
 	
+	/**
+	 * <p>A response from a request. Comprised of the response body, response code, and request time.</p>
+	 * <p>If the request resulted in an error (code >= 300), the value will be <code>null</code>.</p>
+	 * 
+	 * @author Enigma
+	 */
 	public class Response
 	{
 		private Object value;
 		private int code;
 		private long made;
 		
+		/**
+		 * Create a new value with the given value and response code.
+		 * @param value The value.
+		 * @param code The response code.
+		 */
 		protected Response(Object value, int code)
 		{
 			this.value = value;
@@ -67,32 +78,65 @@ public class Requester
 			made = System.currentTimeMillis();
 		}
 		
+		/**
+		 * Returns the value of the response. Will return <code>null</code> if the response resulted from an error (code >= 300).
+		 * @return The value, or <code>null</code> if for a response error.
+		 */
 		public Object getValue()
 		{
 			return value;
 		}
 		
+		/**
+		 * Returns the response code. Errors are values >= 300.
+		 * @return
+		 */
 		public int getCode()
 		{
 			return code;
 		}
 		
-		public long getMadeTime()
+		/**
+		 * Returns the time (in ms) the request result was received.
+		 * @return The time the request was made.
+		 */
+		public long getTimeReceived()
 		{
 			return made;
 		}
 	}
 	
+	/**
+	 * Sends a request to the server at the given URL and returns the response.
+	 * @param requestUrl The request URL.
+	 * @return The response from the request.
+	 * @throws IOException If there was an error when sending the request.
+	 */
 	public Response request(String requestUrl) throws IOException
 	{
 		return request(requestUrl, false);
 	}
 	
+	/**
+	 * Sends a request to the server at the given URL and returns the response, skipping the cache if specified.
+	 * @param requestUrl The request URL.
+	 * @param skipCache Whether or not to skip the cache and forcefully send the request.
+	 * @return The response from the request.
+	 * @throws IOException If there was an error when sending the request.
+	 */
 	public Response request(String requestUrl, boolean skipCache) throws IOException
 	{
 		return request(requestUrl, skipCache, false);
 	}
 	
+	/**
+	 * Sends a request to the server at the given URL and returns the response, skipping the cache if specified.
+	 * @param requestUrl The request URL.
+	 * @param skipCache Whether or not to skip the cache and forcefully send the request.
+	 * @param speedy
+	 * @return
+	 * @throws IOException
+	 */
 	public Response request(String requestUrl, boolean skipCache, boolean speedy) throws IOException
 	{
 		Response response;
@@ -102,7 +146,7 @@ public class Requester
 		{
 			response = cache.get(requestUrl);
 			//Ignore if not in cache or too old
-			if(response != null && System.currentTimeMillis()-response.getMadeTime() < CACHE_AGE_LIMIT)
+			if(response != null && System.currentTimeMillis()-response.getTimeReceived() < CACHE_AGE_LIMIT)
 				return response;
 		}
 		
@@ -169,7 +213,7 @@ public class Requester
 		
 		//Manage request queue
 		trimRequestQueue();
-		requestQueue.add(lastCall);
+		requestQueue.offerLast(lastCall);
 		
 		//Unlock to let the next request through
 		rateLock.unlock();
@@ -179,7 +223,7 @@ public class Requester
 	
 	private void trimRequestQueue()
 	{
-		for(Iterator<Long> it = requestQueue.iterator(); it.hasNext();)
+		for(Iterator<Long> it = requestQueue.descendingIterator(); it.hasNext();)
 		{
 			if(lastCall-it.next() > REQUEST_QUEUE_TIME_LIMIT)
 				it.remove();
@@ -197,8 +241,7 @@ public class Requester
 	
 	public void setLimitPer10Seconds(int limitPer10Seconds)
 	{
-		this.limitPer10Seconds = limitPer10Seconds;
-		limitWait = (int)(10.0/limitPer10Seconds*1000);
+		limitWait = 10000/(this.limitPer10Seconds = limitPer10Seconds);
 	}
 	
 	public int getLimitPer10Minutes()
@@ -221,15 +264,36 @@ public class Requester
 		this.userAgent = userAgent;
 	}
 	
+	public int getRequestsInPast10Seconds()
+	{
+		int count = 0;
+		for(Long time : requestQueue)
+		{
+			if(time <= 10000)
+				count++;
+			else
+				break;
+		}
+		return count;
+	}
+	
 	public int getRequestsInPast10Minutes()
 	{
 		trimRequestQueue();
 		return requestQueue.size();
 	}
 	
+	public long getOldestRequestTimeByAge(int age)
+	{
+		for(Long time : requestQueue)
+			if(time >= age)
+				return time;
+		return requestQueue.peekLast();
+	}
+	
 	public long getOldestRequestTime()
 	{
-		return requestQueue.peek();
+		return requestQueue.isEmpty() ? -1 : requestQueue.peekLast();
 	}
 	
 	public void setRateLimiterEnabled(boolean enabled)

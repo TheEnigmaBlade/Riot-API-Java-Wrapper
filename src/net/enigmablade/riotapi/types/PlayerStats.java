@@ -11,46 +11,12 @@ import net.enigmablade.riotapi.constants.*;
  */
 public class PlayerStats
 {
-	/**
-	 * An aggregated stat for a queue.
-	 * 
-	 * @author Enigma
-	 */
-	public static class AggregatedStat
-	{
-		private int id;
-		private String name;
-		private int count;
-		
-		public AggregatedStat(int id, String name, int count)
-		{
-			this.id = id;
-			this.name = name;
-			this.count = count;
-		}
-		
-		public int getId()
-		{
-			return id;
-		}
-		
-		public String getName()
-		{
-			return name;
-		}
-		
-		public int getCount()
-		{
-			return count;
-		}
-	}
-	
 	private QueueType summaryType;
 	private Date modifyDate;
 	private int wins, losses;
-	private List<AggregatedStat> stats;
+	private Map<String, Integer> stats;
 	
-	public PlayerStats(String summaryType, long modifyDate, int wins, int losses, List<AggregatedStat> stats)
+	public PlayerStats(String summaryType, long modifyDate, int wins, int losses, Map<String, Integer> stats)
 	{
 		this.summaryType = QueueType.getFromStatsValue(summaryType);
 		this.modifyDate = new Date(modifyDate);
@@ -79,8 +45,8 @@ public class PlayerStats
 		return losses;
 	}
 
-	public List<AggregatedStat> getStats()
+	public int getAggregatedStat(AggregatedStatType statType)
 	{
-		return stats;
+		return stats.get(statType.getValue());
 	}
 }

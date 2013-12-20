@@ -13,7 +13,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The league method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 2.1</li>
+ * 		<li><i>Version</i>: 2.2</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE, BR, TR</li>
  * 	</ul>
  * </p>
@@ -34,7 +34,7 @@ public class LeagueMethod extends Method
 	 */
 	public LeagueMethod(RiotApi api)
 	{
-		super(api, "api", "league", "2.1", new Region[]{NA, EUW, EUNE, BR, TR});
+		super(api, "api/lol", "league", "2.2", new Region[]{NA, EUW, EUNE, BR, TR});
 	}
 	
 	//API-defined operation methods
@@ -45,6 +45,7 @@ public class LeagueMethod extends Method
 	 * @param summonerId The ID of the summoner.
 	 * @return A list of recent games (max 10).
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws SummonerNotFoundException If the given summoner was not found, or if the summoner is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public Map<String, League> getLeagues(Region region, long summonerId) throws RiotApiException
@@ -54,8 +55,11 @@ public class LeagueMethod extends Method
 				createArgMap("summonerId", String.valueOf(summonerId)));
 		
 		//Check errors
-		if(response.getCode() == 401)
-			throw new RiotApiException("401: Unauthorized");
+		switch(response.getCode())
+		{
+			case 401: throw new RiotApiException("401: Unauthorized");
+			case 404: throw new SummonerNotFoundException(region);
+		}
 		
 		//Parse response
 		try
@@ -77,27 +81,19 @@ public class LeagueMethod extends Method
 					JsonObject entryObject = entriesArray.getObject(l);
 					
 					//Convert league entry series if exists
-					JsonObject seriesObject = entryObject.getObject("miniSeries");
-					League.Entry.Series series = null;
-					if(seriesObject != null)
-					{
-						series = new League.Entry.Series(seriesObject.getInt("target"), seriesObject.getInt("wins"), seriesObject.getInt("losses"),
-								seriesObject.getString("progress"),
-								seriesObject.getLong("timeLeftToPlayMillis"));
-					}
+					League.Entry.Series series = convertMiniSeries(entryObject.getObject("miniSeries"));
 					
 					//Create entry
 					League.Entry entry = new League.Entry(entryObject.getString("tier"), entryObject.getString("rank"),	entryObject.getString("queueType"), entryObject.getString("leagueName"),
 							entryObject.getString("playerOrTeamId"), entryObject.getString("playerOrTeamName"),
 							entryObject.getBoolean("isHotStreak"), entryObject.getBoolean("isFreshBlood"), entryObject.getBoolean("isVeteran"), entryObject.getBoolean("isInactive"),
-							entryObject.getInt("wins"), entryObject.getInt("losses"), entryObject.getInt("leaguePoints"), series,
-							entryObject.getLong("lastPlayed"), entryObject.getLong("timeUntilDecay"));
+							entryObject.getInt("wins"), entryObject.getInt("leaguePoints"), series,
+							entryObject.getLong("lastPlayed"));
 					entries.add(entry);
 				}
 				
 				//Create league
-				League league = new League(leagueObject.getString("tier"), leagueObject.getString("name"), leagueObject.getString("queue"),
-						leagueObject.getLong("timestamp"), entries);
+				League league = new League(leagueObject.getString("tier"), leagueObject.getString("name"), leagueObject.getString("queue"), entries);
 				leagues.put(leagueKey, league);
 			}
 			
@@ -110,5 +106,20 @@ public class LeagueMethod extends Method
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	//Private converter methods
+	
+	private League.Entry.Series convertMiniSeries(JsonObject seriesObject) throws JsonException
+	{
+		League.Entry.Series series = null;
+		if(seriesObject != null)
+		{
+			series = new League.Entry.Series(seriesObject.getInt("target"),
+					seriesObject.getInt("wins"), seriesObject.getInt("losses"),
+					seriesObject.getString("progress"),
+					seriesObject.getLong("timeLeftToPlayMillis"));
+		}
+		return series;
 	}
 }

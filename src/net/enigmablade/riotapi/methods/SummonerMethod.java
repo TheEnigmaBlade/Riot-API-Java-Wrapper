@@ -14,7 +14,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The summoner method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 1.1</li>
+ * 		<li><i>Version</i>: 1.2</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
  * 	</ul>
  * </p>
@@ -39,7 +39,7 @@ public class SummonerMethod extends Method
 	 */
 	public SummonerMethod(RiotApi api)
 	{
-		super(api, "api/lol", "summoner", "1.1", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "summoner", "1.2", new Region[]{NA, EUW, EUNE});
 	}
 	
 	//API-defined operation methods
@@ -68,7 +68,7 @@ public class SummonerMethod extends Method
 			throw new SummonerNotFoundException(region, summonerName);
 		
 		//Parse response
-		return parseSummoner(region, (JsonObject)response.getValue());
+		return convertSummoner(region, (JsonObject)response.getValue());
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class SummonerMethod extends Method
 			throw new SummonerNotFoundException(region, summonerId);
 		
 		//Parse response
-		return parseSummoner(region, (JsonObject)response.getValue());
+		return convertSummoner(region, (JsonObject)response.getValue());
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public class SummonerMethod extends Method
 	 * @param summonerObject The JSON object to parse.
 	 * @return The summoner.
 	 */
-	private Summoner parseSummoner(Region region, JsonObject summonerObject)
+	private Summoner convertSummoner(Region region, JsonObject summonerObject)
 	{
 		try
 		{
@@ -202,6 +202,10 @@ public class SummonerMethod extends Method
 		{
 			JsonObject root = (JsonObject)response.getValue();
 			
+			//An empty object means the summoner has no masteries
+			if(root.isEmpty())
+				return new ArrayList<>(0);
+				
 			//Check summoner IDs to make sure the server isn't crazy
 			long rootSummonerId = root.getLong("summonerId");
 			if(rootSummonerId != summonerId)
@@ -229,9 +233,13 @@ public class SummonerMethod extends Method
 						talents.add(talent);
 					}
 				}
+				else
+				{
+					talents = new ArrayList<>(0);
+				}
 				
 				//Create mastery page object
-				MasteryPage page = new MasteryPage(pageObject.getString("name"), talents, pageObject.getBoolean("current"));
+				MasteryPage page = new MasteryPage(pageObject.getLong("id"), pageObject.getString("name"), talents, pageObject.getBoolean("current"));
 				pages.add(page);
 			}
 			return pages;
@@ -270,6 +278,10 @@ public class SummonerMethod extends Method
 		{
 			JsonObject root = (JsonObject)response.getValue();
 			
+			//An empty object means the summoner has no runes
+			if(root.isEmpty())
+				return new ArrayList<>(0);
+			
 			//Check summoner IDs to make sure the server isn't crazy
 			long rootSummonerId = root.getLong("summonerId");
 			if(rootSummonerId != summonerId)
@@ -300,6 +312,10 @@ public class SummonerMethod extends Method
 						RunePage.Slot slot = new RunePage.Slot(slotObject.getInt("runeSlotId"), rune);
 						slots.add(slot);
 					}
+				}
+				else
+				{
+					slots = new ArrayList<>(0);
 				}
 				
 				//Create mastery page object

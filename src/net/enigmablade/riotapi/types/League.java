@@ -96,12 +96,12 @@ public class League
 		
 		private String playerOrTeamId, playerOrTeamName;
 		private boolean isHotStreak, isFreshBlood, isVeteran, isInactive;
-		private int wins, losses;
+		private int wins;
 		private int leaguePoints;
 		private Series series;
-		private long lastPlayed, timeUntilDecay;
+		private Date lastPlayed;
 		
-		public Entry(String tier, String rank, String queueType, String leagueName, String string, String playerOrTeamName, boolean isHotStreak, boolean isFreshBlood, boolean isVeteran, boolean isInactive, int wins, int losses, int leaguePoints, Series series, long lastPlayed, long timeUntilDecay)
+		public Entry(String tier, String rank, String queueType, String leagueName, String string, String playerOrTeamName, boolean isHotStreak, boolean isFreshBlood, boolean isVeteran, boolean isInactive, int wins, int leaguePoints, Series series, long lastPlayed)
 		{
 			this.tier = LeagueConstants.stringToConstant(tier);
 			this.rank = LeagueConstants.stringToConstant(rank);
@@ -114,11 +114,9 @@ public class League
 			this.isVeteran = isVeteran;
 			this.isInactive = isInactive;
 			this.wins = wins;
-			this.losses = losses;
 			this.leaguePoints = leaguePoints;
 			this.series = series;
-			this.lastPlayed = lastPlayed;
-			this.timeUntilDecay = timeUntilDecay;
+			this.lastPlayed = new Date(lastPlayed);
 		}
 		
 		//Accessor methods
@@ -178,11 +176,6 @@ public class League
 			return wins;
 		}
 			
-		public int getLosses()
-		{
-			return losses;
-		}
-		
 		public int getLeaguePoints()
 		{
 			return leaguePoints;
@@ -193,29 +186,22 @@ public class League
 			return series;
 		}
 		
-		public long getLastPlayed()
+		public Date getLastPlayed()
 		{
 			return lastPlayed;
-		}
-		
-		public long getTimeUntilDecay()
-		{
-			return timeUntilDecay;
 		}
 	}
 	
 	private LeagueConstants tier;
 	private String name;
 	private QueueType queueType;
-	private long timestamp;
 	private List<Entry> entries;
 	
-	public League(String tier, String name, String queueType, long timestamp, List<Entry> entries)
+	public League(String tier, String name, String queueType, List<Entry> entries)
 	{
 		this.tier = LeagueConstants.stringToConstant(tier);
 		this.name = name;
 		this.queueType = QueueType.getFromLeagueValue(queueType);
-		this.timestamp = timestamp;
 		this.entries = entries;
 	}
 	
@@ -234,11 +220,6 @@ public class League
 	public QueueType getQueueType()
 	{
 		return queueType;
-	}
-	
-	public long getTimestamp()
-	{
-		return timestamp;
 	}
 	
 	public List<Entry> getEntries()

@@ -13,7 +13,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The stats method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 1.1</li>
+ * 		<li><i>Version</i>: 1.2</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
  * 	</ul>
  * </p>
@@ -35,7 +35,7 @@ public class StatsMethod extends Method
 	 */
 	public StatsMethod(RiotApi api)
 	{
-		super(api, "api/lol", "stats", "1.1", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "stats", "1.2", new Region[]{NA, EUW, EUNE});
 	}
 	
 	//API-defined operation methods
@@ -94,17 +94,7 @@ public class StatsMethod extends Method
 				JsonObject sumObject = sumsArray.getObject(s);
 				
 				//Convert stats list
-				JsonArray statsArray = sumObject.getArray("aggregatedStats");
-				List<PlayerStats.AggregatedStat> stats = new ArrayList<>(statsArray.size());
-				for(int a = 0; a < statsArray.size(); a++)
-				{
-					JsonObject statObject = statsArray.getObject(a);
-					
-					//Create stat object
-					PlayerStats.AggregatedStat stat = new PlayerStats.AggregatedStat(statObject.getInt("id"), statObject.getString("name"),
-							statObject.getInt("count"));
-					stats.add(stat);
-				}
+				Map<String, Integer> stats = convertAggregatedStats(sumObject.getObject("aggregatedStats"));
 				
 				//Create stat summary object
 				PlayerStats sum = new PlayerStats(sumObject.getString("playerStatSummaryType"), sumObject.getLong("modifyDate"),
@@ -176,17 +166,7 @@ public class StatsMethod extends Method
 				JsonObject championObject = championsArray.getObject(c);
 				
 				//Convert stats list
-				JsonArray statsArray = championObject.getArray("stats");
-				List<ChampionStats.Stat> stats = new ArrayList<>(statsArray.size());
-				for(int a = 0; a < statsArray.size(); a++)
-				{
-					JsonObject statObject = statsArray.getObject(a);
-					
-					//Create stat object
-					ChampionStats.Stat stat = new ChampionStats.Stat(statObject.getInt("id"), statObject.getString("name"),
-							statObject.getInt("value"), statObject.getInt("c" /* Docs say "count", so API is wrong :( */ ));
-					stats.add(stat);
-				}
+				Map<String, Integer> stats = convertAggregatedStats(championObject.getObject("stats"));
 				
 				//Create stat summary object
 				ChampionStats sum = new ChampionStats(championObject.getInt("id"), championObject.getString("name"), stats);
@@ -201,5 +181,15 @@ public class StatsMethod extends Method
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	//Private converter methods
+	
+	private Map<String, Integer> convertAggregatedStats(JsonObject statsObject) throws JsonException
+	{
+		Map<String, Integer> stats = new HashMap<>(statsObject.size());
+		for(String key : statsObject.keySet())
+			stats.put(key, statsObject.getInt(key));
+		return stats;
 	}
 }
