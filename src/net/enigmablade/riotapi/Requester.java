@@ -112,10 +112,23 @@ public class Requester
 	 * @return The response from the request.
 	 * @throws IOException If there was an error when sending the request.
 	 */
-	public Response request(String requestUrl) throws IOException
+	public Response request(String requestUrl)
 	{
-		return request(requestUrl, false);
+		//return request(requestUrl, null);
+		return requestHelper(requestUrl, false);
 	}
+	
+	/**
+	 * Sends a request to the server at the given URL and returns the response or responds to the given listener.
+	 * @param requestUrl The request URL.
+	 * @param listener The request listener to receive the result. Leave <code>null</code> to return the value.
+	 * @return The response from the request, or <code>null</code> if a listener was given.
+	 * @throws IOException
+	 */
+	/*public Response request(String requestUrl, RequestListener listener)
+	{
+		return request(requestUrl, listener, false);
+	}*/
 	
 	/**
 	 * Sends a request to the server at the given URL and returns the response, skipping the cache if specified.
@@ -124,20 +137,44 @@ public class Requester
 	 * @return The response from the request.
 	 * @throws IOException If there was an error when sending the request.
 	 */
-	public Response request(String requestUrl, boolean skipCache) throws IOException
+	public Response request(String requestUrl, boolean skipCache)
 	{
-		return request(requestUrl, skipCache, false);
+		//return request(requestUrl, null, skipCache);
+		return requestHelper(requestUrl, skipCache);
 	}
 	
 	/**
 	 * Sends a request to the server at the given URL and returns the response, skipping the cache if specified.
 	 * @param requestUrl The request URL.
+	 * @param listener The request listener to receive the result. Leave <code>null</code> to return the value.
 	 * @param skipCache Whether or not to skip the cache and forcefully send the request.
-	 * @param speedy
-	 * @return
+	 * @return The response from the request, or <code>null</code> if a listener was given.
 	 * @throws IOException
 	 */
-	public Response request(String requestUrl, boolean skipCache, boolean speedy) throws IOException
+	/*public Response request(final String requestUrl, final RequestListener listener, final boolean skipCache)
+	{
+		//Send request to separate thread and return null
+		if(listener != null)
+		{
+			//I can't wait until this is misused and someone ends up making 50,000 threads with queued requests
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					listener.requestFulfilled(requestHelper(requestUrl, skipCache));
+				}
+			}).start();
+			return null;
+		}
+		//Send request directly and return the result
+		else
+		{
+			return requestHelper(requestUrl, skipCache);
+		}
+	}*/
+	
+	private Response requestHelper(String requestUrl, boolean skipCache)
 	{
 		Response response;
 		
@@ -152,73 +189,89 @@ public class Requester
 		
 		//Otherwise send the request
 		response = sendLimitedRequest(requestUrl);
-		if(response.getValue() == null)
-			return response;
+		if(response.getValue() != null)
+		{
+			//Parse the request
+			try
+			{
+				response.value = JsonParser.parse((String)response.getValue());
+			}
+			catch(JsonParseException e)
+			{
+				//This shouldn't happen if we assume they're always sending correctly-formatted JSON
+				e.printStackTrace();
+				response.value = null;
+				response.code = -1;
+			}
+		}
 		
-		//Parse the request
-		try
-		{
-			response.value = JsonParser.parse((String)response.getValue(), speedy);
-			return response;
-		}
-		catch(JsonParseException e)
-		{
-			//This shouldn't happen if we assume they're always sending correctly-formatted JSON
-			e.printStackTrace();
-			return null;
-		}
+		return response;
 	}
 	
 	//Private utilities
 	
-	private Response sendRequest(String requestUrl) throws IOException
+	private Response sendRequest(String requestUrl)
 	{
-		//Create and connect
-		URL url = new URL(requestUrl);
-		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-		connection.setRequestMethod("GET");
-		connection.setRequestProperty("Accept-Charset", "UTF-8");
-		if(userAgent != null)
-			connection.setRequestProperty("User-Agent", userAgent);
-		connection.connect();
-		
-		//Check response code and return if error
-		int responseCode = connection.getResponseCode();
-		if(responseCode >= 300)
-			return new Response(null, responseCode);
-		
-		//Get response
-		InputStream in = connection.getInputStream();
-		String response = IOUtil.readInputStreamFully(in);
-		return new Response(response, responseCode);
+		try
+		{
+			//Create and connect
+			URL url = new URL(requestUrl);
+			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Accept-Charset", "UTF-8");
+			if(userAgent != null)
+				connection.setRequestProperty("User-Agent", userAgent);
+			connection.connect();
+			
+			//Check response code and return if error
+			int responseCode = connection.getResponseCode();
+			if(responseCode >= 300)
+				return new Response(null, responseCode);
+			
+			//Get response
+			InputStream in = connection.getInputStream();
+			String response = IOUtil.readInputStreamFully(in);
+			return new Response(response, responseCode);
+		}
+		catch(IOException e)
+		{
+			System.err.println("Failed to send request: IOException");
+			e.printStackTrace();
+			return new Response(null, -1);
+		}
 	}
 	
-	private Response sendLimitedRequest(String requestUrl) throws IOException
+	private Response sendLimitedRequest(String requestUrl)
 	{
 		//Lock to prevent multiple requests from executing at once
 		rateLock.lock();
 		
-		//Wait (if required) for the request time limit
-		long timeSinceLast = System.currentTimeMillis()-lastCall;
-		if(limiterEnabled && timeSinceLast < limitWait)
-			try
-			{
-				Thread.sleep(limitWait-timeSinceLast);
-			}
-			catch(InterruptedException e) { /* I don't even know when this is ever thrown... */ }
-		
-		//Send request
-		Response response = sendRequest(requestUrl);
-		lastCall = System.currentTimeMillis();
-		
-		//Manage request queue
-		trimRequestQueue();
-		requestQueue.offerLast(lastCall);
-		
-		//Unlock to let the next request through
-		rateLock.unlock();
-		
-		return response;
+		try
+		{
+			//Wait (if required) for the request time limit
+			long timeSinceLast = System.currentTimeMillis()-lastCall;
+			if(limiterEnabled && timeSinceLast < limitWait)
+				try
+				{
+					Thread.sleep(limitWait-timeSinceLast);
+				}
+				catch(InterruptedException e) { /* I don't even know when this is ever thrown... */ }
+			
+			//Send request
+			Response response = sendRequest(requestUrl);
+			lastCall = System.currentTimeMillis();
+			
+			//Manage request queue
+			trimRequestQueue();
+			requestQueue.offerLast(lastCall);
+			
+			return response;
+		}
+		finally
+		{
+			//Unlock to let the next request through
+			rateLock.unlock();
+		}
 	}
 	
 	private void trimRequestQueue()

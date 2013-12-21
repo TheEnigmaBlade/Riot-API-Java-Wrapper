@@ -42,6 +42,19 @@ public class GameMethod extends Method
 	/**
 	 * Returns a list of recent games for the given summoner.
 	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param summoner The the summoner.
+	 * @return A list of recent games (max 10).
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<Game> getRecentGames(Region region, Summoner summoner) throws RiotApiException
+	{
+		return getRecentGames(region, summoner.getId());
+	}
+	
+	/**
+	 * Returns a list of recent games for the given summoner.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
 	 * @param summonerId The ID of the summoner.
 	 * @return A list of recent games (max 10).
 	 * @throws RegionNotSupportedException If the region is not supported by the method.

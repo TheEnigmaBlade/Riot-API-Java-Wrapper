@@ -1,7 +1,7 @@
 package net.enigmablade.riotapi;
 
-import java.io.*;
 import java.util.*;
+
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
@@ -101,34 +101,28 @@ public abstract class Method
 		
 		//Create request URL
 		String url = buildUrl(region, operation, pathArgs, queryArgs);
-		try
+		
+		//Send request
+		Response response = api.getRequester().request(url, skipCache);
+		if(response == null)	//null if parse exception, highly unlikely
+			throw new RiotApiException("Uh oh, failed to parse response! That's bad!");
+		
+		//Everything is fine and dandy
+		if(response.getCode() == 200)
+			return response;
+		
+		//Errors common to all methods
+		switch(response.getCode())
 		{
-			//Send request
-			Response response = api.getRequester().request(url, skipCache);
-			if(response == null)	//null if parse exception, highly unlikely
-				throw new RiotApiException("Uh oh, failed to parse response! That's bad!");
+			case 400: throw new RiotApiException("400: Bad request");
+			case 401: throw new RiotApiException("401: Unauthorized");
+			case 429: throw new TooManyRequestsException((api.getTimeUntilMoreApiCalls()/1000)+" seconds until more API calls are available");
 			
-			//Everything is fine and dandy
-			if(response.getCode() == 200)
-				return response;
+			case 500: throw new RiotApiException("500: Internal server error");
+			case 503: throw new RiotApiException("503: Something is broken");
 			
-			//Errors common to all methods
-			switch(response.getCode())
-			{
-				case 400: throw new RiotApiException("400: Bad request");
-				case 401: throw new RiotApiException("401: Unauthorized");
-				case 429: throw new TooManyRequestsException((api.getTimeUntilMoreApiCalls()/1000)+" seconds until more API calls are available");
-				
-				case 500: throw new RiotApiException("500: Internal server error");
-				case 503: throw new RiotApiException("503: Something is broken");
-				
-				default: return response;
-					//throw new RiotApiException("Unknown error code "+response.getCode());
-			}
-		}
-		catch(IOException e)
-		{
-			throw new RiotApiException("Failed to send request", e);
+			default: return response;
+				//throw new RiotApiException("Unknown error code "+response.getCode());
 		}
 	}
 	

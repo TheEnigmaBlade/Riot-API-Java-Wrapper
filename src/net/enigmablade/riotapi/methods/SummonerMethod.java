@@ -180,6 +180,20 @@ public class SummonerMethod extends Method
 	/**
 	 * Returns a list of the summoner's mastery pages.
 	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param summoner The summoner.
+	 * @return The list of mastery pages.
+	 * @throws SummonerNotFoundException If the summoner was not found.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<MasteryPage> getSummonerMasteryPages(Region region, Summoner summoner) throws RiotApiException
+	{
+		return getSummonerMasteryPages(region, summoner.getId());
+	}
+	
+	/**
+	 * Returns a list of the summoner's mastery pages.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
 	 * @param summonerId The ID of the summoner.
 	 * @return The list of mastery pages.
 	 * @throws SummonerNotFoundException If the summoner was not found.
@@ -251,6 +265,20 @@ public class SummonerMethod extends Method
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	/**
+	 * Returns a list of the summoner's rune pages.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param summoner The summoner.
+	 * @return The list of rune pages.
+	 * @throws SummonerNotFoundException If the summoner was not found.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<RunePage> getSummonerRunePages(Region region, Summoner summoner) throws RiotApiException
+	{
+		return getSummonerRunePages(region, summoner.getId());
 	}
 	
 	/**
