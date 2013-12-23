@@ -26,7 +26,9 @@ public enum QueueType
 	DOMINION_5V5_DRAFT	(17,	"", 					"OdinUnranked",		false,	"Dominion 5v5 Draft Pick"),
 	DOMINION_5V5_COOP	(25,	"",						"OdinUnranked",		false,	"Dominion Coop vs AI"),
 	ARAM_5V5			(65,	"ARAM_UNRANKED_5x5",	"AramUnranked5x5",	false,	"ARAM"),
-	ARAM_5V5_COOP		(67,	"",						"AramUnranked5x5",	false,	"ARAM Coop vs AI");
+	ARAM_5V5_COOP		(67,	"",						"AramUnranked5x5",	false,	"ARAM Coop vs AI"),
+	SHOWDOWN_1V1		(72,	"FIRSTBLOOD_1x1",		"Firstblood1x1",	false,	"Snowdown Showdown 1v1"),
+	SHOWDOWN_2V2 		(73,	"FIRSTBLOOD_2x2",		"Firstblood2x2",	false,	"Snowdown Showdown 2v2");
 	
 	//---//
 	
