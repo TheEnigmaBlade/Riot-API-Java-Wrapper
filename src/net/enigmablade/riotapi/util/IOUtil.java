@@ -7,7 +7,7 @@ import java.util.*;
 
 public class IOUtil
 {
-	public static String replaceStringArgs(String s, Map<String, String> args)
+	public static String replacePathArgs(String s, Map<String, String> args)
 	{
 		StringBuffer buf = new StringBuffer();
 		
@@ -31,6 +31,22 @@ public class IOUtil
 		buf.append(part2);										//Add any remaining bits
 		
 		return buf.toString();
+	}
+	
+	public static String genQueryArgs(Map<String, String> queryArgs)
+	{
+		StringBuffer queryArgsStr = new StringBuffer();
+		if(queryArgs != null)
+		{
+			int i = 0;
+			for(String key : queryArgs.keySet())
+			{
+				queryArgsStr.append(key).append('=').append(queryArgs.get(key));
+				if(i++ < queryArgs.size()-1)
+					queryArgsStr.append('&');
+			}
+		}
+		return queryArgsStr.toString();
 	}
 	
 	/**

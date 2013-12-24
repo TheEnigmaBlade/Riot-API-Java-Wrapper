@@ -8,7 +8,7 @@ Requires Java 7 or higher.
 Key Features
 ------------
 
-* **Request rate limiting**: requests are limited based on the requests per 10 seconds value. If you only have 5 requests per 10 seconds, requests will be limited to 1 request every 2 seconds.
+* **Request rate limiting**: requests are limited based on the requests per 10 seconds value. If you only have 10 requests per 10 seconds, requests will be limited to 1 request every second.
 * **Request caching**: requests are cached using LRU replacement. This means the most frequent requests will be stored and not requested from the server. Caching can be bypassed.
 * **Two distinct styles of API usage**: you can follow the API style and call individual methods and operations, or you can take advantage of object-oriented principles and make requests directly from an object (such as a champion or summoner).
 

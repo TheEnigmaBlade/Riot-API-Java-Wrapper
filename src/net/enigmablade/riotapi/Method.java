@@ -155,31 +155,22 @@ public abstract class Method
 	
 	private String buildUrl(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs)
 	{
-		//If not null, prepare for the URL, otherwise it's empty
-		if(operation != null)
-			operation = "/"+operation;
-		else
-			operation = "";
-		
 		//Format path arguments within the operation
-		operation = IOUtil.replaceStringArgs(operation, pathArgs);
+		operation = IOUtil.replacePathArgs(operation, pathArgs);
 		
-		//Create string of query arguments (&arg=argv&arg2=arg2v...)
-		StringBuffer queryArgsStr = new StringBuffer();
-		if(queryArgs != null)
-		{
-			for(String key : queryArgs.keySet())
-				queryArgsStr.append('&').append(key).append('=').append(queryArgs.get(key));
-		}
+		//Create string of query arguments (arg=argv&arg2=arg2v...)
+		String queryArgsStr = IOUtil.genQueryArgs(queryArgs);
 		
 		//Create URL and send the request
 		StringBuilder s = new StringBuilder(API_URL_BASE);	//Domain
 		s.append(header).append('/');						//Header
 		s.append(region.getApiUsage());						//Region
 		s.append("/v").append(version).append('/');			//Version
-		s.append(method).append(operation);					//Operation
+		s.append(method);									//Method
+		if(operation != null)								//Operation (optional)
+			s.append('/').append(operation);				
 		s.append("?api_key=").append(api.getApiKey());		//API key
-		s.append(queryArgsStr.toString());					//Query args
+		s.append('&').append(queryArgsStr);					//Query args
 		return s.toString();
 	}
 	
