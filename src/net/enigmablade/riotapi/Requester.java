@@ -89,7 +89,7 @@ public class Requester
 		
 		/**
 		 * Returns the response code. Errors are values >= 300.
-		 * @return
+		 * @return The response code.
 		 */
 		public int getCode()
 		{
@@ -97,7 +97,7 @@ public class Requester
 		}
 		
 		/**
-		 * Returns the time (in ms) the request result was received.
+		 * Returns the time (in milliseconds) the request result was received.
 		 * @return The time the request was made.
 		 */
 		public long getTimeReceived()

@@ -118,12 +118,16 @@ public class Game implements Comparable<Game>
 	
 	private boolean getBooleanStat(String key)
 	{
-		return (Boolean)stats.get(key);
+		if(stats.containsKey(key))
+			return (Boolean)stats.get(key);
+		return false;
 	}
 	
 	private int getIntStat(String key)
 	{
-		return (Integer)stats.get(key);
+		if(stats.containsKey(key))
+			return ((Long)stats.get(key)).intValue();
+		return 0;
 	}
 	
 	public int getAssists()
@@ -185,8 +189,15 @@ public class Game implements Comparable<Game>
 	{
 		List<Integer> items = new ArrayList<>(7);
 		int item;
-		for(int n = 0; n < 7 && (item = getIntStat("item"+n)) > 0; n++)
-			items.add(item);
+		for(int n = 0; n < 7; n++)
+		{
+			System.out.println("item"+n);
+			if((item = getIntStat("item"+n)) > 0)
+			{
+				System.out.println("\t"+item);
+				items.add(item);
+			}
+		}
 		return items;
 	}
 	

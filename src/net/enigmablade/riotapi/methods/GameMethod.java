@@ -100,7 +100,7 @@ public class GameMethod extends Method
 				List<Player> players = convertPlayerList(gameObject.getArray("fellowPlayers"), region);
 				
 				//Convert statistic list
-				Map<String, Object> stats = convertGameStats(gameObject.getObject("statistics"));
+				Map<String, Object> stats = convertGameStats(gameObject.getObject("stats"));
 				
 				//Create game object
 				Game game = new Game(gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
