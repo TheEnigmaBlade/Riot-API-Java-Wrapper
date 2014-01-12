@@ -33,7 +33,7 @@ public class ChampionMethod extends Method
 	 * Create a new champion method instance.
 	 * @param api The API instance being used.
 	 */
-	public ChampionMethod(RiotAPI api)
+	public ChampionMethod(RiotApi api)
 	{
 		super(api, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE});
 	}

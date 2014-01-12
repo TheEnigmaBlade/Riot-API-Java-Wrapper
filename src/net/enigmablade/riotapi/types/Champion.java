@@ -21,12 +21,12 @@ public class Champion extends DynamicType
 	private boolean active, freeToPlay;
 	private boolean botMatchMadeEnabled, botCustomEnabled, rankedEnabled;
 	
-	public Champion(RiotAPI api, Region region, String name, long id)
+	public Champion(RiotApi api, Region region, String name, long id)
 	{
 		this(api, region, name, id, -1, -1, -1, -1, false, false, false, false, false);
 	}
 	
-	public Champion(RiotAPI api, Region region, String name, long id, int attackRank, int magicRank, int defenseRank, int difficultyRank, boolean active, boolean freeToPlay, boolean botMatchMadeEnabled, boolean botCustomEnabled, boolean rankedEnabled)
+	public Champion(RiotApi api, Region region, String name, long id, int attackRank, int magicRank, int defenseRank, int difficultyRank, boolean active, boolean freeToPlay, boolean botMatchMadeEnabled, boolean botCustomEnabled, boolean rankedEnabled)
 	{
 		super(api);
 		

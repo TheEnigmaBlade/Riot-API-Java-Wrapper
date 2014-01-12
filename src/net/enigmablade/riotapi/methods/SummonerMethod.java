@@ -37,7 +37,7 @@ public class SummonerMethod extends Method
 	 * Create a new summoner method instance.
 	 * @param api The API instance being used.
 	 */
-	public SummonerMethod(RiotAPI api)
+	public SummonerMethod(RiotApi api)
 	{
 		super(api, "api/lol", "summoner", "1.2", new Region[]{NA, EUW, EUNE});
 	}

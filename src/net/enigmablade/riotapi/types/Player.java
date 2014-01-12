@@ -13,7 +13,7 @@ public class Player extends Summoner
 	private int championId;
 	private int teamId;
 	
-	public Player(RiotAPI api, Region region, long summonerId, int championId, int teamId)
+	public Player(RiotApi api, Region region, long summonerId, int championId, int teamId)
 	{
 		super(api, region, summonerId, null);
 		this.championId = championId;

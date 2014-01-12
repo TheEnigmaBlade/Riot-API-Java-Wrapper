@@ -32,7 +32,7 @@ public class LeagueMethod extends Method
 	 * Create a new league method instance.
 	 * @param api The API instance being used.
 	 */
-	public LeagueMethod(RiotAPI api)
+	public LeagueMethod(RiotApi api)
 	{
 		super(api, "api/lol", "league", "2.2", new Region[]{NA, EUW, EUNE, BR, TR});
 	}

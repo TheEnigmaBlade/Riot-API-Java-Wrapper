@@ -33,7 +33,7 @@ public class StatsMethod extends Method
 	 * Create a new stats method instance.
 	 * @param api The API instance being used.
 	 */
-	public StatsMethod(RiotAPI api)
+	public StatsMethod(RiotApi api)
 	{
 		super(api, "api/lol", "stats", "1.2", new Region[]{NA, EUW, EUNE});
 	}

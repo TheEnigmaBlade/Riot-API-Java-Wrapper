@@ -21,7 +21,7 @@ import net.enigmablade.riotapi.types.*;
  * 
  * @author Enigma
  */
-public class RiotAPI
+public class RiotApi
 {
 	public static final int DEFAULT_RATE_LIMIT_10_SEC = 10;
 	public static final int DEFAULT_RATE_LIMIT_10_MIN = 500;
@@ -31,21 +31,21 @@ public class RiotAPI
 	
 	/**
 	 * Creates a new instance to access the Riot API with the given API key and no user agent.
-	 * Rate limiting is set the default of {@value RiotAPI#DEFAULT_RATE_LIMIT_10_SEC} requests per 10 seconds and {@value RiotAPI#DEFAULT_RATE_LIMIT_10_MIN} requests per 10 minutes.
+	 * Rate limiting is set the default of {@value RiotApi#DEFAULT_RATE_LIMIT_10_SEC} requests per 10 seconds and {@value RiotApi#DEFAULT_RATE_LIMIT_10_MIN} requests per 10 minutes.
 	 * @param apiKey The API key to use.
 	 */
-	public RiotAPI(String apiKey)
+	public RiotApi(String apiKey)
 	{
 		this(apiKey, null);
 	}
 	
 	/**
 	 * Creates a new instance to access the Riot API with the given API key and user agent.
-	 * Rate limiting is set the default of {@value RiotAPI#DEFAULT_RATE_LIMIT_10_SEC} requests per 10 seconds and {@value RiotAPI#DEFAULT_RATE_LIMIT_10_MIN} requests per 10 minutes.
+	 * Rate limiting is set the default of {@value RiotApi#DEFAULT_RATE_LIMIT_10_SEC} requests per 10 seconds and {@value RiotApi#DEFAULT_RATE_LIMIT_10_MIN} requests per 10 minutes.
 	 * @param apiKey The API key to use.
 	 * @param userAgent The user agent to use.
 	 */
-	public RiotAPI(String apiKey, String userAgent)
+	public RiotApi(String apiKey, String userAgent)
 	{
 		this(apiKey, userAgent, DEFAULT_RATE_LIMIT_10_SEC, DEFAULT_RATE_LIMIT_10_MIN);
 	}
@@ -57,7 +57,7 @@ public class RiotAPI
 	 * @param limitPer10Seconds The limit for the number of requests per 10 seconds. Must be greater than 0.
 	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
 	 */
-	public RiotAPI(String apiKey, String userAgent, int limitPer10Seconds, int limitPer10Minutes)
+	public RiotApi(String apiKey, String userAgent, int limitPer10Seconds, int limitPer10Minutes)
 	{
 		this.apiKey = apiKey;
 		
