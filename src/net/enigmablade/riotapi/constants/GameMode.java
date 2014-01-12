@@ -12,7 +12,9 @@ public enum GameMode
 	CLASSIC		("CLASSIC",		"Classic"),
 	DOMINION	("ODIN",		"Dominion"),
 	ARAM		("ARAM",		"ARAM"),
-	TUTORIAL	("TUTORIAL",	"Tutorial");
+	TUTORIAL	("TUTORIAL",	"Tutorial"),
+	ALL_FOR_ONE	("ALLFORONE",	"All-for-one"),
+	SHOWDOWN	("FIRSTBLOOD",	"Showdown");
 	
 	//---//
 	

@@ -13,7 +13,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The game method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 1.2</li>
+ * 		<li><i>Version</i>: 1.3</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
  * 	</ul>
  * </p>
@@ -34,7 +34,7 @@ public class GameMethod extends Method
 	 */
 	public GameMethod(RiotAPI api)
 	{
-		super(api, "api/lol", "game", "1.2", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "game", "1.3", new Region[]{NA, EUW, EUNE});
 	}
 	
 	//API-defined operation methods
@@ -66,18 +66,28 @@ public class GameMethod extends Method
 				"by-summoner/{summonerId}/recent",
 				createArgMap("summonerId", String.valueOf(summonerId)));
 		
+		//Check errors
+		if(response.getCode() == 404)
+			throw new GameDataNotFoundException(region, summonerId);
+		
 		//Parse response
+		JsonObject root = (JsonObject)response.getValue();
+		return convertRecentGames(root, region, summonerId);
+	}
+	
+	//Private converter methods
+	
+	private List<Game> convertRecentGames(JsonObject recentGamesObject, Region region, long summonerId) throws RiotApiException
+	{
 		try
 		{
-			JsonObject root = (JsonObject)response.getValue();
-			
 			//Check summoner IDs to make sure the server isn't crazy
-			long rootSummonerId = root.getLong("summonerId");
+			long rootSummonerId = recentGamesObject.getLong("summonerId");
 			if(rootSummonerId != summonerId)
 				throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
 			
 			//Convert game list
-			JsonArray gamesArray = root.getArray("games");
+			JsonArray gamesArray = recentGamesObject.getArray("games");
 			if(gamesArray == null)								//Might be null if no games have been played
 				return new ArrayList<>(0);
 			
@@ -90,7 +100,7 @@ public class GameMethod extends Method
 				List<Player> players = convertPlayerList(gameObject.getArray("fellowPlayers"), region);
 				
 				//Convert statistic list
-				Map<String, Game.Stat> stats = convertGameStats(gameObject.getArray("statistics"));
+				Map<String, Object> stats = convertGameStats(gameObject.getObject("statistics"));
 				
 				//Create game object
 				Game game = new Game(gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
@@ -109,8 +119,6 @@ public class GameMethod extends Method
 			return null;
 		}
 	}
-	
-	//Private converter methods
 	
 	/**
 	 * Private helper to convert a list of players in a game.
@@ -145,17 +153,15 @@ public class GameMethod extends Method
 	 * @return The new converted list of stats.
 	 * @throws JsonException Shouldn't ever happen.
 	 */
-	private Map<String, Game.Stat> convertGameStats(JsonArray statsArray) throws JsonException
+	private Map<String, Object> convertGameStats(JsonObject statsObject) throws JsonException
 	{
-		Map<String, Game.Stat> stats = new TreeMap<>();
-		if(statsArray != null)
+		Map<String, Object> stats = new TreeMap<>();
+		if(statsObject != null)
 		{
-			for(int p = 0; p < statsArray.size(); p++)
+			for(String key : statsObject.keySet())
 			{
-				JsonObject statObject = statsArray.getObject(p);
-				String name = statObject.getString("name");
-				Game.Stat stat = new Game.Stat(statObject.getInt("id"), name, statObject.getInt("value"));
-				stats.put(name, stat);
+				Object value = statsObject.get(key);
+				stats.put(key, value);
 			}
 		}
 		return stats;

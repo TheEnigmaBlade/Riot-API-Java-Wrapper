@@ -42,6 +42,9 @@ public class Champion extends DynamicType
 		this.botMatchMadeEnabled = botMatchMadeEnabled;
 		this.botCustomEnabled = botCustomEnabled;
 		this.rankedEnabled = rankedEnabled;
+		
+		if(attackRank >= 0)
+			setDynamicUpdated();
 	}
 	
 	//Dynamic methods

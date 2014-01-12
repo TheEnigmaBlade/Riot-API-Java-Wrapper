@@ -77,39 +77,7 @@ public class StatsMethod extends Method
 			throw new SummonerNotFoundException(region, summonerId);
 		
 		//Parse response
-		try
-		{
-			JsonObject root = (JsonObject)response.getValue();
-			
-			//Check summoner IDs to make sure the server isn't crazy
-			long rootSummonerId = root.getLong("summonerId");
-			if(rootSummonerId != summonerId)
-				throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
-			
-			//Convert stat summaries list
-			JsonArray sumsArray = root.getArray("playerStatSummaries");
-			List<PlayerStats> sums = new ArrayList<>(sumsArray.size());
-			for(int s = 0; s < sumsArray.size(); s++)
-			{
-				JsonObject sumObject = sumsArray.getObject(s);
-				
-				//Convert stats list
-				Map<String, Integer> stats = convertAggregatedStats(sumObject.getObject("aggregatedStats"));
-				
-				//Create stat summary object
-				PlayerStats sum = new PlayerStats(sumObject.getString("playerStatSummaryType"), sumObject.getLong("modifyDate"),
-						sumObject.getInt("wins"), sumObject.getInt("losses"), stats);
-				sums.add(sum);
-			}
-			return sums;
-		}
-		catch(JsonException e)
-		{
-			//Shouldn't happen since the JSON is already parsed
-			System.err.println("JSON parse error");
-			e.printStackTrace();
-			return null;
-		}
+		return convertStatSummaries((JsonObject)response.getValue(), summonerId);
 	}
 	
 	/**
@@ -149,17 +117,60 @@ public class StatsMethod extends Method
 			throw new SummonerNotFoundException(region, summonerId);
 		
 		//Parse response
+		return convertRankedChampionStats((JsonObject)response.getValue(), summonerId);
+		
+	}
+	
+	//Private converter methods
+	
+	private List<PlayerStats> convertStatSummaries(JsonObject statSummariesObject, long summonerId) throws RiotApiException
+	{
 		try
 		{
-			JsonObject root = (JsonObject)response.getValue();
-			
 			//Check summoner IDs to make sure the server isn't crazy
-			long rootSummonerId = root.getLong("summonerId");
+			long rootSummonerId = statSummariesObject.getLong("summonerId");
 			if(rootSummonerId != summonerId)
 				throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
 			
 			//Convert stat summaries list
-			JsonArray championsArray = root.getArray("champions");
+			JsonArray sumsArray = statSummariesObject.getArray("playerStatSummaries");
+			List<PlayerStats> sums = new ArrayList<>(sumsArray.size());
+			for(int s = 0; s < sumsArray.size(); s++)
+			{
+				JsonObject sumObject = sumsArray.getObject(s);
+				
+				//Convert stats list
+				Map<String, Integer> stats = convertAggregatedStats(sumObject.getObject("aggregatedStats"));
+				
+				//Create stat summary object
+				PlayerStats sum = new PlayerStats(sumObject.getString("playerStatSummaryType"), sumObject.getLong("modifyDate"),
+						sumObject.containsKey("wins") ? sumObject.getInt("wins") : 0,
+						sumObject.containsKey("losses") ? sumObject.getInt("losses") : 0,
+						stats);
+				sums.add(sum);
+			}
+			return sums;
+		}
+		catch(JsonException e)
+		{
+			//Shouldn't happen since the JSON is already parsed
+			System.err.println("JSON parse error");
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private List<ChampionStats> convertRankedChampionStats(JsonObject rankedStatsObject, long summonerId) throws RiotApiException
+	{
+		try
+		{
+			//Check summoner IDs to make sure the server isn't crazy
+			long rootSummonerId = rankedStatsObject.getLong("summonerId");
+			if(rootSummonerId != summonerId)
+				throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
+			
+			//Convert stat summaries list
+			JsonArray championsArray = rankedStatsObject.getArray("champions");
 			List<ChampionStats> champions = new ArrayList<>(championsArray.size());
 			for(int c = 0; c < championsArray.size(); c++)
 			{
@@ -182,8 +193,6 @@ public class StatsMethod extends Method
 			return null;
 		}
 	}
-	
-	//Private converter methods
 	
 	private Map<String, Integer> convertAggregatedStats(JsonObject statsObject) throws JsonException
 	{

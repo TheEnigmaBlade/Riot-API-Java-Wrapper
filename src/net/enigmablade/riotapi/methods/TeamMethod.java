@@ -122,7 +122,7 @@ public class TeamMethod extends Method
 		for(int s = 0; s < statsArray.size(); s++)
 		{
 			JsonObject statObject = statsArray.getObject(s);
-			QueueType queue = QueueType.getFromLeagueValue(statObject.getString("teamStatType"));
+			QueueType queue = QueueType.getFromGameValue(statObject.getString("teamStatType"));
 			Team.QueueStat stat = new Team.QueueStat(statObject.getInt("wins"), statObject.getInt("losses"), statObject.getInt("averageGamesPlayed"),
 					statObject.containsKey("rating") ? statObject.getInt("rating") : -1,
 					statObject.containsKey("maxRating") ? statObject.getInt("maxRating") : -1,

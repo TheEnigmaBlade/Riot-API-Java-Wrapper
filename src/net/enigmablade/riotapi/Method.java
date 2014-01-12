@@ -114,12 +114,12 @@ public abstract class Method
 		//Errors common to all methods
 		switch(response.getCode())
 		{
-			case 400: throw new RiotApiException("400: Bad request");
+			case 400: throw new RiotApiException("400: Bad request (theoretically shouldn't happen)");
 			case 401: throw new RiotApiException("401: Unauthorized");
 			case 429: throw new TooManyRequestsException((api.getTimeUntilMoreApiCalls()/1000)+" seconds until more API calls are available");
 			
 			case 500: throw new RiotApiException("500: Internal server error");
-			case 503: throw new RiotApiException("503: Something is broken");
+			case 503: throw new RiotApiException("503: Service unavailable (someone broke it)");
 			
 			default: return response;
 				//throw new RiotApiException("Unknown error code "+response.getCode());
@@ -156,7 +156,8 @@ public abstract class Method
 	private String buildUrl(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs)
 	{
 		//Format path arguments within the operation
-		operation = IOUtil.replacePathArgs(operation, pathArgs);
+		if(operation != null)
+			operation = IOUtil.replacePathArgs(operation, pathArgs);
 		
 		//Create string of query arguments (arg=argv&arg2=arg2v...)
 		String queryArgsStr = IOUtil.genQueryArgs(queryArgs);

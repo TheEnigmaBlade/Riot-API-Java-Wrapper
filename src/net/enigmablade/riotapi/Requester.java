@@ -181,11 +181,7 @@ public class Requester
 		//Check if it's in the cache
 		if(!skipCache)
 		{
-			System.out.println("Checking if in cache: "+requestUrl);
 			response = cache.get(requestUrl);
-			System.out.println("\tResponse: "+response);
-			if(response != null)
-				System.out.println("\tAge: "+(System.currentTimeMillis()-response.getTimeReceived()));
 			//Ignore if not in cache or too old
 			if(response != null && System.currentTimeMillis()-response.getTimeReceived() < CACHE_AGE_LIMIT)
 				return response;
@@ -256,11 +252,13 @@ public class Requester
 			//Wait (if required) for the request time limit
 			long timeSinceLast = System.currentTimeMillis()-lastCall;
 			if(limiterEnabled && timeSinceLast < limitWait)
+			{
 				try
 				{
 					Thread.sleep(limitWait-timeSinceLast);
 				}
 				catch(InterruptedException e) { /* I don't even know when this is ever thrown... */ }
+			}
 			
 			//Send request
 			Response response = sendRequest(requestUrl);

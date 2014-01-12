@@ -11,22 +11,24 @@ package net.enigmablade.riotapi.constants;
  */
 public enum QueueType
 {
-	//Constant			ID		League value			Stat value			Ranked	Name
-	UNKNOWN				(-1,	"UNKNOWN",				"UNKNOWN",			false, 	"Unknown"),
-	NORMAL_5V5_BLIND	(2,		"NORMAL",				"Unranked",			false,	"Normal 5v5 Blind Pick"),
-	NORMAL_5V5_DRAFT	(14,	"",						"Unranked",			false,	"Normal 5v5 Draft Pick"),
-	NORMAL_5V5_COOP		(7,		"BOT",					"Unranked",			false,	"Normal Coop vs AI"),
+	//Constant			ID		Game/League value		Stat value			Ranked	Name
+	NONE				(-1,	"NONE",					"None",				false, 	"None"),
+	NORMAL_5V5_BLIND	(2,		"NORMAL",				"Unranked",			false,	"Normal 5v5 Blind"),
+	NORMAL_5V5_DRAFT	(14,	"NORMAL",				"Unranked",			false,	"Normal 5v5 Draft"),
+	NORMAL_5V5_BOTS		(7,		"BOT",					"Unranked",			false,	"Normal Coop vs AI"),
 	RANKED_5V5_SOLO		(4,		"RANKED_SOLO_5x5",		"RankedSolo5x5",	true,	"Ranked 5v5 Solo"),
-	RANKED_5V5_TEAM		(42,	"RANKED_TEAM_5x5",		"RankedPremade5x5",	true,	"Ranked Team 5v5"),
-	NORMAL_3V3_BLIND	(8,		"", 					"Unranked3x3",		false,	"Normal 3v3 Blind"),
-	NORMAL_3V3_COOP		(52,	"", 					"Unranked3x3",		false,	"Normal 3v3 Coop vs AI"),
-	RANKED_3V3_SOLO		(4,		"",						"RankedPremade3x3",	true,	"Ranked 5v5 Solo"),
+	RANKED_5V5_DUO		(4,		"RANKED_PREMADE0_5x5",	"RankedPremade5x5",	true,	"Ranked 5v5 Duo"),
+	RANKED_5V5_TEAM		(42,	"RANKED_TEAM_5x5",		"RankedTeam5x5",	true,	"Ranked 5v5 Team"),
+	NORMAL_3V3_BLIND	(8,		"NORMAL_3x3",			"Unranked3x3",		false,	"Normal 3v3 Blind"),
+	NORMAL_3V3_BOTS		(52,	"BOT_3x3", 				"Unranked3x3",		false,	"Normal 3v3 Coop vs AI"),
+	RANKED_3V3_SOLO		(4,		"RANKED_PREMADE_3x3",	"RankedPremade3x3",	true,	"Ranked 5v5 Solo"),
 	RANKED_3V3_TEAM		(41,	"RANKED_TEAM_3x3",		"RankedTeam3x3",	true,	"Ranked Team 3v3"),
-	DOMINION_5V5_BLIND	(16,	"", 					"OdinUnranked",		false,	"Dominion 5v5 Blind Pick"),
-	DOMINION_5V5_DRAFT	(17,	"", 					"OdinUnranked",		false,	"Dominion 5v5 Draft Pick"),
-	DOMINION_5V5_COOP	(25,	"",						"OdinUnranked",		false,	"Dominion Coop vs AI"),
+	DOMINION_5V5_BLIND	(16,	"ODIN_UNRANKED", 		"OdinUnranked",		false,	"Dominion 5v5 Blind"),
+	DOMINION_5V5_DRAFT	(17,	"ODIN_UNRANKED", 		"OdinUnranked",		false,	"Dominion 5v5 Draft"),
+	DOMINION_5V5_BOTS	(25,	"ODIN_UNRANKED",		"OdinUnranked",		false,	"Dominion Coop vs AI"),
 	ARAM_5V5			(65,	"ARAM_UNRANKED_5x5",	"AramUnranked5x5",	false,	"ARAM"),
-	ARAM_5V5_COOP		(67,	"",						"AramUnranked5x5",	false,	"ARAM Coop vs AI"),
+	ARAM_5V5_BOTS		(67,	"ARAM_UNRANKED_5x5",	"AramUnranked5x5",	false,	"ARAM Coop vs AI"),
+	ONE_FOR_ALL_5V5		(70,	"ONEFORALL_5x5",		"",					false,	"One-for-all 5v5"),
 	SHOWDOWN_1V1		(72,	"FIRSTBLOOD_1x1",		"Firstblood1x1",	false,	"Snowdown Showdown 1v1"),
 	SHOWDOWN_2V2 		(73,	"FIRSTBLOOD_2x2",		"Firstblood2x2",	false,	"Snowdown Showdown 2v2");
 	
@@ -103,7 +105,7 @@ public enum QueueType
 		for(QueueType q : values())
 			if(q.getId() == id)
 				return q;
-		return UNKNOWN;
+		return NONE;
 	}
 	
 	/**
@@ -112,12 +114,12 @@ public enum QueueType
 	 * @param value The API queue value.
 	 * @return The constant.
 	 */
-	public static QueueType getFromLeagueValue(String value)
+	public static QueueType getFromGameValue(String value)
 	{
 		for(QueueType q : values())
 			if(q.getLeagueValue().equals(value))
 				return q;
-		return UNKNOWN;
+		return NONE;
 	}
 	
 	/**
@@ -131,6 +133,6 @@ public enum QueueType
 		for(QueueType q : values())
 			if(q.getStatsValue().equals(value))
 				return q;
-		return UNKNOWN;
+		return NONE;
 	}
 }
