@@ -32,7 +32,7 @@ public class GameMethod extends Method
 	 * Create a new game method instance.
 	 * @param api The API instance being used.
 	 */
-	public GameMethod(RiotApi api)
+	public GameMethod(RiotAPI api)
 	{
 		super(api, "api/lol", "game", "1.2", new Region[]{NA, EUW, EUNE});
 	}

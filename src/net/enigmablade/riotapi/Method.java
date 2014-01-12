@@ -17,7 +17,7 @@ public abstract class Method
 {
 	private static final String API_URL_BASE = "http://prod.api.pvp.net/";
 	
-	protected RiotApi api;
+	protected RiotAPI api;
 	private boolean skipCache;
 	
 	private String header;
@@ -33,7 +33,7 @@ public abstract class Method
 	 * @param version The version of the method.
 	 * @param supportedRegions The regions supported by the method.
 	 */
-	public Method(RiotApi api, String header, String method, String version, Region[] supportedRegions)
+	public Method(RiotAPI api, String header, String method, String version, Region[] supportedRegions)
 	{
 		this.api = api;
 		skipCache = false;

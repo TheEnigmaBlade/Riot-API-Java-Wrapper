@@ -27,7 +27,7 @@ public class Summoner extends DynamicType
 	 * @param id The summoner ID.
 	 * @param name The summoner name.
 	 */
-	public Summoner(RiotApi api, Region region, long id, String name)
+	public Summoner(RiotAPI api, Region region, long id, String name)
 	{
 		this(api, region, id, name, -1, -1, 0);
 	}
@@ -43,7 +43,7 @@ public class Summoner extends DynamicType
 	 * @param summonerLevel The summoner level.
 	 * @param revisionDate The revision date of the summoner.
 	 */
-	public Summoner(RiotApi api, Region region, long id, String name, int profileIconId, long summonerLevel, long revisionDate)
+	public Summoner(RiotAPI api, Region region, long id, String name, int profileIconId, long summonerLevel, long revisionDate)
 	{
 		super(api);
 		setRegion(region);

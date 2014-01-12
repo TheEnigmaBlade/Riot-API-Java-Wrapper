@@ -4,10 +4,10 @@ import net.enigmablade.riotapi.*;
 
 public abstract class DynamicType
 {
-	protected RiotApi api;
+	protected RiotAPI api;
 	private boolean updated;
 	
-	public DynamicType(RiotApi api)
+	public DynamicType(RiotAPI api)
 	{
 		this.api = api;
 		
