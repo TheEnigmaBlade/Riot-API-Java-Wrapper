@@ -9,13 +9,8 @@ public class SummonerNotFoundException extends RiotApiException
 		super("The summoners were not found in "+region);
 	}
 	
-	public SummonerNotFoundException(Region region, String summoner)
+	public SummonerNotFoundException(Region region, long summonerId)
 	{
-		super("Summoner \""+summoner+"\" was not found in "+region);
-	}
-	
-	public SummonerNotFoundException(Region region, long summoner)
-	{
-		this(region, summoner+"");
+		super("The summoner "+summonerId+" was not found in "+region);
 	}
 }

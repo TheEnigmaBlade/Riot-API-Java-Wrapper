@@ -50,7 +50,7 @@ public class IOUtil
 	}
 	
 	/**
-	 * Encodes a piece of text for a URI by removing all spaces and encoding non-US-ASCII characters.
+	 * Encodes a piece of text for a URI by removing all spaces and encoding non-US-ASCII-alphanumeric characters.
 	 * @param text The text to encode.
 	 * @return The encoded text.
 	 */
@@ -74,6 +74,11 @@ public class IOUtil
 		return text;
 	}
 	
+	/**
+	 * Read a UTF-8 formatted text input stream until a line-termination character. 
+	 * @param in The input stream from which to read.
+	 * @return The String representation of the input stream.
+	 */
 	public static String readInputStreamFully(InputStream in)
 	{
 		try(BufferedReader reader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8"))))

@@ -17,7 +17,7 @@ public enum QueueType
 	NORMAL_5V5_DRAFT	(14,	"NORMAL",				"Unranked",			false,	"Normal 5v5 Draft"),
 	NORMAL_5V5_BOTS		(7,		"BOT",					"Unranked",			false,	"Normal Coop vs AI"),
 	RANKED_5V5_SOLO		(4,		"RANKED_SOLO_5x5",		"RankedSolo5x5",	true,	"Ranked 5v5 Solo"),
-	RANKED_5V5_DUO		(4,		"RANKED_PREMADE0_5x5",	"RankedPremade5x5",	true,	"Ranked 5v5 Duo"),
+	RANKED_5V5_DUO		(4,		"RANKED_PREMADE_5x5",	"RankedPremade5x5",	true,	"Ranked 5v5 Duo"),
 	RANKED_5V5_TEAM		(42,	"RANKED_TEAM_5x5",		"RankedTeam5x5",	true,	"Ranked 5v5 Team"),
 	NORMAL_3V3_BLIND	(8,		"NORMAL_3x3",			"Unranked3x3",		false,	"Normal 3v3 Blind"),
 	NORMAL_3V3_BOTS		(52,	"BOT_3x3", 				"Unranked3x3",		false,	"Normal 3v3 Coop vs AI"),

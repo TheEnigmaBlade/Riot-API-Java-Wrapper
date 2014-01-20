@@ -167,7 +167,7 @@ public class Game implements Comparable<Game>
 	
 	public boolean getGotFirstBlood()
 	{
-		return getIntStat("firstBlood") == 1;
+		return getIntStat("firstBlood") > 0;
 	}
 	
 	public int getGoldLeft()
