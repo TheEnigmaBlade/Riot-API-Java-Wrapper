@@ -2,8 +2,10 @@ package net.enigmablade.riotapi;
 
 import java.io.*;
 import java.net.*;
+import java.security.cert.*;
 import java.util.*;
 import java.util.concurrent.locks.*;
+import javax.net.ssl.*;
 import net.enigmablade.jsonic.*;
 import net.enigmablade.riotapi.util.*;
 
@@ -14,6 +16,9 @@ import net.enigmablade.riotapi.util.*;
  */
 public class Requester
 {
+	public static final String HTTP_PROTOCOL = "https";
+	
+	//Options
 	private String userAgent;
 	
 	//Rate limiting
@@ -217,7 +222,7 @@ public class Requester
 		{
 			//Create and connect
 			URL url = new URL(requestUrl);
-			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+			HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Accept-Charset", "UTF-8");
 			if(userAgent != null)
@@ -229,16 +234,56 @@ public class Requester
 			if(responseCode >= 300)
 				return new Response(null, responseCode);
 			
+			print_https_cert(connection);
+			
 			//Get response
-			InputStream in = connection.getInputStream();
-			String response = IOUtil.readInputStreamFully(in);
-			return new Response(response, responseCode);
+			String responseText;
+			try(InputStream in = connection.getInputStream())
+			{
+				responseText = IOUtil.readInputStreamFully(in);
+			}
+			Response response = new Response(responseText, responseCode);
+			
+			connection.disconnect();
+			
+			return response;
 		}
 		catch(IOException e)
 		{
 			System.err.println("Failed to send request: IOException");
 			e.printStackTrace();
 			return new Response(null, -1);
+		}
+	}
+	
+	private void print_https_cert(HttpsURLConnection con){
+		
+		if(con!=null)
+		{
+			try
+			{
+				System.out.println("Response Code : " + con.getResponseCode());
+				System.out.println("Cipher Suite : " + con.getCipherSuite());
+				System.out.println("\n");
+				
+				Certificate[] certs = con.getServerCertificates();
+				for(Certificate cert : certs)
+				{
+					System.out.println("Cert Type : " + cert.getType());
+					System.out.println("Cert Hash Code : " + cert.hashCode());
+					System.out.println("Cert Public Key Algorithm : "+cert.getPublicKey().getAlgorithm());
+					System.out.println("Cert Public Key Format : "+cert.getPublicKey().getFormat());
+					System.out.println("\n");
+				}
+			}
+			catch (SSLPeerUnverifiedException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
