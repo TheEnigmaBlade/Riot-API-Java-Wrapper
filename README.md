@@ -51,29 +51,16 @@ API Support
 | Method        | Operation                 | Supported |
 | ------------- | ------------------------- | :-------: |
 | champion-v1.1 | /                         | **Yes**   |
-| game-v1.2     | /by-summoner/{id}/recent  | **Yes**   |
+| game-v1.3     | /by-summoner/{id}/recent  | **Yes**   |
 | league-v2.2   | /by-summoner/{id}         | **Yes**   |
 | stats-v1.2    | /by-summoner/{id}/summary | **Yes**   |
 |               | /by-summoner/{id}/ranked  | **Yes**   |
-| summoner-v1.2 | /by-name/{name}           | **Yes**   |
-|               | /{id}                     | **Yes**   |
+| summoner-v1.3 | /by-name/{names}          | **Yes**   |
+|               | /{ids}                    | **Yes**   |
 |               | /{ids}/name               | **Yes**   |
-|               | /{id}/masteries           | **Yes**   |
-|               | /{id}/runes               | **Yes**   |
+|               | /{ids}/masteries          | **Yes**   |
+|               | /{ids}/runes              | **Yes**   |
 | team-v2.2     | /by-summoner/{id}         | **Yes**   |
-
-###Object-oriented Usage
-
-| Type     | Operation               |
-| -------- | ----------------------- |
-| Summoner | getMatchHistory()       |
-|          | getLeagues()            |
-|          | getLeague(QueueType)    |
-|          | getMasteryPages()       |
-|          | getCurrentMasteryPage() |
-|          | getRunePages()          |
-|          | getCurrentRunePage()    |
-| Champion | All accessor methods    |
 
 Legal stuff
 -----------
