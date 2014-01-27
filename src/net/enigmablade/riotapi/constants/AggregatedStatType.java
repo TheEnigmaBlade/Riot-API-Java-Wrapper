@@ -18,7 +18,7 @@ public enum AggregatedStatType
 	AVERAGE_TEAM_OBJECTIVE			("averageTeamObjective",		DOMINION),
 	AVERAGE_TOTAL_PLAYER_SCORE		("averageTotalPlayerScore",		DOMINION),
 	BOT_GAMES_PLAYED				("botGamesPlayed",				CLASSIC, DOMINION, ARAM, TUTORIAL),
-	//UNKNOWN						("killingSpree",				CLASSIC, DOMINION, ARAM, TUTORIAL),
+	KILLING_SPREE					("killingSpree",				CLASSIC, DOMINION, ARAM, TUTORIAL),
 	MAX_ASSISTS						("maxAssists",					DOMINION),
 	MAX_CHAMPIONS_KILLED			("maxChampionsKilled",			CLASSIC, DOMINION, ARAM, TUTORIAL),
 	MAX_COMBAT_PLAYER_SCORE			("maxCombatPlayerScore",		DOMINION),
@@ -61,22 +61,36 @@ public enum AggregatedStatType
 	TOTAL_TURRETS_KILLED			("totalTurretsKilled",			CLASSIC, DOMINION, ARAM, TUTORIAL),
 	TOTAL_UNREAL_KILLS				("totalUnrealKills",			CLASSIC, DOMINION, ARAM, TUTORIAL);
 	
-	//--//
+	//---//
 	
 	private String value;
 	private List<GameMode> supportedGameModes;
 	
+	/**
+	 * Create a new aggregated stat type.
+	 * @param value The stat type's value for use with the API.
+	 * @param supportedGameModes A list of supported game modes.
+	 */
 	private AggregatedStatType(String value, GameMode... supportedGameModes)
 	{
 		this.value = value;
 		this.supportedGameModes = Arrays.asList(supportedGameModes);
 	}
 	
+	/**
+	 * Returns the string value of the stat type for use with the API.
+	 * @return The type value.
+	 */
 	public String getValue()
 	{
 		return value;
 	}
 	
+	/**
+	 * Returns whether or not the aggregated stat type is supported by the given game mode.
+	 * @param mode The game mode.
+	 * @return <code>true</code> if the game mode is supported, otherwise <code>false</code>.
+	 */
 	public boolean isGameModeSupported(GameMode mode)
 	{
 		return supportedGameModes.contains(mode);
@@ -84,6 +98,11 @@ public enum AggregatedStatType
 	
 	//Utility methods
 	
+	/**
+	 * Returns a list of aggregated stat types that are supported by the given game mode.
+	 * @param mode The game mode.
+	 * @return A list of stat types.
+	 */
 	public static List<AggregatedStatType> getSupportedTypes(GameMode mode)
 	{
 		List<AggregatedStatType> types = new ArrayList<>();

@@ -1,12 +1,12 @@
 package net.enigmablade.riotapi.constants;
 
-public enum LeagueConstants
+public enum LeagueTier
 {
 	TIER_CHALLENGER, TIER_DIAMOND, TIER_PLATINUM, TIER_GOLD, TIER_SILVER, TIER_BRONZE,
 	RANK_V, RANK_IV, RANK_III, RANK_II, RANK_I, 
 	UNKNOWN;
 	
-	public static LeagueConstants stringToConstant(String value)
+	public static LeagueTier stringToConstant(String value)
 	{
 		switch(value.toLowerCase())
 		{

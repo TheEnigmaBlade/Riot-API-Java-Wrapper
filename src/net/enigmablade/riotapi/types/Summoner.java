@@ -54,7 +54,7 @@ public class Summoner extends DynamicType
 		setRevisionDate(revisionDate);
 		
 		if(id >= 0 && name != null)
-			setDynamicUpdated();
+			setTypeUpdated();
 	}
 	
 	//Convenience methods
@@ -66,9 +66,9 @@ public class Summoner extends DynamicType
 	 */
 	private void verifyConvenienceState() throws RiotApiException
 	{
-		if(!hasDynamicUpdated())
+		if(!hasTypeUpdated())
 		{
-			setDynamicUpdated();
+			setTypeUpdated();
 			api.getSummonerMethod().fillSummoner(this);
 		}
 	}
@@ -92,7 +92,7 @@ public class Summoner extends DynamicType
 	 * @throws RegionNotSupportedException If the summoner's region is not supported.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
-	public Map<String, League> getLeagues() throws RiotApiException
+	public List<League> getLeagues() throws RiotApiException
 	{
 		verifyConvenienceState();
 		return api.getLeagueMethod().getLeagues(region, id);
@@ -107,8 +107,8 @@ public class Summoner extends DynamicType
 	 */
 	public League getLeague(QueueType queue) throws RiotApiException
 	{
-		Map<String, League> leagues = getLeagues();
-		for(League league : leagues.values())
+		List<League> leagues = getLeagues();
+		for(League league : leagues)
 			if(league.getQueueType() == queue)
 				return league;
 		return null;

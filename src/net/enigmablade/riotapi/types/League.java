@@ -36,10 +36,10 @@ public class League
 				
 				public static Progress charToProgress(char c)
 				{
-					switch(c)
+					switch(Character.toLowerCase(c))
 					{
-						case 'W': return WON;
-						case 'L': return LOST;
+						case 'w': return WON;
+						case 'l': return LOST;
 						default: return NOT_PLAYED;
 					}
 				}
@@ -90,7 +90,7 @@ public class League
 			}
 		}
 		
-		private LeagueConstants tier, rank;
+		private LeagueTier tier, rank;
 		private QueueType queueType;
 		private String leagueName;
 		
@@ -103,8 +103,8 @@ public class League
 		
 		public Entry(String tier, String rank, String queueType, String leagueName, String string, String playerOrTeamName, boolean isHotStreak, boolean isFreshBlood, boolean isVeteran, boolean isInactive, int wins, int leaguePoints, Series series, long lastPlayed)
 		{
-			this.tier = LeagueConstants.stringToConstant(tier);
-			this.rank = LeagueConstants.stringToConstant(rank);
+			this.tier = LeagueTier.stringToConstant(tier);
+			this.rank = LeagueTier.stringToConstant(rank);
 			this.queueType = QueueType.getFromGameValue(queueType);
 			this.leagueName = leagueName;
 			this.playerOrTeamId = string;
@@ -121,12 +121,17 @@ public class League
 		
 		//Accessor methods
 		
-		public LeagueConstants getTier()
+		/**
+		 * Returns the league's tier:
+		 * TIER_CHALLENGER, TIER_DIAMOND, TIER_PLATINUM, TIER_GOLD, TIER_SILVER, or TIER_BRONZE.
+		 * @return The league's tier.
+		 */
+		public LeagueTier getTier()
 		{
 			return tier;
 		}
 		
-		public LeagueConstants getRank()
+		public LeagueTier getRank()
 		{
 			return rank;
 		}
@@ -192,34 +197,55 @@ public class League
 		}
 	}
 	
-	private LeagueConstants tier;
 	private String name;
+	private String participantId;
 	private QueueType queueType;
+	private LeagueTier tier;
 	private List<Entry> entries;
 	
-	public League(String tier, String name, String queueType, List<Entry> entries)
+	public League(String name, String participantId,  String queueType, String tier, List<Entry> entries)
 	{
-		this.tier = LeagueConstants.stringToConstant(tier);
 		this.name = name;
+		this.participantId = participantId;
 		this.queueType = QueueType.getFromGameValue(queueType);
+		this.tier = LeagueTier.stringToConstant(tier);
 		this.entries = entries;
 	}
 	
 	//Accessor methods
 	
-	public LeagueConstants getTier()
-	{
-		return tier;
-	}
-	
+	/**
+	 * Returns the name of the league.
+	 * @return The league's name.
+	 */
 	public String getName()
 	{
 		return name;
 	}
 	
+	/**
+	 * Returns the ID of the participant in the league.
+	 * For solo queue leagues, it's a summoner ID as a string.
+	 * For team leagues, it's a team ID. 
+	 * @return The participant ID. 
+	 */
+	public String getParticipantId()
+	{
+		return participantId;
+	}
+	
+	/**
+	 * Returns the queue 
+	 * @return
+	 */
 	public QueueType getQueueType()
 	{
 		return queueType;
+	}
+	
+	public LeagueTier getTier()
+	{
+		return tier;
 	}
 	
 	public List<Entry> getEntries()

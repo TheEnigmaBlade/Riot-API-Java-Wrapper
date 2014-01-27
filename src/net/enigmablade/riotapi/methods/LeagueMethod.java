@@ -13,7 +13,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The league method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 2.2</li>
+ * 		<li><i>Version</i>: 2.3</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE, BR, TR</li>
  * 	</ul>
  * </p>
@@ -22,7 +22,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * 		<li>Get all leagues and team leagues associated with a summoner ID</li>
  * 	</ol>
  * </p>
- * @see <a href="https://developer.riotgames.com/api/methods#!/293">Developer site</a>
+ * @see <a href="https://developer.riotgames.com/api/methods#!/369">Developer site</a>
  * 
  * @author Enigma
  */
@@ -34,7 +34,7 @@ public class LeagueMethod extends Method
 	 */
 	public LeagueMethod(RiotApi api)
 	{
-		super(api, "api/lol", "league", "2.2", new Region[]{NA, EUW, EUNE, BR, TR});
+		super(api, "api/lol", "league", "2.3", new Region[]{NA, EUW, EUNE, BR, TR});
 	}
 	
 	//API-defined operation methods
@@ -45,10 +45,10 @@ public class LeagueMethod extends Method
 	 * @param summonerId The ID of the summoner.
 	 * @return A list of recent games (max 10).
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
-	 * @throws SummonerNotFoundException If the given summoner was not found, or if the summoner is not in any leagues.
+	 * @throws LeagueNotFoundException If the given summoner is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
-	public Map<String, League> getLeagues(Region region, long summonerId) throws RiotApiException
+	public List<League> getLeagues(Region region, long summonerId) throws RiotApiException
 	{
 		Response response = getMethodResult(region,
 				"by-summoner/{summonerId}",
@@ -57,60 +57,62 @@ public class LeagueMethod extends Method
 		//Check errors
 		switch(response.getCode())
 		{
-			case 401: throw new RiotApiException("401: Unauthorized");
-			case 404: throw new SummonerNotFoundException(region);
+			case 404: throw new LeagueNotFoundException(region, summonerId);
 		}
 		
 		//Parse response
-		try
-		{
-			//Convert a map of League objects
-			JsonObject leaguesObject = (JsonObject)response.getValue();
-			Map<String, League> leagues = new HashMap<>();
-			
-			//Convert to list of leagues
-			for(String leagueKey : leaguesObject.keySet())
-			{
-				JsonObject leagueObject = leaguesObject.getObject(leagueKey);
-				
-				//Convert league entries list
-				JsonArray entriesArray = leagueObject.getArray("entries");
-				List<League.Entry> entries = new ArrayList<>(entriesArray.size());
-				for(int l = 0; l < entriesArray.size(); l++)
-				{
-					JsonObject entryObject = entriesArray.getObject(l);
-					
-					//Convert league entry series if exists
-					League.Entry.Series series = convertMiniSeries(entryObject.getObject("miniSeries"));
-					
-					//Create entry
-					League.Entry entry = new League.Entry(entryObject.getString("tier"), entryObject.getString("rank"),	entryObject.getString("queueType"), entryObject.getString("leagueName"),
-							entryObject.getString("playerOrTeamId"), entryObject.getString("playerOrTeamName"),
-							entryObject.getBoolean("isHotStreak"), entryObject.getBoolean("isFreshBlood"), entryObject.getBoolean("isVeteran"), entryObject.getBoolean("isInactive"),
-							entryObject.getInt("wins"), entryObject.getInt("leaguePoints"), series,
-							entryObject.getLong("lastPlayed"));
-					entries.add(entry);
-				}
-				
-				//Create league
-				League league = new League(leagueObject.getString("tier"), leagueObject.getString("name"), leagueObject.getString("queue"), entries);
-				leagues.put(leagueKey, league);
-			}
-			
-			return leagues;
-		}
-		catch(JsonException e)
-		{
-			//Shouldn't happen since the JSON is already parsed
-			System.err.println("JSON parse error");
-			e.printStackTrace();
-			return null;
-		}
+		return convertLeagues((JsonArray)response.getValue());
 	}
 	
 	//Private converter methods
 	
-	private League.Entry.Series convertMiniSeries(JsonObject seriesObject) throws JsonException
+	/**
+	 * Converts a JSON array of leagues to a list of league objects.
+	 * @param leaguesArray The JSON array to be converted.
+	 * @return The converted list of leagues.
+	 */
+	private List<League> convertLeagues(JsonArray leaguesArray)
+	{
+		List<League> leagues = new ArrayList<>(leaguesArray.size());
+		
+		//Convert to list of leagues
+		for(int n = 0; n < leaguesArray.size(); n++)
+		{
+			JsonObject leagueObject = leaguesArray.getObject(n);
+			
+			//Convert league entries list
+			JsonArray entriesArray = leagueObject.getArray("entries");
+			List<League.Entry> entries = new ArrayList<>(entriesArray.size());
+			for(int l = 0; l < entriesArray.size(); l++)
+			{
+				JsonObject entryObject = entriesArray.getObject(l);
+				
+				//Convert league entry series if exists
+				League.Entry.Series series = convertMiniSeries(entryObject.getObject("miniSeries"));
+				
+				//Create entry
+				League.Entry entry = new League.Entry(entryObject.getString("tier"), entryObject.getString("rank"),	entryObject.getString("queueType"), entryObject.getString("leagueName"),
+						entryObject.getString("playerOrTeamId"), entryObject.getString("playerOrTeamName"),
+						entryObject.getBoolean("isHotStreak"), entryObject.getBoolean("isFreshBlood"), entryObject.getBoolean("isVeteran"), entryObject.getBoolean("isInactive"),
+						entryObject.getInt("wins"), entryObject.getInt("leaguePoints"), series,
+						entryObject.getLong("lastPlayed"));
+				entries.add(entry);
+			}
+			
+			//Create league
+			League league = new League(leagueObject.getString("name"), leagueObject.getString("participantId"), leagueObject.getString("queue"), leagueObject.getString("tier"), entries);
+			leagues.add(league);
+		}
+		
+		return leagues;
+	}
+	
+	/**
+	 * Converts a JSON series object to a series object.
+	 * @param seriesObject The JSON series object.
+	 * @return The converted series object.
+	 */
+	private League.Entry.Series convertMiniSeries(JsonObject seriesObject)
 	{
 		League.Entry.Series series = null;
 		if(seriesObject != null)

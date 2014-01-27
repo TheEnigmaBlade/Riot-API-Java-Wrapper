@@ -24,7 +24,9 @@ public class PlayerStats
 		this.losses = losses;
 		this.stats = stats;
 	}
-
+	
+	//Accessor methods
+	
 	public QueueType getSummaryType()
 	{
 		return summaryType;

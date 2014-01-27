@@ -48,11 +48,13 @@ API Support
 
 ###API Specifications
 
+[Full method descriptions](http://developer.riotgames.com/api/methods)
+
 | Method        | Operation                 | Supported |
 | ------------- | ------------------------- | :-------: |
 | champion-v1.1 | /                         | **Yes**   |
 | game-v1.3     | /by-summoner/{id}/recent  | **Yes**   |
-| league-v2.2   | /by-summoner/{id}         | **Yes**   |
+| league-v2.3   | /by-summoner/{id}         | **Yes**   |
 | stats-v1.2    | /by-summoner/{id}/summary | **Yes**   |
 |               | /by-summoner/{id}/ranked  | **Yes**   |
 | summoner-v1.3 | /by-name/{names}          | **Yes**   |

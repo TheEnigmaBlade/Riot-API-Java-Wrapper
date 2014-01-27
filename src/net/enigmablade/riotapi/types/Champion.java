@@ -44,7 +44,7 @@ public class Champion extends DynamicType
 		this.rankedEnabled = rankedEnabled;
 		
 		if(attackRank >= 0)
-			setDynamicUpdated();
+			setTypeUpdated();
 	}
 	
 	//Dynamic methods
@@ -56,9 +56,9 @@ public class Champion extends DynamicType
 	 */
 	private void verifyDynamicState() throws RiotApiException
 	{
-		if(!hasDynamicUpdated())
+		if(!hasTypeUpdated())
 		{
-			setDynamicUpdated();
+			setTypeUpdated();
 			api.getChampionMethod().fillChampion(this, region);
 		}
 	}

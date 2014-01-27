@@ -49,73 +49,132 @@ public class Game implements Comparable<Game>
 	
 	//Accessor methods
 	
+	/**
+	 * Returns the ID of the champion played by the target summoner of the request.
+	 * @return The played champion ID.
+	 */
 	public int getChampionId()
 	{
 		return championId;
 	}
 	
-	public Date getPlayedDate()
-	{
-		return playedDate;
-	}
-	
-	public List<Player> getPlayers()
-	{
-		return players;
-	}
-	
-	public long getGameId()
-	{
-		return gameId;
-	}
-	
-	public GameMode getGameMode()
-	{
-		return gameMode;
-	}
-	
-	public GameType getGameType()
-	{
-		return gameType;
-	}
-	
-	public QueueType getGameSubType()
-	{
-		return gameSubType;
-	}
-	
-	public MapType getMapType()
-	{
-		return map;
-	}
-	
-	public boolean isInvalid()
-	{
-		return invalid;
-	}
-	
+	/**
+	 * Returns the level of the target summoner of the request.
+	 * @return The summoner level.
+	 */
 	public int getLevel()
 	{
 		return level;
 	}
 	
+	/**
+	 * Returns the first summoner spell used by the target summoner of the request.
+	 * @return The first summoner spell.
+	 */
 	public int getSpell1()
 	{
 		return spell1;
 	}
 	
+	/**
+	 * Returns the second summoner spell used by the target summmoner of the request.
+	 * @return The second summoner spell.
+	 */
 	public int getSpell2()
 	{
 		return spell2;
 	}
 	
+	/**
+	 * Returns the ID of the team on which the target summoner of the request played.
+	 * @return The summoner's team ID.
+	 */
 	public int getTeamId()
 	{
 		return teamId;
 	}
 	
+	/**
+	 * Returns the date on which the game was played.
+	 * @return The played date.
+	 */
+	public Date getPlayedDate()
+	{
+		return playedDate;
+	}
+	
+	/**
+	 * Returns a list of players who participated in the game.
+	 * @return A list of players.
+	 */
+	public List<Player> getPlayers()
+	{
+		return players;
+	}
+	
+	/**
+	 * Returns the game's ID.
+	 * @return The game's ID.
+	 */
+	public long getGameId()
+	{
+		return gameId;
+	}
+	
+	/**
+	 * Returns the game's mode.
+	 * @return The game's mode.
+	 */
+	public GameMode getGameMode()
+	{
+		return gameMode;
+	}
+	
+	/**
+	 * Returns the game's type.
+	 * @return The game's type.
+	 */
+	public GameType getGameType()
+	{
+		return gameType;
+	}
+	
+	/**
+	 * Returns the game's sub-type, which is normally represented as a queue type.
+	 * @return The game's sub-type.
+	 */
+	public QueueType getGameSubType()
+	{
+		return gameSubType;
+	}
+	
+	/**
+	 * Returns the map on which the game was played.
+	 * @return The game's map.
+	 */
+	public MapType getMapType()
+	{
+		return map;
+	}
+	
+	/**
+	 * Returns whether or not the game is invalid (not sure what it means).
+	 * @return <code>true</code> if the game is invalid, otherwise <code>false</code>.
+	 */
+	public boolean isInvalid()
+	{
+		return invalid;
+	}
+	
 	//Stat accessor methods
 	
+	/**
+	 * Returns a boolean represented by the given key.
+	 * If the value doesn't exist, returns <code>false</code>.
+	 * If the value exists, assumes the value is a valid boolean.
+	 * @param key The stat key.
+	 * @return The boolean value.
+	 */
 	private boolean getBooleanStat(String key)
 	{
 		if(stats.containsKey(key))
@@ -123,6 +182,13 @@ public class Game implements Comparable<Game>
 		return false;
 	}
 	
+	/**
+	 * Returns an integer represented by the given key.
+	 * If the value doesn't exist, returns <code>0</code>.
+	 * If the value exists, assumes the value is a valid integer.
+	 * @param key The stat key.
+	 * @return The integer value.
+	 */
 	private int getIntStat(String key)
 	{
 		if(stats.containsKey(key))
