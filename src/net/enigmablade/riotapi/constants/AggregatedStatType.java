@@ -4,6 +4,11 @@ import java.util.*;
 
 import static net.enigmablade.riotapi.constants.GameMode.*;
 
+/**
+ * Constants used to retrieve information on aggregated stats.
+ * 
+ * @author Enigma
+ */
 public enum AggregatedStatType
 {
 	AVERAGE_ASSISTS					("averageAssists",				DOMINION),
@@ -63,8 +68,12 @@ public enum AggregatedStatType
 	
 	//---//
 	
+	//Data
+	
 	private String value;
 	private List<GameMode> supportedGameModes;
+	
+	//Constructors
 	
 	/**
 	 * Create a new aggregated stat type.
@@ -76,6 +85,8 @@ public enum AggregatedStatType
 		this.value = value;
 		this.supportedGameModes = Arrays.asList(supportedGameModes);
 	}
+	
+	//Accessor methods
 	
 	/**
 	 * Returns the string value of the stat type for use with the API.

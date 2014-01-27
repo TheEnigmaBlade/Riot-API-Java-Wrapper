@@ -34,11 +34,24 @@ public enum QueueType
 	
 	//---//
 	
+	//Data
+	
 	private int id;
 	private String leagueValue, statsValue;
 	private boolean ranked, team;
 	private String name;
 	
+	//Constructors
+	
+	/**
+	 * Create a new queue type constant with the given information. 
+	 * @param id The queue ID.
+	 * @param leagueValue The value used by game and league methods.
+	 * @param statValue The value used by stat methods.
+	 * @param ranked Whether or not the queue is ranked.
+	 * @param team Whether or not the queue is team-based.
+	 * @param name The queue name.
+	 */
 	private QueueType(int id, String leagueValue, String statValue, boolean ranked, boolean team, String name)
 	{
 		this.id = id;
@@ -48,6 +61,8 @@ public enum QueueType
 		this.ranked = ranked;
 		this.team = team;
 	}
+	
+	//Accessor methods
 	
 	/**
 	 * Returns the queue ID to be used in API calls.
@@ -88,7 +103,7 @@ public enum QueueType
 	/**
 	 * Returns whether or not the queue type is team-based, i.e. you queue as a team rather than a group of players.
 	 * Examples include RANKED_TEAM_5x5 and RANKED_TEAM_3x3.
-	 * @return
+	 * @return Returns <code>true</code> if the queue is team-based, otherwise <code>false</code>.
 	 */
 	public boolean isTeamBased()
 	{
@@ -104,7 +119,7 @@ public enum QueueType
 		return name;
 	}
 	
-	//Helpers
+	//Utility methods
 	
 	/**
 	 * Returns the constant from the given API queue ID.

@@ -8,6 +8,7 @@ package net.enigmablade.riotapi.constants;
  */
 public enum GameMode
 {
+	//Constant	Value			Name
 	UNKNOWN		("UNKNOWN",		"Unknown"),
 	CLASSIC		("CLASSIC",		"Classic"),
 	DOMINION	("ODIN",		"Dominion"),
@@ -18,14 +19,20 @@ public enum GameMode
 	
 	//---//
 	
+	//Data
+	
 	private String value;
 	private String name;
+	
+	//Constructors
 	
 	private GameMode(String value, String name)
 	{
 		this.value = value;
 		this.name = name;
 	}
+	
+	//Accessor methods
 	
 	/**
 	 * Returns the value of the constant for use in API calls.
@@ -45,7 +52,7 @@ public enum GameMode
 		return name;
 	}
 	
-	//Helpers
+	//Utility methods
 	
 	/**
 	 * Returns the constant from the given API value.

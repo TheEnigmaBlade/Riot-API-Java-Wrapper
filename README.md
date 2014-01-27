@@ -50,19 +50,19 @@ API Support
 
 [Full method descriptions](http://developer.riotgames.com/api/methods)
 
-| Method        | Operation                 | Supported |
-| ------------- | ------------------------- | :-------: |
-| champion-v1.1 | /                         | **Yes**   |
-| game-v1.3     | /by-summoner/{id}/recent  | **Yes**   |
-| league-v2.3   | /by-summoner/{id}         | **Yes**   |
-| stats-v1.2    | /by-summoner/{id}/summary | **Yes**   |
-|               | /by-summoner/{id}/ranked  | **Yes**   |
-| summoner-v1.3 | /by-name/{names}          | **Yes**   |
-|               | /{ids}                    | **Yes**   |
-|               | /{ids}/name               | **Yes**   |
-|               | /{ids}/masteries          | **Yes**   |
-|               | /{ids}/runes              | **Yes**   |
-| team-v2.2     | /by-summoner/{id}         | **Yes**   |
+| Method        | Operation                          | Supported |
+| ------------- | ---------------------------------- | :-------: |
+| champion-v1.1 | /                                  | **Yes**   |
+| game-v1.3     | /by-summoner/{summoner_id}/recent  | **Yes**   |
+| league-v2.3   | /by-summoner/{summoner_id}         | **Yes**   |
+| stats-v1.2    | /by-summoner/{summoner_id}/summary | **Yes**   |
+|               | /by-summoner/{summoner_id}/ranked  | **Yes**   |
+| summoner-v1.3 | /by-name/{summoner_names}          | **Yes**   |
+|               | /{summoner_ids}                    | **Yes**   |
+|               | /{summoner_ids}/name               | **Yes**   |
+|               | /{summoner_ids}/masteries          | **Yes**   |
+|               | /{summoner_ids}/runes              | **Yes**   |
+| team-v2.2     | /by-summoner/{summoner_id}         | **Yes**   |
 
 Legal stuff
 -----------

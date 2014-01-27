@@ -1,11 +1,24 @@
 package net.enigmablade.riotapi.constants;
 
+/**
+ * Constants for a league's tier and rank.
+ * 
+ * @author Enigma
+ */
 public enum LeagueTier
 {
 	TIER_CHALLENGER, TIER_DIAMOND, TIER_PLATINUM, TIER_GOLD, TIER_SILVER, TIER_BRONZE,
 	RANK_V, RANK_IV, RANK_III, RANK_II, RANK_I, 
 	UNKNOWN;
 	
+	//Utility methods
+	
+	/**
+	 * Returns the league constant representing the given value.
+	 * For example, "diamond" would return TIER_DIAMOND and "iii" would return RANK_III.
+	 * @param value The value.
+	 * @return The corresponding league constant.
+	 */
 	public static LeagueTier stringToConstant(String value)
 	{
 		switch(value.toLowerCase())

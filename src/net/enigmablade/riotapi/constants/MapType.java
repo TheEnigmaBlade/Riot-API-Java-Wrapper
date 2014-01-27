@@ -8,25 +8,37 @@ package net.enigmablade.riotapi.constants;
  */
 public enum MapType
 {
-	UNKNOWN					(-1, "Unknown"),
-	SUMMONERS_RIFT			(1,	 "Summoner's Rift"),
-	SUMMONERS_RIFT_AUTUMN	(2,	 "Summoner's Rift Autumn"),
-	TWISTED_TREELINE		(10, "Twisted Treeline"),
-	TWISTED_TREELINE_OLD	(4,	 "Original Twisted Treeline"),
-	CRYSTAL_SCAR			(8,	 "Crystal Scar"),
-	HOWLING_ABYSS			(12, "Howling Abyss"),
-	PROVING_GROUNDS			(3,	 "Proving Grounds");
+	//Constant				ID		Name
+	UNKNOWN					(-1,	"Unknown"),
+	SUMMONERS_RIFT			(1,		"Summoner's Rift"),
+	SUMMONERS_RIFT_AUTUMN	(2,		"Summoner's Rift Autumn"),
+	TWISTED_TREELINE		(10,	"Twisted Treeline"),
+	TWISTED_TREELINE_OLD	(4,		"Original Twisted Treeline"),
+	CRYSTAL_SCAR			(8,		"Crystal Scar"),
+	HOWLING_ABYSS			(12,	"Howling Abyss"),
+	PROVING_GROUNDS			(3,		"Proving Grounds");
 	
 	//---//
+	
+	//Data
 	
 	private int id;
 	private String name;
 	
+	//Constructors
+	
+	/**
+	 * Creates a new map type constant with the given map ID and map name.
+	 * @param id The map ID.
+	 * @param name The map name.
+	 */
 	private MapType(int id, String name)
 	{
 		this.id = id;
 		this.name = name;
 	}
+	
+	//Accessor methods
 	
 	/**
 	 * Returns the map ID to be used in API calls.
@@ -46,7 +58,7 @@ public enum MapType
 		return name;
 	}
 	
-	//Helpers
+	//Utility methods
 	
 	/**
 	 * Returns the constant from the given API map ID.

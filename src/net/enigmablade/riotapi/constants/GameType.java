@@ -8,6 +8,7 @@ package net.enigmablade.riotapi.constants;
  */
 public enum GameType
 {
+	//Constant	Value
 	UNKNOWN		("UNKNOWN"),
 	CUSTOM		("CUSTOM_GAME"),
 	MATCHED		("MATCHED_GAME"),
@@ -16,12 +17,22 @@ public enum GameType
 	
 	//---//
 	
+	//Data
+	
 	private String value;
 	
+	//Constructors
+	
+	/**
+	 * Create a new game type with the given value.
+	 * @param value The value.
+	 */
 	private GameType(String value)
 	{
 		this.value = value;
 	}
+	
+	//Accessor methods
 	
 	/**
 	 * Return the value of the constant for use in API calls.
@@ -32,7 +43,7 @@ public enum GameType
 		return value;
 	}
 	
-	//Helpers
+	//Utility methods
 	
 	/**
 	 * Returns the constant from the given API value.

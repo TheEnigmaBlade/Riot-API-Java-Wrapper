@@ -7,24 +7,38 @@ package net.enigmablade.riotapi.constants;
  */
 public enum Region
 {
-	NA("na"),
-	EUW("euw"),
+	NA	("na"),
+	EUW	("euw"),
 	EUNE("eune"),
-	BR("br"),
-	TR("tr"),
-	OCE("oce");
+	BR	("br"),
+	TR	("tr"),
+	OCE	("oce");
 	
 	//---//
 	
-	private String apiUse;
+	//Data
 	
-	private Region(String apiUse)
+	private String value;
+	
+	//Constructors
+	
+	/**
+	 * Creates a new region with the given API value.
+	 * @param value The API value.
+	 */
+	private Region(String value)
 	{
-		this.apiUse = apiUse;
+		this.value = value;
 	}
 	
-	public String getApiUsage()
+	//Accessor methods
+	
+	/**
+	 * Returns the value of the region for use with the API.
+	 * @return The API value.
+	 */
+	public String getValue()
 	{
-		return apiUse;
+		return value;
 	}
 }

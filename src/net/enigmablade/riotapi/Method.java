@@ -166,7 +166,7 @@ public abstract class Method
 		StringBuilder s = new StringBuilder(Requester.HTTP_PROTOCOL).append("://");
 		s.append(API_LOCATION).append('/');					//Domain
 		s.append(header).append('/');						//Header
-		s.append(region.getApiUsage());						//Region
+		s.append(region.getValue());						//Region
 		s.append("/v").append(version).append('/');			//Version
 		s.append(method);									//Method
 		if(operation != null)								//Operation (optional)
