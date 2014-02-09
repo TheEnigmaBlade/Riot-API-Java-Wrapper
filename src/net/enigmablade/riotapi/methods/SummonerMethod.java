@@ -39,7 +39,7 @@ public class SummonerMethod extends Method
 	 */
 	public SummonerMethod(RiotApi api)
 	{
-		super(api, "api/lol", "summoner", "1.3", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "summoner", "1.3", new Region[]{NA, EUW, EUNE, BR, LAN, LAS});
 	}
 	
 	//API-defined operation methods

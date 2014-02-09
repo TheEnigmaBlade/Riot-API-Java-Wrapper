@@ -20,7 +20,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>Operation information:
  * 	<ol>
  * 		<li>Get all champions</li>
- * 		<li>Get all free champions</i>
+ * 		<li>Get all free champions</li>
  * 	</ol>
  * </p>
  * @see <a href="http://developer.riotgames.com/api/methods#!/291">Developer site</a>
@@ -35,7 +35,7 @@ public class ChampionMethod extends Method
 	 */
 	public ChampionMethod(RiotApi api)
 	{
-		super(api, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE, BR, LAN, LAS});
 	}
 	
 	//API-defined operation methods

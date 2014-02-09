@@ -10,9 +10,13 @@ public enum Region
 	NA	("na"),
 	EUW	("euw"),
 	EUNE("eune"),
+	LAN	("lan"),
+	LAS	("las"),
+	OCE	("oce"),
 	BR	("br"),
 	TR	("tr"),
-	OCE	("oce");
+	RU	("ru"),
+	KR	("kr");
 	
 	//---//
 	

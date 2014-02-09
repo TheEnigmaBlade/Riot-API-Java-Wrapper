@@ -2,7 +2,6 @@ package net.enigmablade.riotapi;
 
 import java.io.*;
 import java.net.*;
-import java.security.cert.*;
 import java.util.*;
 import java.util.concurrent.locks.*;
 import javax.net.ssl.*;

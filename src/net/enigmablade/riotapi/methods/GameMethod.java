@@ -34,7 +34,7 @@ public class GameMethod extends Method
 	 */
 	public GameMethod(RiotApi api)
 	{
-		super(api, "api/lol", "game", "1.3", new Region[]{NA, EUW, EUNE});
+		super(api, "api/lol", "game", "1.3", new Region[]{NA, EUW, EUNE, BR, LAN, LAS});
 	}
 	
 	//API-defined operation methods
@@ -79,45 +79,35 @@ public class GameMethod extends Method
 	
 	private List<Game> convertRecentGames(JsonObject recentGamesObject, Region region, long summonerId) throws RiotApiException
 	{
-		try
+		//Check summoner IDs to make sure the server isn't crazy
+		long rootSummonerId = recentGamesObject.getLong("summonerId");
+		if(rootSummonerId != summonerId)
+			throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
+		
+		//Convert game list
+		JsonArray gamesArray = recentGamesObject.getArray("games");
+		if(gamesArray == null)								//Might be null if no games have been played
+			return new ArrayList<>(0);
+		
+		List<Game> games = new ArrayList<>(gamesArray.size());
+		for(int g = 0; g < gamesArray.size(); g++)
 		{
-			//Check summoner IDs to make sure the server isn't crazy
-			long rootSummonerId = recentGamesObject.getLong("summonerId");
-			if(rootSummonerId != summonerId)
-				throw new RiotApiException("Server returned invalid data: summoner ID mismatch");
+			JsonObject gameObject = gamesArray.getObject(g);
 			
-			//Convert game list
-			JsonArray gamesArray = recentGamesObject.getArray("games");
-			if(gamesArray == null)								//Might be null if no games have been played
-				return new ArrayList<>(0);
+			//Convert player list
+			List<Player> players = convertPlayerList(gameObject.getArray("fellowPlayers"), region);
 			
-			List<Game> games = new ArrayList<>(gamesArray.size());
-			for(int g = 0; g < gamesArray.size(); g++)
-			{
-				JsonObject gameObject = gamesArray.getObject(g);
-				
-				//Convert player list
-				List<Player> players = convertPlayerList(gameObject.getArray("fellowPlayers"), region);
-				
-				//Convert statistic list
-				Map<String, Object> stats = convertGameStats(gameObject.getObject("stats"));
-				
-				//Create game object
-				Game game = new Game(gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
-						gameObject.getLong("createDate"), gameObject.getBoolean("invalid"),
-						gameObject.getLong("gameId"), gameObject.getString("gameMode"), gameObject.getString("gameType"), gameObject.getString("subType"), gameObject.getInt("mapId"),
-						gameObject.getInt("teamId"), players, stats);
-				games.add(game);
-			}
-			return games;
+			//Convert statistic list
+			Map<String, Object> stats = convertGameStats(gameObject.getObject("stats"));
+			
+			//Create game object
+			Game game = new Game(gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
+					gameObject.getLong("createDate"), gameObject.getBoolean("invalid"),
+					gameObject.getLong("gameId"), gameObject.getString("gameMode"), gameObject.getString("gameType"), gameObject.getString("subType"), gameObject.getInt("mapId"),
+					gameObject.getInt("teamId"), players, stats);
+			games.add(game);
 		}
-		catch(JsonException e)
-		{
-			//Shouldn't happen since the JSON is already parsed
-			System.err.println("JSON parse error");
-			e.printStackTrace();
-			return null;
-		}
+		return games;
 	}
 	
 	/**

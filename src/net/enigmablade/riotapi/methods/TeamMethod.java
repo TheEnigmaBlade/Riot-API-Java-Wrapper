@@ -62,44 +62,33 @@ public class TeamMethod extends Method
 		}
 		
 		//Parse response
-		try
+		JsonArray teamsArray = (JsonArray)response.getValue();
+		List<Team> teams = new ArrayList<>(teamsArray.size());
+		for(int t = 0; t < teamsArray.size(); t++)
 		{
-			//Convert to a list of teams
-			JsonArray teamsArray = (JsonArray)response.getValue();
-			List<Team> teams = new ArrayList<>(teamsArray.size());
-			for(int t = 0; t < teamsArray.size(); t++)
-			{
-				JsonObject teamObject = teamsArray.getObject(t);
-				
-				//Get team ID
-				String id = teamObject.getString("fullId");
-				//Convert stats
-				Map<QueueType, Team.QueueStat> stats = parseStats(teamObject.getObject("teamStatSummary"));
-				//Convert roster
-				Team.Roster roster = parseRoster(teamObject.getObject("roster"), region);
-				//Convert match history
-				List<Team.Match> matchHistory = parseMatchHistory(teamObject.getArray("matchHistory"));
-				//Convert MOTD
-				Team.MessageOfTheDay motd = parseMotd(teamObject.getObject("messageOfDay"));
-				
-				//Create league
-				Team team = new Team(id, teamObject.getString("name"), teamObject.getString("tag"), teamObject.getString("status"),
-						roster, matchHistory, stats, motd,
-						teamObject.getLong("createDate"), teamObject.getLong("modifyDate"),
-						teamObject.getLong("lastGameDate"), teamObject.getLong("lastJoinedRankedTeamQueueDate"),
-						teamObject.getLong("lastJoinDate"), teamObject.getLong("secondLastJoinDate"), teamObject.getLong("thirdLastJoinDate"));
-				teams.add(team);
-			}
+			JsonObject teamObject = teamsArray.getObject(t);
 			
-			return teams;
+			//Get team ID
+			String id = teamObject.getString("fullId");
+			//Convert stats
+			Map<QueueType, Team.QueueStat> stats = parseStats(teamObject.getObject("teamStatSummary"));
+			//Convert roster
+			Team.Roster roster = parseRoster(teamObject.getObject("roster"), region);
+			//Convert match history
+			List<Team.Match> matchHistory = parseMatchHistory(teamObject.getArray("matchHistory"));
+			//Convert MOTD
+			Team.MessageOfTheDay motd = parseMotd(teamObject.getObject("messageOfDay"));
+			
+			//Create league
+			Team team = new Team(id, teamObject.getString("name"), teamObject.getString("tag"), teamObject.getString("status"),
+					roster, matchHistory, stats, motd,
+					teamObject.getLong("createDate"), teamObject.getLong("modifyDate"),
+					teamObject.getLong("lastGameDate"), teamObject.getLong("lastJoinedRankedTeamQueueDate"),
+					teamObject.getLong("lastJoinDate"), teamObject.getLong("secondLastJoinDate"), teamObject.getLong("thirdLastJoinDate"));
+			teams.add(team);
 		}
-		catch(JsonException e)
-		{
-			//Shouldn't happen since the JSON is already parsed
-			System.err.println("JSON parse error");
-			e.printStackTrace();
-			return null;
-		}
+		
+		return teams;
 	}
 	
 	//Private converter methods
