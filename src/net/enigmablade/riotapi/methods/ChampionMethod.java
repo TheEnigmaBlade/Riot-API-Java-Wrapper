@@ -52,31 +52,21 @@ public class ChampionMethod extends Method
 	{
 		Response response = getMethodResult(region, createArgMap("freeToPlay", String.valueOf(free)));
 		
-		//Parse response
-		try
+		//Convert JSON into Champion objects
+		JsonObject csObj = (JsonObject)response.getValue();
+		List<Champion> cs = new ArrayList<>(csObj.size());
+		JsonArray csArray = csObj.getArray("champions");
+		for(int n = 0; n < csArray.size(); n++)
 		{
-			//Convert JSON into Champion objects
-			JsonObject csObj = (JsonObject)response.getValue();
-			List<Champion> cs = new ArrayList<>(csObj.size());
-			JsonArray csArray = csObj.getArray("champions");
-			for(int n = 0; n < csArray.size(); n++)
-			{
-				JsonObject cObj = csArray.getObject(n);
-				Champion c = new Champion(api, region, cObj.getString("name"), cObj.getLong("id"),
-						cObj.getInt("attackRank"), cObj.getInt("magicRank"), cObj.getInt("defenseRank"), cObj.getInt("difficultyRank"),
-						cObj.getBoolean("active"), cObj.getBoolean("freeToPlay"),
-						cObj.getBoolean("botMmEnabled"), cObj.getBoolean("botEnabled"), cObj.getBoolean("rankedPlayEnabled"));
-				cs.add(c);
-			}
-			return cs;
+			//Convert Champion object
+			JsonObject cObj = csArray.getObject(n);
+			Champion c = new Champion(api, region, cObj.getString("name"), cObj.getLong("id"),
+					cObj.getInt("attackRank"), cObj.getInt("magicRank"), cObj.getInt("defenseRank"), cObj.getInt("difficultyRank"),
+					cObj.getBoolean("active"), cObj.getBoolean("freeToPlay"),
+					cObj.getBoolean("botMmEnabled"), cObj.getBoolean("botEnabled"), cObj.getBoolean("rankedPlayEnabled"));
+			cs.add(c);
 		}
-		catch(JsonException e)
-		{
-			//Shouldn't happen since the JSON is already parsed
-			System.err.println("JSON parse error");
-			e.printStackTrace();
-			return null;
-		}
+		return cs;
 	}
 	
 	//Other methods

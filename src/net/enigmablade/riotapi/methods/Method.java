@@ -1,7 +1,7 @@
-package net.enigmablade.riotapi;
+package net.enigmablade.riotapi.methods;
 
 import java.util.*;
-
+import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
@@ -13,17 +13,19 @@ import net.enigmablade.riotapi.util.*;
  * 
  * @author Enigma
  */
-public abstract class Method
+abstract class Method
 {
 	private static final String API_LOCATION = "prod.api.pvp.net";
 	
+	//Data
 	protected RiotApi api;
-	private boolean skipCache;
 	
 	private String header;
 	private String version;
 	private String method;
 	private Region[] supportedRegions;
+	
+	//Constructors
 	
 	/**
 	 * Created a new method defined by the given information.
@@ -33,10 +35,9 @@ public abstract class Method
 	 * @param version The version of the method.
 	 * @param supportedRegions The regions supported by the method.
 	 */
-	public Method(RiotApi api, String header, String method, String version, Region[] supportedRegions)
+	protected Method(RiotApi api, String header, String method, String version, Region[] supportedRegions)
 	{
 		this.api = api;
-		skipCache = false;
 		
 		this.header = header;
 		this.method = method;
@@ -103,7 +104,7 @@ public abstract class Method
 		String url = buildUrl(region, operation, pathArgs, queryArgs);
 		
 		//Send request
-		Response response = api.getRequester().request(url, skipCache);
+		Response response = api.getRequester().request(url);
 		if(response == null)	//null if parse exception, highly unlikely
 			throw new RiotApiException("Uh oh, failed to parse response! That's bad!");
 		
@@ -126,18 +127,6 @@ public abstract class Method
 		}
 	}
 	
-	//Accessor and modifier methods
-	
-	public boolean isSkippingCache()
-	{
-		return skipCache;
-	}
-	
-	public void setSkipCache(boolean skipCache)
-	{
-		this.skipCache = skipCache;
-	}
-	
 	//Helper methods
 	
 	/**
@@ -153,6 +142,15 @@ public abstract class Method
 		return false;
 	}
 	
+	/**
+	 * <p>Build a RESTful URL for the current method in the Riot API from the given information.<p>
+	 * <p><b>Warning</b>: Some arguments are optional, and required arguments are not checked. See argument descriptions for more information.</p>
+	 * @param region <i>Required</i> - The region in which the method is being called.
+	 * @param operation <i>Optional</i> - The more specific operation of the method being called.
+	 * @param pathArgs <i>Required if <code>region</code> contains path arguments</i> - A map of path arguments being replaced in the method.
+	 * @param queryArgs <i>Optional</i> - A map of query arguments.
+	 * @return The nicely formatted request URL.
+	 */
 	private String buildUrl(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs)
 	{
 		//Format path arguments within the operation
@@ -167,8 +165,9 @@ public abstract class Method
 		s.append(API_LOCATION).append('/');					//Domain
 		s.append(header).append('/');						//Header
 		s.append(region.getValue());						//Region
-		s.append("/v").append(version).append('/');			//Version
-		s.append(method);									//Method
+		s.append("/v").append(version);						//Version
+		if(method != null)
+			s.append('/').append(method);					//Method
 		if(operation != null)								//Operation (optional)
 			s.append('/').append(operation);				
 		s.append("?api_key=").append(api.getApiKey());		//API key

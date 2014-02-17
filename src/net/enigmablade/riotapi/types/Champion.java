@@ -13,13 +13,17 @@ public class Champion extends DynamicType
 {
 	private Region region;
 	
+	//ID data
 	private String name;
 	private long id;
-	private int attackRank, magicRank, defenseRank, difficultyRank;
 	
 	//Dynamic data
 	private boolean active, freeToPlay;
 	private boolean botMatchMadeEnabled, botCustomEnabled, rankedEnabled;
+	private int attackRank, magicRank, defenseRank, difficultyRank;
+	
+	//Static data
+	
 	
 	public Champion(RiotApi api, Region region, String name, long id)
 	{
@@ -28,7 +32,7 @@ public class Champion extends DynamicType
 	
 	public Champion(RiotApi api, Region region, String name, long id, int attackRank, int magicRank, int defenseRank, int difficultyRank, boolean active, boolean freeToPlay, boolean botMatchMadeEnabled, boolean botCustomEnabled, boolean rankedEnabled)
 	{
-		super(api);
+		super(api, 2);
 		
 		this.region = region;
 		this.name = name;
@@ -56,10 +60,24 @@ public class Champion extends DynamicType
 	 */
 	private void verifyDynamicState() throws RiotApiException
 	{
-		if(!hasTypeUpdated())
+		if(!hasTypeUpdated(0))
 		{
-			setTypeUpdated();
+			setTypeUpdated(0);
 			api.getChampionMethod().fillChampion(this, region);
+		}
+	}
+	
+	/**
+	 * Verifies required information for static information methods is available, such as champion ID.
+	 * If not found, makes an API call to get dynamic champion information.
+	 * @throws RiotApiException If there was an exception or an error from the server.
+	 */
+	private void verifyStaticState() throws RiotApiException
+	{
+		if(!hasTypeUpdated(1))
+		{
+			setTypeUpdated(1);
+			api.getStaticDataMethod().fillChampion(this, region);
 		}
 	}
 	

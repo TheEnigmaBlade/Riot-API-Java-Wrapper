@@ -17,11 +17,11 @@ public enum QueueType
 	NORMAL_5V5_DRAFT	(14,	"NORMAL",				"Unranked",			false,	false,	"Normal 5v5 Draft"),
 	NORMAL_5V5_BOTS		(7,		"BOT",					"Unranked",			false,	false,	"Normal Coop vs AI"),
 	RANKED_5V5_SOLO		(4,		"RANKED_SOLO_5x5",		"RankedSolo5x5",	true,	false,	"Ranked 5v5 Solo"),
-	RANKED_5V5_DUO		(4,		"RANKED_PREMADE_5x5",	"RankedPremade5x5",	true,	false,	"Ranked 5v5 Duo"),
+	/*RANKED_5V5_DUO		(4,		"RANKED_SOLO_5x5",		"RankedPremade5x5",	true,	false,	"Ranked 5v5 Duo"),*/
 	RANKED_5V5_TEAM		(42,	"RANKED_TEAM_5x5",		"RankedTeam5x5",	true,	true,	"Ranked 5v5 Team"),
 	NORMAL_3V3_BLIND	(8,		"NORMAL_3x3",			"Unranked3x3",		false,	false,	"Normal 3v3 Blind"),
 	NORMAL_3V3_BOTS		(52,	"BOT_3x3", 				"Unranked3x3",		false,	false,	"Normal 3v3 Coop vs AI"),
-	RANKED_3V3_SOLO		(4,		"RANKED_PREMADE_3x3",	"RankedPremade3x3",	true,	false,	"Ranked 5v5 Solo"),
+	/*RANKED_3V3_SOLO		(4,		"RANKED_PREMADE_3x3",	"RankedPremade3x3",	true,	false,	"Ranked 5v5 Solo"),*/
 	RANKED_3V3_TEAM		(41,	"RANKED_TEAM_3x3",		"RankedTeam3x3",	true,	true,	"Ranked Team 3v3"),
 	DOMINION_5V5_BLIND	(16,	"ODIN_UNRANKED", 		"OdinUnranked",		false,	false,	"Dominion 5v5 Blind"),
 	DOMINION_5V5_DRAFT	(17,	"ODIN_UNRANKED", 		"OdinUnranked",		false,	false,	"Dominion 5v5 Draft"),

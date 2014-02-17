@@ -31,6 +31,8 @@ public class Requester
 	private static final long REQUEST_QUEUE_TIME_LIMIT = 600000;	//10 minutes
 	
 	//Caching
+	private boolean cacheEnabled = true;
+	
 	private BufferPool<String, Response> cache;
 	private static final int CACHE_AGE_LIMIT = 600000;	//10 minutes
 	
@@ -116,46 +118,20 @@ public class Requester
 	 * @return The response from the request.
 	 * @throws IOException If there was an error when sending the request.
 	 */
-	public Response request(String requestUrl)
+	public synchronized Response request(String requestUrl)
 	{
 		//return request(requestUrl, null);
-		return requestHelper(requestUrl, false);
-	}
-	
-	/**
-	 * Sends a request to the server at the given URL and returns the response or responds to the given listener.
-	 * @param requestUrl The request URL.
-	 * @param listener The request listener to receive the result. Leave <code>null</code> to return the value.
-	 * @return The response from the request, or <code>null</code> if a listener was given.
-	 * @throws IOException
-	 */
-	/*public Response request(String requestUrl, RequestListener listener)
-	{
-		return request(requestUrl, listener, false);
-	}*/
-	
-	/**
-	 * Sends a request to the server at the given URL and returns the response, skipping the cache if specified.
-	 * @param requestUrl The request URL.
-	 * @param skipCache Whether or not to skip the cache and forcefully send the request.
-	 * @return The response from the request.
-	 * @throws IOException If there was an error when sending the request.
-	 */
-	public Response request(String requestUrl, boolean skipCache)
-	{
-		//return request(requestUrl, null, skipCache);
-		return requestHelper(requestUrl, skipCache);
+		return requestHelper(requestUrl);
 	}
 	
 	/**
 	 * Sends a request to the server at the given URL and returns the response, skipping the cache if specified.
 	 * @param requestUrl The request URL.
 	 * @param listener The request listener to receive the result. Leave <code>null</code> to return the value.
-	 * @param skipCache Whether or not to skip the cache and forcefully send the request.
 	 * @return The response from the request, or <code>null</code> if a listener was given.
 	 * @throws IOException
 	 */
-	/*public Response request(final String requestUrl, final RequestListener listener, final boolean skipCache)
+	/*public Response request(final String requestUrl, final RequestListener listener)
 	{
 		//Send request to separate thread and return null
 		if(listener != null)
@@ -166,7 +142,7 @@ public class Requester
 				@Override
 				public void run()
 				{
-					listener.requestFulfilled(requestHelper(requestUrl, skipCache));
+					listener.requestFulfilled(requestHelper(requestUrl));
 				}
 			}).start();
 			return null;
@@ -174,16 +150,16 @@ public class Requester
 		//Send request directly and return the result
 		else
 		{
-			return requestHelper(requestUrl, skipCache);
+			return requestHelper(requestUrl);
 		}
 	}*/
 	
-	private Response requestHelper(String requestUrl, boolean skipCache)
+	private Response requestHelper(String requestUrl)
 	{
 		Response response;
 		
 		//Check if it's in the cache
-		if(!skipCache)
+		if(cacheEnabled)
 		{
 			response = cache.get(requestUrl);
 			//Ignore if not in cache or too old
@@ -288,7 +264,7 @@ public class Requester
 		}
 	}
 	
-	private void trimRequestQueue()
+	private synchronized void trimRequestQueue()
 	{
 		for(Iterator<Long> it = requestQueue.descendingIterator(); it.hasNext();)
 		{
@@ -331,7 +307,7 @@ public class Requester
 		this.userAgent = userAgent;
 	}
 	
-	public int getRequestsInPast10Seconds()
+	public synchronized int getRequestsInPast10Seconds()
 	{
 		int count = 0;
 		for(Long time : requestQueue)
@@ -344,13 +320,13 @@ public class Requester
 		return count;
 	}
 	
-	public int getRequestsInPast10Minutes()
+	public synchronized int getRequestsInPast10Minutes()
 	{
 		trimRequestQueue();
 		return requestQueue.size();
 	}
 	
-	public long getOldestRequestTimeByAge(int age)
+	public synchronized long getOldestRequestTimeByAge(int age)
 	{
 		for(Long time : requestQueue)
 			if(time >= age)
@@ -358,17 +334,38 @@ public class Requester
 		return requestQueue.peekLast();
 	}
 	
-	public long getOldestRequestTime()
+	public synchronized long getOldestRequestTime()
 	{
 		return requestQueue.isEmpty() ? -1 : requestQueue.peekLast();
 	}
 	
-	public void setRateLimiterEnabled(boolean enabled)
+	public void setRateLimitEnabled(boolean enabled)
 	{
 		limiterEnabled = enabled;
 	}
 	
-	public void clearCache()
+	public boolean isRateLimitEnabled()
+	{
+		return limiterEnabled;
+	}
+	
+	public synchronized void clearRateLimit()
+	{
+		requestQueue.clear();
+		lastCall = 0;
+	}
+	
+	public void setCacheEnabled(boolean enabled)
+	{
+		cacheEnabled = enabled;
+	}
+	
+	public boolean isCacheEnabled()
+	{
+		return cacheEnabled;
+	}
+	
+	public synchronized void clearCache()
 	{
 		cache.clear();
 	}

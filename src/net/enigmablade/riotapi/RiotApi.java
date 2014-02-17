@@ -72,6 +72,7 @@ public class RiotApi
 	private SummonerMethod summonerMethod;
 	private StatsMethod statsMethod;
 	private TeamMethod teamMethod;
+	private StaticDataMethod staticDataMethod;
 	
 	/**
 	 * Returns the champion method to use for champion operations.
@@ -139,6 +140,17 @@ public class RiotApi
 		return teamMethod;
 	}
 	
+	/**
+	 * Returns the static data method to retrieve static LoL data.
+	 * @return The static data method.
+	 */
+	public StaticDataMethod getStaticDataMethod()
+	{
+		if(staticDataMethod == null)
+			staticDataMethod = new StaticDataMethod(this);
+		return staticDataMethod;
+	}
+	
 	//Convenience methods
 	
 	/**
@@ -172,12 +184,39 @@ public class RiotApi
 	//Utility methods
 	
 	/**
-	 * Sets whether or not the time limit on requests is enforced.
+	 * Sets whether or not the rate limit on requests is enforced.
 	 * @param enabled Whether or not request limits are enforced.
 	 */
-	public void setApiCallRateLimitEnabled(boolean enabled)
+	public void setRateLimitEnabled(boolean enabled)
 	{
-		requester.setRateLimiterEnabled(enabled);
+		requester.setRateLimitEnabled(enabled);
+	}
+	
+	/**
+	 * Returns whether or not the rate limit on requests is enforced.
+	 * @return <code>true</code> if rate limits are enforced, otherwise <code>false</code>.
+	 */
+	public boolean isRateLimitEnabled()
+	{
+		return requester.isRateLimitEnabled();
+	}
+	
+	/**
+	 * Sets whether or not request caching is enabled.
+	 * @param enabled Whether or not request caching is enabled.
+	 */
+	public void setCacheEnabled(boolean enabled)
+	{
+		requester.setCacheEnabled(enabled);
+	}
+	
+	/**
+	 * Returns whether or not request caching is enabled.
+	 * @return <code>true</code> if request caching is enabled, otherwise <code>false</code>.
+	 */
+	public boolean isCacheEnabled()
+	{
+		return requester.isCacheEnabled();
 	}
 	
 	/**
@@ -214,7 +253,7 @@ public class RiotApi
 	 * Returns the Requester being used to send and limit API requests.
 	 * @return The current Requester.
 	 */
-	protected Requester getRequester()
+	public Requester getRequester()
 	{
 		return requester;
 	}
@@ -226,5 +265,14 @@ public class RiotApi
 	public String getApiKey()
 	{
 		return apiKey;
+	}
+	
+	/**
+	 * Sets the API key to use with API requests.
+	 * @param apiKey The new API key.
+	 */
+	public void setApiKey(String apiKey)
+	{
+		this.apiKey = apiKey;
 	}
 }
