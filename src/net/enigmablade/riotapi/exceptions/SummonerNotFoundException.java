@@ -2,7 +2,7 @@ package net.enigmablade.riotapi.exceptions;
 
 import net.enigmablade.riotapi.constants.*;
 
-public class SummonerNotFoundException extends RiotApiException
+public class SummonerNotFoundException extends NotFoundException
 {
 	public SummonerNotFoundException(Region region)
 	{

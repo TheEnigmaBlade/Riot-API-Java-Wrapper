@@ -29,6 +29,8 @@ public class RiotApi
 	private String apiKey;
 	private Requester requester;
 	
+	private Locale locale;
+	
 	/**
 	 * Creates a new instance to access the Riot API with the given API key and no user agent.
 	 * Rate limiting is set the default of {@value RiotApi#DEFAULT_RATE_LIMIT_10_SEC} requests per 10 seconds and {@value RiotApi#DEFAULT_RATE_LIMIT_10_MIN} requests per 10 minutes.
@@ -62,6 +64,8 @@ public class RiotApi
 		this.apiKey = apiKey;
 		
 		requester = new Requester(userAgent, limitPer10Seconds, limitPer10Minutes);
+		
+		locale = Locale.ENGLISH_US;
 	}
 	
 	//Method management
@@ -274,5 +278,15 @@ public class RiotApi
 	public void setApiKey(String apiKey)
 	{
 		this.apiKey = apiKey;
+	}
+	
+	public Locale getLocale()
+	{
+		return locale;
+	}
+	
+	public void setLocale(Locale locale)
+	{
+		this.locale = locale;
 	}
 }

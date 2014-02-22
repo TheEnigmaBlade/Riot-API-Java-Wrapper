@@ -7,6 +7,7 @@ import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
 import net.enigmablade.riotapi.types.*;
+import net.enigmablade.riotapi.util.*;
 import static net.enigmablade.riotapi.constants.Region.*;
 
 /**
@@ -45,21 +46,19 @@ public class TeamMethod extends Method
 	 * @param summonerId The ID of the summoner.
 	 * @return A list of recent games (max 10).
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
-	 * @throws SummonerNotFoundException If the given summoner was not found, or if the summoner is not in any teams.
+	 * @throws TeamNotFoundException If the given summoner was not found, or if the summoner is not in any teams.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
-	public List<Team> getTeams(Region region, long summonerId) throws RiotApiException
+	public List<Team> getSummonerTeams(Region region, long summonerId) throws RiotApiException
 	{
+		//Make request
 		Response response = getMethodResult(region,
 				"by-summoner/{summonerId}",
 				createArgMap("summonerId", String.valueOf(summonerId)));
 		
 		//Check errors
-		switch(response.getCode())
-		{
-			case 401: throw new RiotApiException("401: Unauthorized");
-			case 404: throw new SummonerNotFoundException(region);
-		}
+		if(response.getCode() == 404)
+			throw new TeamNotFoundException(region);
 		
 		//Parse response
 		JsonArray teamsArray = (JsonArray)response.getValue();
@@ -67,31 +66,76 @@ public class TeamMethod extends Method
 		for(int t = 0; t < teamsArray.size(); t++)
 		{
 			JsonObject teamObject = teamsArray.getObject(t);
-			
-			//Get team ID
-			String id = teamObject.getString("fullId");
-			//Convert stats
-			Map<QueueType, Team.QueueStat> stats = parseStats(teamObject.getObject("teamStatSummary"));
-			//Convert roster
-			Team.Roster roster = parseRoster(teamObject.getObject("roster"), region);
-			//Convert match history
-			List<Team.Match> matchHistory = parseMatchHistory(teamObject.getArray("matchHistory"));
-			//Convert MOTD
-			Team.MessageOfTheDay motd = parseMotd(teamObject.getObject("messageOfDay"));
-			
-			//Create league
-			Team team = new Team(id, teamObject.getString("name"), teamObject.getString("tag"), teamObject.getString("status"),
-					roster, matchHistory, stats, motd,
-					teamObject.getLong("createDate"), teamObject.getLong("modifyDate"),
-					teamObject.getLong("lastGameDate"), teamObject.getLong("lastJoinedRankedTeamQueueDate"),
-					teamObject.getLong("lastJoinDate"), teamObject.getLong("secondLastJoinDate"), teamObject.getLong("thirdLastJoinDate"));
-			teams.add(team);
+			teams.add(convertTeam(teamObject, region));
 		}
 		
 		return teams;
 	}
 	
+	/**
+	 * Returns a map of the teams corresponding to the given team IDs.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param teamIds The team IDs.
+	 * @return A map of team IDs to teams.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws TeamNotFoundException If the given summoner was not found, or if the summoner is not in any teams.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public Map<String, Team> getTeams(Region region, String... teamIds) throws RiotApiException
+	{
+		String ids = IOUtil.createCommaDelimitedString(teamIds);
+		
+		//Make request
+		Response response = getMethodResult(region,
+				"{teamIds}",
+				createArgMap("teamIds", ids));
+		
+		//Check errors
+		if(response.getCode() == 404)
+			throw new TeamNotFoundException(region);
+		
+		//Parse response
+		JsonObject teamsObject = (JsonObject)response.getValue();
+		Map<String, Team> teams = new HashMap<String, Team>();
+		for(String teamId : teamsObject.keySet())
+		{
+			JsonObject teamObject = teamsObject.getObject(teamId);
+			teams.put(teamId, convertTeam(teamObject, region));
+		}
+		return teams;
+	}
+	
 	//Private converter methods
+	
+	/**
+	 * Convert the JSON team object into a team object.
+	 * @param teamObject The JSON object.
+	 * @param region The game region.
+	 * @return The converted team object.
+	 */
+	private Team convertTeam(JsonObject teamObject, Region region)
+	{
+		//Get team ID
+		String id = teamObject.getString("fullId");
+		//Convert stats
+		Map<QueueType, Team.QueueStat> stats = convertStats(teamObject.getObject("teamStatSummary"));
+		//Convert roster
+		Team.Roster roster = convertRoster(teamObject.getObject("roster"), region);
+		//Convert match history
+		List<Team.Match> matchHistory = convertMatchHistory(teamObject.getArray("matchHistory"));
+		//Convert MOTD
+		Team.MessageOfTheDay motd = convertMotd(teamObject.getObject("messageOfDay"));
+		
+		long lastGame = teamObject.containsKey("lastGameDate") ? teamObject.getLong("lastGameDate") : -1;
+		
+		//Create league
+		Team team = new Team(id, teamObject.getString("name"), teamObject.getString("tag"), teamObject.getString("status"),
+				roster, matchHistory, stats, motd,
+				teamObject.getLong("createDate"), teamObject.getLong("modifyDate"),
+				lastGame, teamObject.getLong("lastJoinedRankedTeamQueueDate"),
+				teamObject.getLong("lastJoinDate"), teamObject.getLong("secondLastJoinDate"), teamObject.getLong("thirdLastJoinDate"));
+		return team;
+	}
 	
 	/**
 	 * Parse the queue stats portion of a team response.
@@ -99,7 +143,7 @@ public class TeamMethod extends Method
 	 * @return A map of queue type and stat.
 	 * @throws JsonException Parse error (shouldn't happen).
 	 */
-	private Map<QueueType, Team.QueueStat> parseStats(JsonObject statSummaryObject) throws JsonException
+	private Map<QueueType, Team.QueueStat> convertStats(JsonObject statSummaryObject)
 	{
 		JsonArray statsArray = statSummaryObject.getArray("teamStatDetails");
 		
@@ -128,7 +172,7 @@ public class TeamMethod extends Method
 	 * @return The team roster.
 	 * @throws JsonException Parse error (shouldn't happen).
 	 */
-	private Team.Roster parseRoster(JsonObject rosterObject, Region region) throws JsonException
+	private Team.Roster convertRoster(JsonObject rosterObject, Region region)
 	{
 		//Create list of members
 		JsonArray membersArray = rosterObject.getArray("memberList");
@@ -150,7 +194,7 @@ public class TeamMethod extends Method
 	 * @return A list of matches.
 	 * @throws JsonException Parse error (shouldn't happen).
 	 */
-	private List<Team.Match> parseMatchHistory(JsonArray matchesArray) throws JsonException
+	private List<Team.Match> convertMatchHistory(JsonArray matchesArray)
 	{
 		//Might not exist in the response if no games have been played (not sure)
 		if(matchesArray == null)
@@ -178,7 +222,7 @@ public class TeamMethod extends Method
 	 * @return The MOTD.
 	 * @throws JsonException Parse error (shouldn't happen).
 	 */
-	private Team.MessageOfTheDay parseMotd(JsonObject motdObject) throws JsonException
+	private Team.MessageOfTheDay convertMotd(JsonObject motdObject)
 	{
 		//May not exist in the response
 		if(motdObject == null)

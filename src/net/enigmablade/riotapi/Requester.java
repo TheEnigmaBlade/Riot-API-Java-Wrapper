@@ -15,10 +15,11 @@ import net.enigmablade.riotapi.util.*;
  */
 public class Requester
 {
-	public static final String HTTP_PROTOCOL = "https";
+	public static final String HTTP_PROTOCOL = "http", HTTPS_PROTOCOL = "https";
 	
 	//Options
 	private String userAgent;
+	private String protocol;
 	
 	//Rate limiting
 	private boolean limiterEnabled = true;
@@ -37,16 +38,32 @@ public class Requester
 	private static final int CACHE_AGE_LIMIT = 600000;	//10 minutes
 	
 	/**
-	 * Create a new Requester with the given user agent and rate limits.
+	 * Create a new HTTPS Requester with the given user agent and rate limits.
 	 * @param userAgent The user agent for HTTP requests.
 	 * @param limitPer10Seconds The limit for the number of requests per 10 seconds. Must be greater than 0.
 	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
 	 */
 	public Requester(String userAgent, int limitPer10Seconds, int limitPer10Minutes)
 	{
+		this(HTTPS_PROTOCOL, userAgent, limitPer10Seconds, limitPer10Minutes);
+	}
+	
+	/**
+	 * Create a new Requester with the given user agent and rate limits.
+	 * @param protocol The HTTP protocol to use.
+	 * @param userAgent The user agent for HTTP requests.
+	 * @param limitPer10Seconds The limit for the number of requests per 10 seconds. Must be greater than 0.
+	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
+	 * @throws IllegalArgumentException If one of the arguments is not valid.
+	 */
+	public Requester(String protocol, String userAgent, int limitPer10Seconds, int limitPer10Minutes)
+	{
+		if(!HTTP_PROTOCOL.equals(protocol) && !HTTPS_PROTOCOL.equals(protocol))
+			throw new IllegalArgumentException("A valid protocol must be specified.");
 		if(limitPer10Seconds <= 0 || limitPer10Minutes <= 0)
 			throw new IllegalArgumentException("Rate limits must be greater than 0.");
 		
+		this.protocol = protocol;
 		setUserAgent(userAgent);
 		setLimitPer10Seconds(limitPer10Seconds);
 		setLimitPer10Minutes(limitPer10Minutes);
@@ -264,7 +281,7 @@ public class Requester
 		}
 	}
 	
-	private synchronized void trimRequestQueue()
+	private void trimRequestQueue()
 	{
 		for(Iterator<Long> it = requestQueue.descendingIterator(); it.hasNext();)
 		{
@@ -277,34 +294,39 @@ public class Requester
 	
 	//Accessors and modifiers
 	
-	public int getLimitPer10Seconds()
+	public synchronized int getLimitPer10Seconds()
 	{
 		return limitPer10Seconds;
 	}
 	
-	public void setLimitPer10Seconds(int limitPer10Seconds)
+	public synchronized void setLimitPer10Seconds(int limitPer10Seconds)
 	{
 		limitWait = 10000/(this.limitPer10Seconds = limitPer10Seconds);
 	}
 	
-	public int getLimitPer10Minutes()
+	public synchronized int getLimitPer10Minutes()
 	{
 		return limitPer10Minutes;
 	}
 	
-	public void setLimitPer10Minutes(int limitPer10Minutes)
+	public synchronized void setLimitPer10Minutes(int limitPer10Minutes)
 	{
 		this.limitPer10Minutes = limitPer10Minutes;
 	}
 	
-	public String getUserAgent()
+	public synchronized String getUserAgent()
 	{
 		return userAgent;
 	}
 	
-	public void setUserAgent(String userAgent)
+	public synchronized void setUserAgent(String userAgent)
 	{
 		this.userAgent = userAgent;
+	}
+	
+	public String getProtocol()
+	{
+		return protocol;
 	}
 	
 	public synchronized int getRequestsInPast10Seconds()
@@ -339,32 +361,38 @@ public class Requester
 		return requestQueue.isEmpty() ? -1 : requestQueue.peekLast();
 	}
 	
-	public void setRateLimitEnabled(boolean enabled)
+	public synchronized void setRateLimitEnabled(boolean enabled)
 	{
 		limiterEnabled = enabled;
 	}
 	
-	public boolean isRateLimitEnabled()
+	public synchronized boolean isRateLimitEnabled()
 	{
 		return limiterEnabled;
 	}
 	
+	/**
+	 * Resets rate limits.
+	 */
 	public synchronized void clearRateLimit()
 	{
 		requestQueue.clear();
 		lastCall = 0;
 	}
 	
-	public void setCacheEnabled(boolean enabled)
+	public synchronized void setCacheEnabled(boolean enabled)
 	{
 		cacheEnabled = enabled;
 	}
 	
-	public boolean isCacheEnabled()
+	public synchronized boolean isCacheEnabled()
 	{
 		return cacheEnabled;
 	}
 	
+	/**
+	 * Clears the request cache.
+	 */
 	public synchronized void clearCache()
 	{
 		cache.clear();

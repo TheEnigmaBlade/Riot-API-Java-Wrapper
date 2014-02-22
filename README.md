@@ -75,7 +75,8 @@ API Support
 |                    | /{summoner_ids}/name                | **Yes**   |
 |                    | /{summoner_ids}/masteries           | **Yes**   |
 |                    | /{summoner_ids}/runes               | **Yes**   |
-| team-v2.2          | /by-summoner/{summoner_id}          | **Yes**   |
+| team-v2.2          | /{team_ids}                         | **Yes**   |
+|                    | /by-summoner/{summoner_id}          | **Yes**   |
 
 Legal stuff
 -----------

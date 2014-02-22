@@ -82,7 +82,7 @@ public class SummonerMethod extends Method
 			summonerNames[n] = IOUtil.encodeForUri(ApiUtil.standardizeSummonerName(summonerNames[n]));
 		
 		//Create arg value
-		String namesStr = createCommaDelimitedString(summonerNames);
+		String namesStr = IOUtil.createCommaDelimitedString(summonerNames);
 		
 		//Send request
 		Response response = getMethodResult(region,
@@ -131,7 +131,7 @@ public class SummonerMethod extends Method
 			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
 		
 		//Create arg value
-		String idsStr = createCommaDelimitedString(summonerIds);
+		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);
 				
 		//Send request
 		Response response = getMethodResult(region,
@@ -182,7 +182,7 @@ public class SummonerMethod extends Method
 			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
 		
 		//Create arg value
-		String idsStr = createCommaDelimitedString(summonerIds);
+		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);
 		
 		//Send request
 		Response response = getMethodResult(region,
@@ -268,7 +268,7 @@ public class SummonerMethod extends Method
 			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
 		
 		//Create arg value
-		String idsStr = createCommaDelimitedString(summonerIds);
+		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);
 		
 		//Send request
 		Response response = getMethodResult(region,
@@ -361,7 +361,7 @@ public class SummonerMethod extends Method
 			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
 		
 		//Create arg value
-		String idsStr = createCommaDelimitedString(summonerIds);
+		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);
 		
 		//Send request
 		Response response = getMethodResult(region,
@@ -423,44 +423,6 @@ public class SummonerMethod extends Method
 			return true;
 		}
 		return false;
-	}
-	
-	//Helper methods
-	
-	/**
-	 * Creates a comma delimited string from an array of strings. For example:
-	 * ["a", "b", "c", "w"] -> "a,b,c,w"
-	 * @param things The particularly pompously provided array of strings.
-	 * @return The boring new string.
-	 */
-	private String createCommaDelimitedString(String... things)
-	{
-		StringBuffer s = new StringBuffer();
-		for(int n = 0; n < things.length; n++)
-		{
-			s.append(things[n].toString());
-			if(n < things.length-1)
-				s.append(',');
-		}
-		return s.toString();
-	}
-	
-	/**
-	 * Creates a comma delimited string from an array of longs. For example:
-	 * ["a", "b", "c", "w"] -> "a,b,c,w"
-	 * @param things The gratifyingly glorious given array of longs.
-	 * @return The dull new string.
-	 */
-	private String createCommaDelimitedString(long... things)
-	{
-		StringBuffer s = new StringBuffer();
-		for(int n = 0; n < things.length; n++)
-		{
-			s.append(things[n]);
-			if(n < things.length-1)
-				s.append(',');
-		}
-		return s.toString();
 	}
 	
 	//Private parsing methods

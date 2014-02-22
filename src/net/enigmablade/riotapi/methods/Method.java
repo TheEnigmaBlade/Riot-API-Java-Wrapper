@@ -161,7 +161,7 @@ abstract class Method
 		String queryArgsStr = IOUtil.genQueryArgs(queryArgs);
 		
 		//Create URL and send the request
-		StringBuilder s = new StringBuilder(Requester.HTTP_PROTOCOL).append("://");
+		StringBuilder s = new StringBuilder(api.getRequester().getProtocol()).append("://");
 		s.append(API_LOCATION).append('/');					//Domain
 		s.append(header).append('/');						//Header
 		s.append(region.getValue());						//Region

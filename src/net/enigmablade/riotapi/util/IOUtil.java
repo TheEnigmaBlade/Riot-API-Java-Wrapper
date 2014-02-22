@@ -7,6 +7,53 @@ import java.util.*;
 
 public class IOUtil
 {
+	/**
+	 * Creates a comma delimited string from an array of strings. For example:
+	 * ["a", "b", "c", "w"] -> "a,b,c,w"
+	 * @param things The particularly pompously provided array of strings.
+	 * @return The boring new string.
+	 */
+	public static String createCommaDelimitedString(String... things)
+	{
+		StringBuffer s = new StringBuffer();
+		for(int n = 0; n < things.length; n++)
+		{
+			s.append(things[n].toString());
+			if(n < things.length-1)
+				s.append(',');
+		}
+		return s.toString();
+	}
+	
+	/**
+	 * Creates a comma delimited string from an array of longs. For example:
+	 * [1, 2, 3, 4] -> "1,2,3,4"
+	 * @param things The gratifyingly glorious given array of longs.
+	 * @return The dull new string.
+	 */
+	public static String createCommaDelimitedString(long... things)
+	{
+		StringBuffer s = new StringBuffer();
+		for(int n = 0; n < things.length; n++)
+		{
+			s.append(things[n]);
+			if(n < things.length-1)
+				s.append(',');
+		}
+		return s.toString();
+	}
+	
+	/**
+	 * <p>Replace arguments in a given string with the given mappings. If an argument mapping is not found, it is ignored.</p>
+	 * <p>The substring <code>{ARG}</code> denotes an argument with the key "<code>ARG</code>".</p>
+	 * <p><b>Example</b>:<br/>
+	 * Given string: "<code>/api/lol/{region}/v1.3/summoner/by-name/{summonerNames}</code>"<br/>
+	 * Given arg map: <code>{"region"="na", "summonerNames"="TheEnigmaBlade"}</code><br/>
+	 * Result: "<code>/api/lol/na/v1.3/summoner/by-name/TheEnigmaBlade</code>"</p>
+	 * @param s The string.
+	 * @param args The argument mappings.
+	 * @return A new string with arguments replaced.
+	 */
 	public static String replacePathArgs(String s, Map<String, String> args)
 	{
 		StringBuffer buf = new StringBuffer();
