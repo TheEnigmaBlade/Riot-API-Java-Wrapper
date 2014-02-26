@@ -34,7 +34,7 @@ public class GameMethod extends Method
 	 */
 	public GameMethod(RiotApi api)
 	{
-		super(api, "api/lol", "game", "1.3", new Region[]{NA, EUW, EUNE, BR, LAN, LAS});
+		super(api, "api/lol", "game", "1.3", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE});
 	}
 	
 	//API-defined operation methods

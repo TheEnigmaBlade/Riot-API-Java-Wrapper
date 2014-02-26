@@ -35,7 +35,7 @@ public class StatsMethod extends Method
 	 */
 	public StatsMethod(RiotApi api)
 	{
-		super(api, "api/lol", "stats", "1.2", new Region[]{NA, EUW, EUNE, BR, LAN, LAS});
+		super(api, "api/lol", "stats", "1.2", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE});
 	}
 	
 	//API-defined operation methods

@@ -82,7 +82,11 @@ Legal stuff
 -----------
 
 Copyright EnigmaBlade.net, 2013
+
 Distributed under the Boost Software License, Version 1.0
+
 See LICENSE.txt or at http://www.boost.org/LICENSE_1_0.txt
+
+Uses [JSONic](https://github.com/TheEnigmaBlade/jsonic) (also created by me), which has the same license as above.
 
 *This product is not endorsed, certified or otherwise approved in any way by Riot Games, Inc. or any of its affiliates.*
