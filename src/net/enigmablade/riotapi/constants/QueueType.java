@@ -29,7 +29,8 @@ public enum QueueType
 	ONE_FOR_ALL_5V5		(70,	"ONEFORALL_5x5",		"OneForAll5x5",		false,	false,	"One-for-all 5v5"),
 	SHOWDOWN_1V1		(72,	"FIRSTBLOOD_1x1",		"FirstBlood1x1",	false,	false,	"Snowdown Showdown 1v1"),
 	SHOWDOWN_2V2 		(73,	"FIRSTBLOOD_2x2",		"FirstBlood2x2",	false,	false,	"Snowdown Showdown 2v2"),
-	HEXAKILL_6V6		(-1,	"SR_6x6",				"SummonersRift6x6",	false,	false,	"Hexakill 6v6");
+	HEXAKILL_6V6		(-1,	"SR_6x6",				"SummonersRift6x6",	false,	false,	"Hexakill 6v6"),
+	TEAMBUILDER_5V5		(-1,	"CAP_5x5",				"CAP5x5",			false,	false,	"Team Builder 5v5");
 	
 	//---//
 	
@@ -67,10 +68,11 @@ public enum QueueType
 	 * Returns the queue ID to be used in API calls.
 	 * @return The queue ID.
 	 */
-	/*public int getId()
+	@Deprecated
+	public int getId()
 	{
 		return id;
-	}*/
+	}
 	
 	/**
 	 * Returns the queue value to be used in league API calls.
