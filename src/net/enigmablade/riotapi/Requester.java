@@ -268,17 +268,15 @@ public class Requester
 			
 			//Check for optional encoding
 			String responseEncoding = connection.getHeaderField("Content-Encoding");
-			System.out.println("Response encoding: "+responseEncoding);
 			if(GZIP_ENCODING.equalsIgnoreCase(responseEncoding))
 				in = new GZIPInputStream(in);
-			else if(DEFAULT_ENCODING.equalsIgnoreCase(responseEncoding))
+			else if(DEFLATE_ENCODING.equalsIgnoreCase(responseEncoding))
 				in = new InflaterInputStream(in, new Inflater(true));
-			else
+			else if(responseEncoding != null)
 				System.err.println("Unknown HTTP encoding \""+responseEncoding+"\"");
 			
 			//Get response
 			String responseText = IOUtil.readInputStreamFully(in);
-			System.out.println("Response: "+responseText);
 			return new Response(responseText, responseCode);
 		}
 		catch(IOException e)

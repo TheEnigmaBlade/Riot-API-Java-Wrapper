@@ -4,8 +4,8 @@ import net.enigmablade.riotapi.constants.*;
 
 public class LeagueNotFoundException extends NotFoundException
 {
-	public LeagueNotFoundException(Region region, long summonerId)
+	public LeagueNotFoundException(Region region, String participantId)
 	{
-		super("No leagues were found for summoner "+summonerId+" in "+region);
+		super("No leagues were found for "+participantId+" in "+region);
 	}
 }

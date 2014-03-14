@@ -10,7 +10,7 @@ Key Features
 
 * **Request rate limiting**: requests are limited based on the requests per 10 seconds value. If you only have 10 requests per 10 seconds, requests will be limited to 1 request every second.
 * **Request caching**: requests are cached using LRU replacement. This means the most frequent requests will be stored and not requested from the server. Caching can be bypassed.
-* **Two distinct styles of API usage**: you can follow the API style and call individual methods and operations, or you can take advantage of object-oriented principles and make requests directly from an object (such as a champion or summoner).
+* **Two distinct styles of API usage**: follow the API style and call individual methods and operations, or take advantage of object-oriented principles and make requests directly from an object (such as a champion or summoner).
 
 Examples
 --------
@@ -57,6 +57,8 @@ API Support
 | league-v2.3        | /challenger                         | **Yes**   |
 |                    | /by-summoner/{summoner_id}          | **Yes**   |
 |                    | /by-summoner/{summoner_id}/entry    | **Yes**   |
+|                    | /by-team/{team_id}                  | **Yes**   |
+|                    | /by-team/{team_id}/entry            | **Yes**   |
 | lol-static-data-v1 | /champion                           | No        |
 |                    | /champion/{champion_id}             | No        |
 |                    | /item                               | No        |

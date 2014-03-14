@@ -50,16 +50,7 @@ public class LeagueMethod extends Method
 	 */
 	public List<League> getLeagues(Region region, long summonerId) throws RiotApiException
 	{
-		//Make request
-		Response response = getMethodResult(region,
-				"by-summoner/{summonerId}",
-				createArgMap("summonerId", String.valueOf(summonerId)));
-		
-		//Check errors
-		checkLeagueErrors(response.getCode(), region, summonerId);
-		
-		//Parse response
-		return convertLeagues((JsonArray)response.getValue());
+		return getLeaguesHelper(region, String.valueOf(summonerId), "summoner");
 	}
 	
 	/**
@@ -73,24 +64,35 @@ public class LeagueMethod extends Method
 	 */
 	public List<League.Entry> getLeagueEntries(Region region, long summonerId) throws RiotApiException
 	{
-		//Make request
-		Response response = getMethodResult(region,
-				"by-summoner/{summonerId}/entry",
-				createArgMap("summonerId", String.valueOf(summonerId)));
-		
-		//Check errors
-		checkLeagueErrors(response.getCode(), region, summonerId);
-		
-		//Parse response
-		JsonArray leagueEntriesArray = (JsonArray)response.getValue();
-		List<League.Entry> leagueEntries = new ArrayList<>(leagueEntriesArray.size());
-		for(int n = 0; n < leagueEntriesArray.size(); n++)
-		{
-			//Convert a league entry
-			JsonObject leagueEntryObject = leagueEntriesArray.getObject(n);
-			leagueEntries.add(convertLeagueEntry(leagueEntryObject));
-		}
-		return leagueEntries;
+		return getLeagueEntriesHelper(region, String.valueOf(summonerId), "summoner");
+	}
+	
+	/**
+	 * Returns a list of leagues for the given team.
+	 * @param region The league region (NA, EUW, EUNE, etc.)
+	 * @param teamId The ID of the team.
+	 * @return A list of leagues.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws LeagueNotFoundException If the given teamId is not in any leagues.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<League> getLeagues(Region region, String teamId) throws RiotApiException
+	{
+		return getLeaguesHelper(region, teamId, "team");
+	}
+	
+	/**
+	 * Returns a list of leagues entries for the given team.
+	 * @param region The league region (NA, EUW, EUNE, etc.)
+	 * @param teamId The ID of the team.
+	 * @return A list of league entries.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws LeagueNotFoundException If the given team is not in any leagues.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<League.Entry> getLeagueEntries(Region region, String teamId) throws RiotApiException
+	{
+		return getLeagueEntriesHelper(region, teamId, "team");
 	}
 	
 	/**
@@ -122,17 +124,73 @@ public class LeagueMethod extends Method
 	//Helper methods
 	
 	/**
+	 * Returns a list of leagues for the given participant.
+	 * @param region The league region (NA, EUW, EUNE, etc.)
+	 * @param participantId The participant's ID.
+	 * @param participantType The type of the participant ("summoner" or "team").
+	 * @return A list of leagues.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws LeagueNotFoundException If the given team is not in any leagues.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	private List<League> getLeaguesHelper(Region region, String participantId, String participantType) throws RiotApiException
+	{
+		//Make request
+		Response response = getMethodResult(region,
+				"by-"+participantType+"/{id}",
+				createArgMap("id", participantId));
+		
+		//Check errors
+		checkLeagueErrors(response.getCode(), region, participantId);
+		
+		//Parse response
+		return convertLeagues((JsonArray)response.getValue());
+	}
+	
+	/**
+	 * Returns a list of league entries for the given participant.
+	 * @param region The league region (NA, EUW, EUNE, etc.)
+	 * @param participantId The participant's ID.
+	 * @param participantType The type of the participant ("summoner" or "team").
+	 * @return A list of league entries.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws LeagueNotFoundException If the given team is not in any leagues.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	private List<League.Entry> getLeagueEntriesHelper(Region region, String participantId, String participantType) throws RiotApiException
+	{
+		//Make request
+		Response response = getMethodResult(region,
+				"by-"+participantType+"/{id}/entry",
+				createArgMap("id", participantId));
+		
+		//Check errors
+		checkLeagueErrors(response.getCode(), region, participantId);
+		
+		//Parse response
+		JsonArray leagueEntriesArray = (JsonArray)response.getValue();
+		List<League.Entry> leagueEntries = new ArrayList<>(leagueEntriesArray.size());
+		for(int n = 0; n < leagueEntriesArray.size(); n++)
+		{
+			//Convert a league entry
+			JsonObject leagueEntryObject = leagueEntriesArray.getObject(n);
+			leagueEntries.add(convertLeagueEntry(leagueEntryObject));
+		}
+		return leagueEntries;
+	}
+	
+	/**
 	 * Check for response errors.
 	 * @param responseCode The response code.
 	 * @param region The region (not always used).
 	 * @param summonerId The summoner ID (not always used).
 	 * @throws RiotApiException If there was an error.
 	 */
-	private void checkLeagueErrors(int responseCode, Region region, long summonerId) throws RiotApiException
+	private void checkLeagueErrors(int responseCode, Region region, String participantId) throws RiotApiException
 	{
 		switch(responseCode)
 		{
-			case 404: throw new LeagueNotFoundException(region, summonerId);
+			case 404: throw new LeagueNotFoundException(region, participantId);
 		}
 	}
 	
