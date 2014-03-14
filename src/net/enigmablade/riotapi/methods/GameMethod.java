@@ -101,7 +101,8 @@ public class GameMethod extends Method
 			Map<String, Object> stats = convertGameStats(gameObject.getObject("stats"));
 			
 			//Create game object
-			Game game = new Game(gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
+			Game game = new Game(api, region,
+					gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
 					gameObject.getLong("createDate"), gameObject.getBoolean("invalid"),
 					gameObject.getLong("gameId"), gameObject.getString("gameMode"), gameObject.getString("gameType"), gameObject.getString("subType"), gameObject.getInt("mapId"),
 					gameObject.getInt("teamId"), players, stats);

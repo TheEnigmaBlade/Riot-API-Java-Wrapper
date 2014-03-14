@@ -59,8 +59,8 @@ API Support
 |                    | /by-summoner/{summoner_id}/entry    | **Yes**   |
 |                    | /by-team/{team_id}                  | **Yes**   |
 |                    | /by-team/{team_id}/entry            | **Yes**   |
-| lol-static-data-v1 | /champion                           | No        |
-|                    | /champion/{champion_id}             | No        |
+| lol-static-data-v1 | /champion                           | **Yes**   |
+|                    | /champion/{champion_id}             | **Yes**   |
 |                    | /item                               | No        |
 |                    | /item/{item_id}                     | No        |
 |                    | /mastery                            | No        |

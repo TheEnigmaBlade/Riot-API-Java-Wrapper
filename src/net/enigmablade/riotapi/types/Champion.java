@@ -5,6 +5,7 @@ import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.constants.Locale;
 import net.enigmablade.riotapi.exceptions.*;
+import net.enigmablade.riotapi.types.staticdata.*;
 
 /**
  * Information about a League of Legends champion.
@@ -13,6 +14,46 @@ import net.enigmablade.riotapi.exceptions.*;
  */
 public class Champion extends DynamicType
 {
+	public static class Stats
+	{
+		public double armor, armorPerLevel;
+		public double attackDamage, attackDamagePerLevel, attackRange;
+		public double attackSpeedOffset, attackSpeedPerLevel;
+		public double crit, critPerLevel;
+		public double hp, hpPerLevel, hpRegen, hpRegenPerLevel;
+		public double movespeed;
+		public double mp, mpPerLevel, mpRegen, mpRegenPerLevel;
+		public double magicResist, magicResistPerLevel;
+		
+		public Stats(double attackDamage, double attackDamagePerLevel, double attackRange,
+			double attackSpeedOffset, double attackSpeedPerLevel, double crit, double critPerLevel,
+			double hp, double hpPerLevel, double hpRegen, double hpRegenPerLevel,
+			double mp, double mpPerLevel, double mpRegen, double mpRegenPerLevel,
+			double armor, double armorPerLevel, double magicResist, double magicResistPerLevel, double movespeed)
+		{
+			this.armor = armor;
+			this.armorPerLevel = armorPerLevel;
+			this.attackDamage = attackDamage;
+			this.attackDamagePerLevel = attackDamagePerLevel;
+			this.attackRange = attackRange;
+			this.attackSpeedOffset = attackSpeedOffset;
+			this.attackSpeedPerLevel = attackSpeedPerLevel;
+			this.crit = crit;
+			this.critPerLevel = critPerLevel;
+			this.hp = hp;
+			this.hpPerLevel = hpPerLevel;
+			this.hpRegen = hpRegen;
+			this.hpRegenPerLevel = hpRegenPerLevel;
+			this.movespeed = movespeed;
+			this.mp = mp;
+			this.mpPerLevel = mpPerLevel;
+			this.mpRegen = mpRegen;
+			this.mpRegenPerLevel = mpRegenPerLevel;
+			this.magicResist = magicResist;
+			this.magicResistPerLevel = magicResistPerLevel;
+		}
+	}
+	
 	private Region region;
 	private Locale locale;
 	
@@ -28,9 +69,17 @@ public class Champion extends DynamicType
 	//Static data
 	private String key;
 	private String title;
-	private ChampionResourceType resourceType;
+	private ResourceType resourceType;
 	private String blurb, lore;
+	
 	private List<String> allyTips, enemyTips;
+	private List<String> tags;
+	private Image image;
+	private List<Skin> skins;
+	private List<RecommendedItems> recommended;
+	private Passive passive;
+	private List<Spell> spells;
+	private Stats stats;
 	
 	//Constructors
 	
@@ -60,24 +109,33 @@ public class Champion extends DynamicType
 		this.botCustomEnabled = botCustomEnabled;
 		this.rankedEnabled = rankedEnabled;
 		
-		if(attackRank >= 0)
+		if(attackRank >= 0 && magicRank >= 0 && defenseRank >= 0 && difficultyRank >= 0)
 			setTypeUpdated();
+		
+		key = null;
+		title = null;
+		resourceType = null;
+		blurb = null;
+		lore = null;
+		allyTips = null;
+		enemyTips = null;
+		tags = null;
+		image = null;
+		skins = null;
+		recommended = null;
+		passive = null;
+		spells = null;
+		stats = null;
 	}
 	
 	////Static construction
 	
-	public Champion(RiotApi api, Region region, String name, long id, String key, String title)
+	public Champion(RiotApi api, Region region, Locale locale, String name, long id, String key, String title)
 	{
 		this(api, region, name, id);
 		
 		this.key = key;
 		this.title = title;
-	}
-	
-	public Champion(RiotApi api, Region region, Locale locale, String name, long id, String key, String title)
-	{
-		this(api, region, name, id, key, title);
-		
 		this.locale = locale;
 	}
 	
@@ -117,6 +175,11 @@ public class Champion extends DynamicType
 	}
 	
 	//Accessor methods
+	
+	public Region getRegion()
+	{
+		return region;
+	}
 	
 	public Locale getLocale()
 	{
@@ -264,7 +327,7 @@ public class Champion extends DynamicType
 		return title;
 	}
 	
-	public ChampionResourceType getResourceType() throws RiotApiException
+	public ResourceType getResourceType() throws RiotApiException
 	{
 		if(resourceType == null)
 			verifyStaticState(ChampionDataType.PARTYPE);
@@ -299,6 +362,155 @@ public class Champion extends DynamicType
 		return enemyTips;
 	}
 	
+	public List<String> getTags() throws RiotApiException
+	{
+		if(tags == null)
+			verifyStaticState(ChampionDataType.TAGS);
+		return tags;
+	}
+	
+	public Image getImage() throws RiotApiException
+	{
+		if(image == null)
+			verifyStaticState(ChampionDataType.IMAGE);
+		return image;
+	}
+	
+	public List<Skin> getSkins() throws RiotApiException
+	{
+		if(skins == null)
+			verifyStaticState(ChampionDataType.SKINS);
+		return skins;
+	}
+	
+	public List<RecommendedItems> getRecommendedItems() throws RiotApiException
+	{
+		if(recommended == null)
+			verifyStaticState(ChampionDataType.RECOMMENDED);
+		return recommended;
+	}
+	
+	public Passive getPassive() throws RiotApiException
+	{
+		if(passive == null)
+			verifyStaticState(ChampionDataType.PASSIVE);
+		return passive;
+	}
+	
+	public List<Spell> getSpells() throws RiotApiException
+	{
+		if(spells == null)
+			verifyStaticState(ChampionDataType.SPELLS);
+		return spells;
+	}
+	
+	public Stats getStats() throws RiotApiException
+	{
+		if(stats == null)
+			verifyStaticState(ChampionDataType.STATS);
+		return stats;
+	}
+	
+	public double getArmor() throws RiotApiException
+	{
+		return getStats().armor;
+	}
+	
+	public double getArmorPerLevel() throws RiotApiException
+	{
+		return getStats().armorPerLevel;
+	}
+	
+	public double getAttackDamage() throws RiotApiException
+	{
+		return getStats().attackDamage;
+	}
+	
+	public double getAttackDamagePerLevel() throws RiotApiException
+	{
+		return getStats().attackDamagePerLevel;
+	}
+	
+	public double getAttackRange() throws RiotApiException
+	{
+		return getStats().attackRange;
+	}
+	
+	public double getAttackSpeedOffset() throws RiotApiException
+	{
+		return getStats().attackSpeedOffset;
+	}
+	
+	public double getAttackSpeedPerLevel() throws RiotApiException
+	{
+		return getStats().attackSpeedPerLevel;
+	}
+	
+	public double getCrit() throws RiotApiException
+	{
+		return getStats().crit;
+	}
+	
+	public double getCritPerLevel() throws RiotApiException
+	{
+		return getStats().critPerLevel;
+	}
+	
+	public double getHp() throws RiotApiException
+	{
+		return getStats().hp;
+	}
+	
+	public double getHpPerLevel() throws RiotApiException
+	{
+		return getStats().hpPerLevel;
+	}
+	
+	public double getHpRegen() throws RiotApiException
+	{
+		return getStats().hpRegen;
+	}
+	
+	public double getHpRegenPerLevel() throws RiotApiException
+	{
+		return getStats().hpRegenPerLevel;
+	}
+	
+	public double getMovespeed() throws RiotApiException
+	{
+		return getStats().movespeed;
+	}
+	
+	public double getMana() throws RiotApiException
+	{
+		return getStats().mp;
+	}
+	
+	public double getManaPerLevel() throws RiotApiException
+	{
+		return getStats().mpPerLevel;
+	}
+	
+	public double getManaRegen() throws RiotApiException
+	{
+		return getStats().mpRegen;
+	}
+	
+	public double getManaRegenPerLevel() throws RiotApiException
+	{
+		return getStats().mpRegenPerLevel;
+	}
+	
+	public double getMagicResist() throws RiotApiException
+	{
+		return getStats().magicResist;
+	}
+	
+	public double getMagicResistPerLevel() throws RiotApiException
+	{
+		return getStats().magicResistPerLevel;
+	}
+	
 	public void setKey(String key)
 	{
 		this.key = key;
@@ -309,7 +521,7 @@ public class Champion extends DynamicType
 		this.title = title;
 	}
 	
-	public void setResourceType(ChampionResourceType resourceType)
+	public void setResourceType(ResourceType resourceType)
 	{
 		this.resourceType = resourceType;
 	}
@@ -332,6 +544,41 @@ public class Champion extends DynamicType
 	public void setEnemyTips(List<String> enemyTips)
 	{
 		this.enemyTips = enemyTips;
+	}
+	
+	public void setTags(List<String> tags)
+	{
+		this.tags = tags;
+	}
+	
+	public void setImage(Image image)
+	{
+		this.image = image;
+	}
+	
+	public void setSkins(List<Skin> skins)
+	{
+		this.skins = skins;
+	}
+	
+	public void setRecommendedItems(List<RecommendedItems> recommended)
+	{
+		this.recommended = recommended;
+	}
+	
+	public void setPassive(Passive passive)
+	{
+		this.passive = passive;
+	}
+	
+	public void setSpells(List<Spell> spells)
+	{
+		this.spells = spells;
+	}
+	
+	public void setStats(Stats stats)
+	{
+		this.stats = stats;
 	}
 	
 	//Custom object methods

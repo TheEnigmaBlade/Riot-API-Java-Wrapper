@@ -65,7 +65,7 @@ public class RiotApi
 		
 		requester = new Requester(userAgent, limitPer10Seconds, limitPer10Minutes);
 		
-		locale = Locale.ENGLISH_US;
+		locale = Locale.EN_US;
 	}
 	
 	//Method management

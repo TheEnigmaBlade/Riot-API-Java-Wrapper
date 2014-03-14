@@ -2,7 +2,7 @@ package net.enigmablade.riotapi.constants;
 
 public enum Locale
 {
-	ENGLISH_US("en_US");
+	EN_US("en_US");
 	
 	/* --- */
 	
