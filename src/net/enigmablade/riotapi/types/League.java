@@ -13,14 +13,14 @@ public class League
 {
 	/**
 	 * A simple representation of a league entry.
-	 *  
+	 * 
 	 * @author Enigma
 	 */
 	public static class Entry
 	{
 		/**
 		 * A simple representation of a league entry's series.
-		 *  
+		 * 
 		 * @author Enigma
 		 */
 		public static class Series
@@ -258,11 +258,11 @@ public class League
 	private String participantId;
 	private QueueType queueType;
 	private LeagueTier tier;
-	private List<Entry> entries;
+	private Map<String, Entry> entries;
 	
 	//Constructors
 	
-	public League(String name, String participantId,  String queueType, String tier, List<Entry> entries)
+	public League(String name, String participantId,  String queueType, String tier, Map<String, Entry> entries)
 	{
 		this.name = name;
 		this.participantId = participantId;
@@ -285,8 +285,8 @@ public class League
 	/**
 	 * Returns the ID of the participant in the league.
 	 * For solo queue leagues, it's a summoner ID as a string.
-	 * For team leagues, it's a team ID. 
-	 * @return The participant ID. 
+	 * For team leagues, it's a team ID.
+	 * @return The participant ID.
 	 */
 	public String getParticipantId()
 	{
@@ -315,8 +315,13 @@ public class League
 	 * Returns the entries in the league. A league can consist of exclusively teams or summoners.
 	 * @return The league's entries.
 	 */
-	public List<Entry> getEntries()
+	public Map<String, Entry> getEntries()
 	{
 		return entries;
+	}
+	
+	public Entry getEntry(String entryId)
+	{
+		return getEntries().get(entryId);
 	}
 }

@@ -29,7 +29,8 @@ public class RiotApi
 	private String apiKey;
 	private Requester requester;
 	
-	private Locale locale;
+	private Locale defaultLocale;
+	private Region defaultRegion;
 	
 	/**
 	 * Creates a new instance to access the Riot API with the given API key and no user agent.
@@ -65,7 +66,7 @@ public class RiotApi
 		
 		requester = new Requester(userAgent, limitPer10Seconds, limitPer10Minutes);
 		
-		locale = Locale.EN_US;
+		defaultLocale = null;
 	}
 	
 	//Method management
@@ -82,7 +83,7 @@ public class RiotApi
 	 * Returns the champion method to use for champion operations.
 	 * @return The champion method
 	 */
-	public ChampionMethod getChampionMethod()
+	public ChampionMethod getChampionApiMethod()
 	{
 		if(championMethod == null)
 			championMethod = new ChampionMethod(this);
@@ -93,7 +94,7 @@ public class RiotApi
 	 * Returns the game method to use for game operations.
 	 * @return The game method
 	 */
-	public GameMethod getGameMethod()
+	public GameMethod getGameApiMethod()
 	{
 		if(gameMethod == null)
 			gameMethod = new GameMethod(this);
@@ -104,7 +105,7 @@ public class RiotApi
 	 * Returns the league method to use for league operations.
 	 * @return The league method
 	 */
-	public LeagueMethod getLeagueMethod()
+	public LeagueMethod getLeagueApiMethod()
 	{
 		if(leagueMethod == null)
 			leagueMethod = new LeagueMethod(this);
@@ -115,7 +116,7 @@ public class RiotApi
 	 * Returns the summoner method to use for summoner operations.
 	 * @return The summoner method
 	 */
-	public SummonerMethod getSummonerMethod()
+	public SummonerMethod getSummonerApiMethod()
 	{
 		if(summonerMethod == null)
 			summonerMethod = new SummonerMethod(this);
@@ -126,7 +127,7 @@ public class RiotApi
 	 * Returns the stats method to use for stats operations.
 	 * @return The stats method
 	 */
-	public StatsMethod getStatsMethod()
+	public StatsMethod getStatsApiMethod()
 	{
 		if(statsMethod == null)
 			statsMethod = new StatsMethod(this);
@@ -137,7 +138,7 @@ public class RiotApi
 	 * Returns the team method to use for team operations.
 	 * @return The team method
 	 */
-	public TeamMethod getTeamMethod()
+	public TeamMethod getTeamApiMethod()
 	{
 		if(teamMethod == null)
 			teamMethod = new TeamMethod(this);
@@ -148,7 +149,7 @@ public class RiotApi
 	 * Returns the static data method to retrieve static LoL data.
 	 * @return The static data method.
 	 */
-	public StaticDataMethod getStaticDataMethod()
+	public StaticDataMethod getStaticDataApiMethod()
 	{
 		if(staticDataMethod == null)
 			staticDataMethod = new StaticDataMethod(this);
@@ -168,7 +169,7 @@ public class RiotApi
 	 */
 	public Summoner getSummoner(Region region, String name) throws RiotApiException
 	{
-		return getSummonerMethod().getSummonerByName(region, name);
+		return getSummonerApiMethod().getSummonerByName(region, name);
 	}
 	
 	/**
@@ -182,7 +183,7 @@ public class RiotApi
 	 */
 	public Summoner getSummoner(Region region, long id) throws RiotApiException
 	{
-		return getSummonerMethod().getSummonerById(region, id);
+		return getSummonerApiMethod().getSummonerById(region, id);
 	}
 	
 	//Utility methods
@@ -280,13 +281,40 @@ public class RiotApi
 		this.apiKey = apiKey;
 	}
 	
-	public Locale getLocale()
+	/**
+	 * Returns the default region being used by requests.
+	 * @return The default region.
+	 */
+	public Region getDefaultRegion()
 	{
-		return locale;
+		return defaultRegion;
 	}
 	
-	public void setLocale(Locale locale)
+	/**
+	 * Sets the default region to be used by requests.
+	 * @param defaultRegion The new default region.
+	 */
+	public void setDefaultRegion(Region defaultRegion)
 	{
-		this.locale = locale;
+		this.defaultRegion = defaultRegion;
+	}
+	
+	/**
+	 * Returns the default locale being used by static data requests.
+	 * @return The default locale, or <code>null</code> if using the API default.
+	 */
+	public Locale getDefaultLocale()
+	{
+		return defaultLocale;
+	}
+	
+	/**
+	 * Sets the default locale to be used by static data requests.
+	 * Use <code>null</code> to use the API default.
+	 * @param locale The new default locale.
+	 */
+	public void setDefaultLocale(Locale locale)
+	{
+		this.defaultLocale = locale;
 	}
 }

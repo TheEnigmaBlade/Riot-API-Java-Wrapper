@@ -4,6 +4,7 @@ import java.util.*;
 import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.constants.Locale;
+import net.enigmablade.riotapi.constants.staticdata.*;
 import net.enigmablade.riotapi.exceptions.*;
 import net.enigmablade.riotapi.types.staticdata.*;
 
@@ -62,6 +63,7 @@ public class Champion extends DynamicType
 	private long id;
 	
 	//Dynamic data
+	private static final Object DYNAMIC_DATA = new Object();
 	private boolean active, freeToPlay;
 	private boolean botMatchMadeEnabled, botCustomEnabled, rankedEnabled;
 	private int attackRank, magicRank, defenseRank, difficultyRank;
@@ -92,10 +94,10 @@ public class Champion extends DynamicType
 	
 	public Champion(RiotApi api, Region region, String name, long id, int attackRank, int magicRank, int defenseRank, int difficultyRank, boolean active, boolean freeToPlay, boolean botMatchMadeEnabled, boolean botCustomEnabled, boolean rankedEnabled)
 	{
-		super(api, 2);
+		super(api, 15);
 		
 		this.region = region;
-		this.locale = api.getLocale();
+		this.locale = api.getDefaultLocale();
 		
 		this.name = name;
 		this.id = id;
@@ -110,7 +112,7 @@ public class Champion extends DynamicType
 		this.rankedEnabled = rankedEnabled;
 		
 		if(attackRank >= 0 && magicRank >= 0 && defenseRank >= 0 && difficultyRank >= 0)
-			setTypeUpdated();
+			setTypeUpdated(DYNAMIC_DATA);
 		
 		key = null;
 		title = null;
@@ -148,30 +150,26 @@ public class Champion extends DynamicType
 	 */
 	private void verifyDynamicState() throws RiotApiException
 	{
-		if(!hasTypeUpdated(0))
+		if(!hasTypeUpdated(DYNAMIC_DATA))
 		{
-			setTypeUpdated(0);
-			api.getChampionMethod().fillChampion(this, region);
+			setTypeUpdated(DYNAMIC_DATA);
+			api.getChampionApiMethod().fillChampion(this, region);
 		}
 	}
 	
 	/**
-	 * Verifies required information for static information methods is available, such as champion ID.
+	 * Verifies required information for static information methods is available.
 	 * If not found, makes an API call to get dynamic champion information.
+	 * @param type The type of static data being checked.
 	 * @throws RiotApiException If there was an exception or an error from the server.
 	 */
-	private void verifyStaticState() throws RiotApiException
-	{
-		if(!hasTypeUpdated(1))
-		{
-			setTypeUpdated(1);
-			api.getStaticDataMethod().fillChampion(this, region);
-		}
-	}
-	
 	private void verifyStaticState(ChampionDataType type) throws RiotApiException
 	{
-		api.getStaticDataMethod().fillChampion(this, region, type);
+		if(!hasTypeUpdated(type))
+		{
+			setTypeUpdated(type);
+			api.getStaticDataApiMethod().fillChampion(this, region, type);
+		}
 	}
 	
 	//Accessor methods
@@ -315,99 +313,85 @@ public class Champion extends DynamicType
 	
 	public String getKey() throws RiotApiException
 	{
-		if(key == null)
-			verifyStaticState();
+		verifyStaticState(ChampionDataType.BASIC);
 		return key;
 	}
 	
 	public String getTitle() throws RiotApiException
 	{
-		if(key == null)
-			verifyStaticState();
+		verifyStaticState(ChampionDataType.BASIC);
 		return title;
 	}
 	
 	public ResourceType getResourceType() throws RiotApiException
 	{
-		if(resourceType == null)
-			verifyStaticState(ChampionDataType.PARTYPE);
+		verifyStaticState(ChampionDataType.PARTYPE);
 		return resourceType;
 	}
 	
 	public String getBlurb() throws RiotApiException
 	{
-		if(blurb == null)
-			verifyStaticState(ChampionDataType.BLURB);
+		verifyStaticState(ChampionDataType.BLURB);
 		return blurb;
 	}
 	
 	public String getLore() throws RiotApiException
 	{
-		if(lore == null)
-			verifyStaticState(ChampionDataType.LORE);
+		verifyStaticState(ChampionDataType.LORE);
 		return lore;
 	}
 	
 	public List<String> getAllyTips() throws RiotApiException
 	{
-		if(allyTips == null)
-			verifyStaticState(ChampionDataType.ALLYTIPS);
+		verifyStaticState(ChampionDataType.ALLYTIPS);
 		return allyTips;
 	}
 	
 	public List<String> getEnemyTips() throws RiotApiException
 	{
-		if(enemyTips == null)
-			verifyStaticState(ChampionDataType.ENEMYTIPS);
+		verifyStaticState(ChampionDataType.ENEMYTIPS);
 		return enemyTips;
 	}
 	
 	public List<String> getTags() throws RiotApiException
 	{
-		if(tags == null)
-			verifyStaticState(ChampionDataType.TAGS);
+		verifyStaticState(ChampionDataType.TAGS);
 		return tags;
 	}
 	
 	public Image getImage() throws RiotApiException
 	{
-		if(image == null)
-			verifyStaticState(ChampionDataType.IMAGE);
+		verifyStaticState(ChampionDataType.IMAGE);
 		return image;
 	}
 	
 	public List<Skin> getSkins() throws RiotApiException
 	{
-		if(skins == null)
-			verifyStaticState(ChampionDataType.SKINS);
+		verifyStaticState(ChampionDataType.SKINS);
 		return skins;
 	}
 	
 	public List<RecommendedItems> getRecommendedItems() throws RiotApiException
 	{
-		if(recommended == null)
-			verifyStaticState(ChampionDataType.RECOMMENDED);
+		verifyStaticState(ChampionDataType.RECOMMENDED);
 		return recommended;
 	}
 	
 	public Passive getPassive() throws RiotApiException
 	{
-		if(passive == null)
-			verifyStaticState(ChampionDataType.PASSIVE);
+		verifyStaticState(ChampionDataType.PASSIVE);
 		return passive;
 	}
 	
 	public List<Spell> getSpells() throws RiotApiException
 	{
-		if(spells == null)
-			verifyStaticState(ChampionDataType.SPELLS);
+		verifyStaticState(ChampionDataType.SPELLS);
 		return spells;
 	}
 	
 	public Stats getStats() throws RiotApiException
 	{
-		if(stats == null)
-			verifyStaticState(ChampionDataType.STATS);
+		verifyStaticState(ChampionDataType.STATS);
 		return stats;
 	}
 	

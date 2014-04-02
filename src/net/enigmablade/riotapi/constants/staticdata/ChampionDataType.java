@@ -1,4 +1,4 @@
-package net.enigmablade.riotapi.constants;
+package net.enigmablade.riotapi.constants.staticdata;
 
 /**
  * Available champion data types for use with the champion static data operations.

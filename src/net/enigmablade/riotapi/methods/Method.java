@@ -74,6 +74,19 @@ abstract class Method
 	 * Execute a request and get the result. The response's value may be null if a method-specific error occurred.
 	 * @param region The game region (NA, EUW, EUNE, etc.)
 	 * @param operation The optional operation to perform. Leave <code>null</code> to only execute the method.
+	 * @return The response from the server.
+	 * @throws RegionNotSupportedException If the region is not supported by the method.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	protected Response getMethodResult(Region region, String operation) throws RiotApiException
+	{
+		return getMethodResult(region, operation, null, null);
+	}
+	
+	/**
+	 * Execute a request and get the result. The response's value may be null if a method-specific error occurred.
+	 * @param region The game region (NA, EUW, EUNE, etc.)
+	 * @param operation The optional operation to perform. Leave <code>null</code> to only execute the method.
 	 * @param pathArgs The optional path arguments. Values in the operation surrounded by { } will be replaced.
 	 * @return The response from the server.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
@@ -154,7 +167,7 @@ abstract class Method
 	private String buildUrl(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs)
 	{
 		//Format path arguments within the operation
-		if(operation != null)
+		if(operation != null && pathArgs != null)
 			operation = IOUtil.replacePathArgs(operation, pathArgs);
 		
 		//Create string of query arguments (arg=argv&arg2=arg2v...)

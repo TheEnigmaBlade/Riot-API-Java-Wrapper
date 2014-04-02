@@ -6,7 +6,6 @@ import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.locks.*;
 import java.util.zip.*;
-import javax.net.ssl.*;
 import net.enigmablade.jsonic.*;
 import net.enigmablade.riotapi.util.*;
 
@@ -73,6 +72,15 @@ public class Requester
 		this(protocol, GET_METHOD, userAgent, limitPer10Seconds, limitPer10Minutes);
 	}
 	
+	/**
+	 * Create a new Requester with the given user agent and rate limits.
+	 * @param protocol The HTTP protocol to use.
+	 * @param method The HTTP method to use.
+	 * @param userAgent The user agent for HTTP requests.
+	 * @param limitPer10Seconds The limit for the number of requests per 10 seconds. Must be greater than 0.
+	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
+	 * @throws IllegalArgumentException If one of the arguments is not valid.
+	 */
 	public Requester(String protocol, String method, String userAgent, int limitPer10Seconds, int limitPer10Minutes)
 	{
 		if(!HTTP_PROTOCOL.equals(protocol) && !HTTPS_PROTOCOL.equals(protocol))
@@ -159,6 +167,13 @@ public class Requester
 		return request(requestUrl, null);
 	}
 	
+	/**
+	 * Sends a request to the server at the given URL with an optional request body and returns the response.
+	 * @param requestUrl The request URL.
+	 * @param requestBody The optional request body.
+	 * @return The response from the request.
+	 * @throws IOException If there was an error when sending the request.
+	 */
 	public synchronized Response request(String requestUrl, String requestBody)
 	{
 		return requestHelper(requestUrl, requestBody);
@@ -233,12 +248,12 @@ public class Requester
 	
 	private Response sendRequest(String requestUrl, String requestBody)
 	{
-		HttpsURLConnection connection = null;
+		HttpURLConnection connection = null;
 		try
 		{
 			//Create and connect
 			URL url = new URL(requestUrl);
-			connection = (HttpsURLConnection)url.openConnection();
+			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod(method);
 			if(userAgent != null)
 				connection.setRequestProperty("User-Agent", userAgent);
@@ -472,11 +487,19 @@ public class Requester
 		lastCall = 0;
 	}
 	
+	/**
+	 * Sets whether or not request responses should be cached.
+	 * @param enabled Whether or not caching is enabled.
+	 */
 	public synchronized void setCacheEnabled(boolean enabled)
 	{
 		cacheEnabled = enabled;
 	}
 	
+	/**
+	 * Returns whether or not request responses are cached.
+	 * @return <code>true</code> if requests responses are cached, otherwise <code>false</code>.
+	 */
 	public synchronized boolean isCacheEnabled()
 	{
 		return cacheEnabled;

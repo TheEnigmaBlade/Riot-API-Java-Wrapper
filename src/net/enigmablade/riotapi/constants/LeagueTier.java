@@ -7,9 +7,23 @@ package net.enigmablade.riotapi.constants;
  */
 public enum LeagueTier
 {
-	TIER_CHALLENGER, TIER_DIAMOND, TIER_PLATINUM, TIER_GOLD, TIER_SILVER, TIER_BRONZE,
-	RANK_V, RANK_IV, RANK_III, RANK_II, RANK_I, 
-	UNKNOWN;
+	TIER_CHALLENGER("Challenger"), TIER_DIAMOND("Diamond"), TIER_PLATINUM("Platinum"), TIER_GOLD("Gold"), TIER_SILVER("Silver"), TIER_BRONZE("Bronze"),
+	RANK_V("V"), RANK_IV("IV"), RANK_III("III"), RANK_II("II"), RANK_I("I"),
+	UNKNOWN("Unknown");
+	
+	/* --- */
+	
+	private String name;
+	
+	private LeagueTier(String name)
+	{
+		this.name = name;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
 	
 	//Utility methods
 	

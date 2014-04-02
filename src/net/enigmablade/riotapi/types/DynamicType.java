@@ -9,10 +9,12 @@ import net.enigmablade.riotapi.*;
  * 
  * @author Enigma
  */
-abstract class DynamicType
+public abstract class DynamicType
 {
 	protected RiotApi api;
-	private boolean[] updated;
+	private Map<Object, Boolean> updated;
+	
+	private static final Object DEFAULT_KEY = new Object();
 	
 	protected DynamicType(RiotApi api)
 	{
@@ -23,30 +25,27 @@ abstract class DynamicType
 	{
 		this.api = api;
 		
-		updated = new boolean[num];
-		Arrays.fill(updated, false);
+		updated = new HashMap<>(num);
 	}
 	
 	protected boolean hasTypeUpdated()
 	{
-		return updated[0];
+		return updated.get(DEFAULT_KEY);
 	}
 	
 	protected void setTypeUpdated()
 	{
-		updated[0] = true;
+		updated.put(DEFAULT_KEY, true);
 	}
 	
-	protected boolean hasTypeUpdated(int index)
+	protected boolean hasTypeUpdated(Object key)
 	{
-		if(index >= 0 && index < updated.length)
-			return updated[0];
-		return false;
+		Boolean b = updated.get(key);
+		return b != null ? b : false;
 	}
 	
-	protected void setTypeUpdated(int index)
+	protected void setTypeUpdated(Object key)
 	{
-		if(index >= 0 && index < updated.length)
-			updated[0] = true;
+		updated.put(key, true);
 	}
 }

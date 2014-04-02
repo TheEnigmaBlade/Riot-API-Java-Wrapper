@@ -6,9 +6,11 @@ import net.enigmablade.riotapi.*;
 import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.constants.Locale;
+import net.enigmablade.riotapi.constants.staticdata.*;
 import net.enigmablade.riotapi.exceptions.*;
 import net.enigmablade.riotapi.types.*;
 import net.enigmablade.riotapi.types.staticdata.*;
+import net.enigmablade.riotapi.types.staticdata.masteries.*;
 import net.enigmablade.riotapi.util.*;
 import static net.enigmablade.riotapi.constants.Region.*;
 
@@ -42,9 +44,16 @@ public class StaticDataMethod extends Method
 	
 	//API-defined operation methods
 	
+	////Champions
+	
+	public Map<String, Champion> getChampions() throws RiotApiException
+	{
+		return getChampions(api.getDefaultRegion());
+	}
+	
 	public Map<String, Champion> getChampions(Region region) throws RiotApiException
 	{
-		return getChampions(region, null);
+		return getChampions(region, api.getDefaultLocale());
 	}
 	
 	/**
@@ -74,9 +83,7 @@ public class StaticDataMethod extends Method
 	public Map<String, Champion> getChampions(Region region, Locale locale, ChampionDataType championData) throws RiotApiException
 	{
 		//Create argument maps
-		Map<String, String> queryArgs = createArgMap();
-		if(locale != null)
-			queryArgs.put("locale", locale.getValue());
+		Map<String, String> queryArgs = createLocaleArgMap(locale);
 		if(championData != null && championData != ChampionDataType.BASIC)
 			queryArgs.put("champData", championData.toString().toLowerCase());
 		
@@ -87,6 +94,16 @@ public class StaticDataMethod extends Method
 		
 		//Parse response
 		return convertChampionList((JsonObject)response.getValue(), championData, region, locale);
+	}
+	
+	public Champion getChampion(long championId) throws RiotApiException
+	{
+		return getChampion(api.getDefaultRegion(), championId);
+	}
+	
+	public Champion getChampion(long championId, ChampionDataType championData) throws RiotApiException
+	{
+		return getChampion(api.getDefaultRegion(), championId, championData);
 	}
 	
 	/**
@@ -101,7 +118,7 @@ public class StaticDataMethod extends Method
 	 */
 	public Champion getChampion(Region region, long championId) throws RiotApiException
 	{
-		return getChampion(region, null, championId);
+		return getChampion(region, api.getDefaultLocale(), championId);
 	}
 	
 	/**
@@ -117,7 +134,7 @@ public class StaticDataMethod extends Method
 	 */
 	public Champion getChampion(Region region, long championId, ChampionDataType championData) throws RiotApiException
 	{
-		return getChampion(region, null, championId, championData);
+		return getChampion(region, api.getDefaultLocale(), championId, championData);
 	}
 	
 	/**
@@ -153,10 +170,7 @@ public class StaticDataMethod extends Method
 		//Create argument maps
 		Map<String, String> pathArgs = createArgMap("id", String.valueOf(championId));
 		
-		Map<String, String> queryArgs = createArgMap();
-		if(locale == null)
-			locale = api.getLocale();
-		queryArgs.put("locale", locale.getValue());
+		Map<String, String> queryArgs = createLocaleArgMap(locale);
 		if(championData != null && championData != ChampionDataType.BASIC)
 			queryArgs.put("champData", championData.toString().toLowerCase());
 		
@@ -171,6 +185,65 @@ public class StaticDataMethod extends Method
 		
 		//Parse response
 		return convertChampion((JsonObject)response.getValue(), championData, region, locale);
+	}
+	
+	////Masteries
+	
+	public Masteries getMasteries() throws RiotApiException
+	{
+		return getMasteries((MasteryDataType)null);
+	}
+	
+	public Masteries getMasteries(MasteryDataType masteryData) throws RiotApiException
+	{
+		return getMasteries(api.getDefaultRegion(), masteryData);
+	}
+	
+	public Masteries getMasteries(Region region) throws RiotApiException
+	{
+		return getMasteries(region, (MasteryDataType)null);
+	}
+	
+	public Masteries getMasteries(Region region, MasteryDataType masteryData) throws RiotApiException
+	{
+		return getMasteries(region, api.getDefaultLocale(), masteryData);
+	}
+	
+	public Masteries getMasteries(Region region, Locale locale) throws RiotApiException
+	{
+		return getMasteries(region, locale, null);
+	}
+	
+	public Masteries getMasteries(Region region, Locale locale, MasteryDataType masteryData) throws RiotApiException
+	{
+		//Create argument maps
+		Map<String, String> queryArgs = createLocaleArgMap(locale);
+		if(masteryData != null && masteryData != MasteryDataType.BASIC)
+			queryArgs.put("masteryListData", masteryData.toString().toLowerCase());
+		
+		//Send request
+		Response response = staticGetMethodResult(region,
+				"mastery",
+				null, queryArgs);
+		
+		//Parse response
+		return convertMasteryList((JsonObject)response.getValue());
+	}
+	
+	////Realms (region info)
+	
+	public RegionInfo getRegionInfo() throws RiotApiException
+	{
+		return getRegionInfo(api.getDefaultRegion());
+	}
+	
+	public RegionInfo getRegionInfo(Region region) throws RiotApiException
+	{
+		//Send request
+		Response response = staticGetMethodResult(region, "realm");
+		
+		//Parse response
+		return convertRealm((JsonObject)response.getValue(), region);
 	}
 	
 	//Converter methods
@@ -462,6 +535,68 @@ public class StaticDataMethod extends Method
 		return vars;
 	}
 	
+	////Masteries
+	
+	private Masteries convertMasteryList(JsonObject masteriesObject)
+	{
+		System.out.println("Converting masteries...");
+		Map<String, Mastery> masteries = convertMasteryMap(masteriesObject.getObject("data"));
+		
+		JsonObject treesObject = masteriesObject.getObject("tree");
+		List<String> offenseTree = null;
+		List<String> defenseTree = null;
+		List<String> utilityTree = null;
+		if(treesObject != null)
+		{
+			offenseTree = convertMasteryTree(treesObject.getArray("Offense"));
+			defenseTree = convertMasteryTree(treesObject.getArray("Defense"));
+			utilityTree = convertMasteryTree(treesObject.getArray("Utility"));
+		}
+		
+		return new Masteries(api, masteriesObject.getString("version"), masteries, offenseTree, defenseTree, utilityTree);
+	}
+	
+	private Map<String, Mastery> convertMasteryMap(JsonObject masteryMapObject)
+	{
+		Map<String, Mastery> masteries = new HashMap<>();
+		for(String id : masteryMapObject.keySet())
+			masteries.put(id, convertMastery(masteryMapObject.getObject("id")));
+		return masteries;
+	}
+	
+	private Mastery convertMastery(JsonObject masteryObject)
+	{
+		//TODO
+		return null;
+	}
+	
+	private List<String> convertMasteryTree(JsonArray masteryTreeList)
+	{
+		//TODO
+		return null;
+	}
+	
+	////Realm
+	
+	private RegionInfo convertRealm(JsonObject realmObject, Region region)
+	{
+		String cdn = realmObject.getString("cdn");
+		String css = realmObject.getString("cdn");
+		String dd = realmObject.getString("cdn");
+		String l = realmObject.getString("cdn");
+		String lg = realmObject.getString("cdn");
+		int profileIconMax = realmObject.getInt("profileiconmax");
+		String store = realmObject.getString("cdn");
+		String v = realmObject.getString("cdn");
+		
+		JsonObject nObj = realmObject.getObject("n");
+		Map<String, String> n = new HashMap<>();
+		for(String key : nObj.keySet())
+			n.put(key, nObj.getString(key));
+		
+		return new RegionInfo(cdn, dd, css, l, lg, profileIconMax, store, v, n);
+	}
+	
 	//Common converter methods
 	
 	private Image convertImage(JsonObject imageObject)
@@ -551,11 +686,28 @@ public class StaticDataMethod extends Method
 	
 	//Helper methods
 	
+	private Map<String, String> createLocaleArgMap(Locale locale)
+	{
+		Map<String, String> args = createArgMap();
+		if(locale != null)
+			args.put("locale", locale.getValue());
+		return args;
+	}
+	
 	private Response staticGetMethodResult(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs) throws RiotApiException
 	{
 		boolean save = api.isRateLimitEnabled();
 		api.setRateLimitEnabled(false);
 		Response r = getMethodResult(region, operation, pathArgs, queryArgs);
+		api.setRateLimitEnabled(save);
+		return r;
+	}
+	
+	private Response staticGetMethodResult(Region region, String operation) throws RiotApiException
+	{
+		boolean save = api.isRateLimitEnabled();
+		api.setRateLimitEnabled(false);
+		Response r = getMethodResult(region, operation);
 		api.setRateLimitEnabled(save);
 		return r;
 	}

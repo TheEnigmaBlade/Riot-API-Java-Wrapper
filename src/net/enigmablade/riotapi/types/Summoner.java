@@ -69,7 +69,7 @@ public class Summoner extends DynamicType
 		if(!hasTypeUpdated())
 		{
 			setTypeUpdated();
-			api.getSummonerMethod().fillSummoner(this);
+			api.getSummonerApiMethod().fillSummoner(this);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class Summoner extends DynamicType
 	public List<Game> getMatchHistory() throws RiotApiException
 	{
 		verifyConvenienceState();
-		return api.getGameMethod().getRecentGames(region, id);
+		return api.getGameApiMethod().getRecentGames(region, id);
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class Summoner extends DynamicType
 	public List<League> getLeagues() throws RiotApiException
 	{
 		verifyConvenienceState();
-		return api.getLeagueMethod().getLeagues(region, id);
+		return api.getLeagueApiMethod().getLeagues(region, id);
 	}
 	
 	/**
@@ -123,7 +123,7 @@ public class Summoner extends DynamicType
 	public List<MasteryPage> getMasteryPages() throws RiotApiException
 	{
 		verifyConvenienceState();
-		return api.getSummonerMethod().getSummonerMasteryPages(region, id);
+		return api.getSummonerApiMethod().getSummonerMasteryPages(region, id);
 	}
 	
 	/**
@@ -150,7 +150,7 @@ public class Summoner extends DynamicType
 	public List<RunePage> getRunePages() throws RiotApiException
 	{
 		verifyConvenienceState();
-		return api.getSummonerMethod().getSummonerRunePages(region, id);
+		return api.getSummonerApiMethod().getSummonerRunePages(region, id);
 	}
 	
 	/**

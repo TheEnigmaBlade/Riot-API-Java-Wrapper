@@ -1,13 +1,13 @@
 package net.enigmablade.riotapi.methods;
 
+import static net.enigmablade.riotapi.constants.Region.*;
 import java.util.*;
 import net.enigmablade.jsonic.*;
+import net.enigmablade.riotapi.Requester.Response;
 import net.enigmablade.riotapi.*;
-import net.enigmablade.riotapi.Requester.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
 import net.enigmablade.riotapi.types.*;
-import static net.enigmablade.riotapi.constants.Region.*;
 
 /**
  * <p>The league method and its supporting operations.<p>
@@ -34,7 +34,7 @@ public class LeagueMethod extends Method
 	 */
 	public LeagueMethod(RiotApi api)
 	{
-		super(api, "api/lol", "league", "2.3", new Region[]{NA, EUW, EUNE, BR, TR});
+		super(api, "api/lol", "league", "2.3", new Region[]{NA, EUW, EUNE, BR, TR, RU, LAN, LAS, OCE});
 	}
 	
 	//API-defined operation methods
@@ -226,11 +226,12 @@ public class LeagueMethod extends Method
 	{
 		//Convert league entries list
 		JsonArray entriesArray = leagueObject.getArray("entries");
-		List<League.Entry> entries = new ArrayList<>(entriesArray.size());
+		Map<String, League.Entry> entries = new HashMap<>(entriesArray.size());
 		for(int l = 0; l < entriesArray.size(); l++)
 		{
 			JsonObject entryObject = entriesArray.getObject(l);
-			entries.add(convertLeagueEntry(entryObject));
+			League.Entry entry = convertLeagueEntry(entryObject);
+			entries.put(entry.getPlayerOrTeamId(), entry);
 		}
 		
 		//Create league
