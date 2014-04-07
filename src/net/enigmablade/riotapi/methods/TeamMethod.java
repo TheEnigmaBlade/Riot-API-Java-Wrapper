@@ -35,7 +35,7 @@ public class TeamMethod extends Method
 	 */
 	public TeamMethod(RiotApi api)
 	{
-		super(api, "api/lol", "team", "2.2", new Region[]{NA, EUW, EUNE, BR, TR, RU, LAN, LAS, OCE});
+		super(api, "api/lol", "team", "2.2", new Region[]{NA, EUW, EUNE, BR, TR, RU, LAN, LAS, OCE, KR});
 	}
 	
 	//API-defined operation methods

@@ -34,7 +34,7 @@ public class GameMethod extends Method
 	 */
 	public GameMethod(RiotApi api)
 	{
-		super(api, "api/lol", "game", "1.3", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE});
+		super(api, "api/lol", "game", "1.3", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR});
 	}
 	
 	//API-defined operation methods
@@ -127,7 +127,7 @@ public class GameMethod extends Method
 			for(int p = 0; p < playersArray.size(); p++)
 			{
 				JsonObject playerObject = playersArray.getObject(p);
-				Player player = new Player(api, region, playerObject.getLong("summonerId"), playerObject.getInt("championId"), (int)playerObject.getInt("teamId"));
+				Player player = new Player(api, region, playerObject.getLong("summonerId"), playerObject.getInt("championId"), playerObject.getInt("teamId"));
 				players.add(player);
 			}
 		}

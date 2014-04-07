@@ -34,7 +34,7 @@ public class LeagueMethod extends Method
 	 */
 	public LeagueMethod(RiotApi api)
 	{
-		super(api, "api/lol", "league", "2.3", new Region[]{NA, EUW, EUNE, BR, TR, RU, LAN, LAS, OCE});
+		super(api, "api/lol", "league", "2.3", new Region[]{NA, EUW, EUNE, BR, TR, RU, LAN, LAS, OCE, KR});
 	}
 	
 	//API-defined operation methods
