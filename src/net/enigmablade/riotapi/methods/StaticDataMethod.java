@@ -281,6 +281,7 @@ public class StaticDataMethod extends Method
 			switch(loadedData)
 			{
 				//Basic data
+				case ALL:
 				case PARTYPE:
 					String partype = championObject.getString("partype");
 					ResourceType resourceType = ResourceType.getResourceType(partype);
@@ -632,6 +633,7 @@ public class StaticDataMethod extends Method
 		switch(dataType)
 		{
 			//Basic data
+			case ALL:
 			case PARTYPE:
 				champion.setResourceType(newChampion.getResourceType());
 				if(notAll) break;

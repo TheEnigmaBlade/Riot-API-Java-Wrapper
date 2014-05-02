@@ -509,61 +509,73 @@ public class Champion extends DynamicType
 	public void setResourceType(ResourceType resourceType)
 	{
 		this.resourceType = resourceType;
+		setTypeUpdated(ChampionDataType.PARTYPE);
 	}
 	
 	public void setBlurb(String blurb)
 	{
 		this.blurb = blurb;
+		setTypeUpdated(ChampionDataType.BLURB);
 	}
 	
 	public void setLore(String lore)
 	{
 		this.lore = lore;
+		setTypeUpdated(ChampionDataType.LORE);
 	}
 	
 	public void setAllyTips(List<String> allyTips)
 	{
 		this.allyTips = allyTips;
+		setTypeUpdated(ChampionDataType.ALLYTIPS);
 	}
 	
 	public void setEnemyTips(List<String> enemyTips)
 	{
 		this.enemyTips = enemyTips;
+		setTypeUpdated(ChampionDataType.ENEMYTIPS);
 	}
 	
 	public void setTags(List<String> tags)
 	{
 		this.tags = tags;
+		setTypeUpdated(ChampionDataType.TAGS);
 	}
 	
 	public void setImage(Image image)
 	{
 		this.image = image;
+		setTypeUpdated(ChampionDataType.IMAGE);
 	}
 	
 	public void setSkins(List<Skin> skins)
 	{
 		this.skins = skins;
+		setTypeUpdated(ChampionDataType.SKINS);
 	}
 	
 	public void setRecommendedItems(List<RecommendedItems> recommended)
 	{
 		this.recommended = recommended;
+		setTypeUpdated(ChampionDataType.RECOMMENDED);
 	}
 	
 	public void setPassive(Passive passive)
 	{
 		this.passive = passive;
+		setTypeUpdated(ChampionDataType.PASSIVE);
 	}
 	
 	public void setSpells(List<Spell> spells)
 	{
 		this.spells = spells;
+		setTypeUpdated(ChampionDataType.SPELLS);
 	}
 	
 	public void setStats(Stats stats)
 	{
 		this.stats = stats;
+		setTypeUpdated(ChampionDataType.STATS);
 	}
 	
 	//Custom object methods
