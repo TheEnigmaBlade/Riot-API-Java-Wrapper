@@ -139,6 +139,7 @@ public class Champion extends DynamicType
 		this.key = key;
 		this.title = title;
 		this.locale = locale;
+		setTypeUpdated(ChampionDataType.BASIC);
 	}
 	
 	//State methods
