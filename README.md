@@ -1,3 +1,5 @@
+**Note:** Development is behind Riot's updates due to a busy end of the semester.
+
 Java Wrapper for the Riot API
 =============================
 
