@@ -59,7 +59,6 @@ public class Champion extends DynamicType
 	private Locale locale;
 	
 	//Identification data
-	private String name;
 	private long id;
 	
 	//Dynamic data
@@ -69,6 +68,7 @@ public class Champion extends DynamicType
 	private int attackRank, magicRank, defenseRank, difficultyRank;
 	
 	//Static data
+	private String name;
 	private String key;
 	private String title;
 	private ResourceType resourceType;
@@ -87,33 +87,34 @@ public class Champion extends DynamicType
 	
 	////Dynamic construction
 	
-	public Champion(RiotApi api, Region region, String name, long id)
+	public Champion(RiotApi api, Region region, long id)
 	{
-		this(api, region, name, id, -1, -1, -1, -1, false, false, false, false, false);
+		this(api, region, id, false, false, false, false, false, false);
 	}
 	
-	public Champion(RiotApi api, Region region, String name, long id, int attackRank, int magicRank, int defenseRank, int difficultyRank, boolean active, boolean freeToPlay, boolean botMatchMadeEnabled, boolean botCustomEnabled, boolean rankedEnabled)
+	public Champion(RiotApi api, Region region, long id, boolean active, boolean freeToPlay, boolean botMatchMadeEnabled, boolean botCustomEnabled, boolean rankedEnabled, boolean upToDate)
 	{
 		super(api, 15);
 		
 		this.region = region;
 		this.locale = api.getDefaultLocale();
 		
-		this.name = name;
 		this.id = id;
-		this.attackRank = attackRank;
-		this.magicRank = magicRank;
-		this.defenseRank = defenseRank;
-		this.difficultyRank = difficultyRank;
 		this.active = active;
 		this.freeToPlay = freeToPlay;
 		this.botMatchMadeEnabled = botMatchMadeEnabled;
 		this.botCustomEnabled = botCustomEnabled;
 		this.rankedEnabled = rankedEnabled;
 		
-		if(attackRank >= 0 && magicRank >= 0 && defenseRank >= 0 && difficultyRank >= 0)
+		if(upToDate)
 			setTypeUpdated(DYNAMIC_DATA);
 		
+		this.attackRank = -1;
+		this.magicRank = -1;
+		this.defenseRank = -1;
+		this.difficultyRank = -1;
+		
+		name = null;
 		key = null;
 		title = null;
 		resourceType = null;
@@ -134,11 +135,14 @@ public class Champion extends DynamicType
 	
 	public Champion(RiotApi api, Region region, Locale locale, String name, long id, String key, String title)
 	{
-		this(api, region, name, id);
+		this(api, region, id);
 		
+		this.name = name;
 		this.key = key;
 		this.title = title;
 		this.locale = locale;
+		
+		setTypeUpdated(ChampionDataType.BASIC);
 	}
 	
 	//State methods
@@ -186,8 +190,7 @@ public class Champion extends DynamicType
 	
 	public String getName() throws RiotApiException
 	{
-		if(name == null)
-			verifyDynamicState();
+		verifyStaticState(ChampionDataType.BASIC);
 		return name;
 	}
 	
@@ -199,30 +202,6 @@ public class Champion extends DynamicType
 	}
 	
 	////Dynamic accessor methods
-	
-	public int getAttackRank() throws RiotApiException
-	{
-		verifyDynamicState();
-		return attackRank;
-	}
-	
-	public int getMagicRank() throws RiotApiException
-	{
-		verifyDynamicState();
-		return magicRank;
-	}
-	
-	public int getDefenseRank() throws RiotApiException
-	{
-		verifyDynamicState();
-		return defenseRank;
-	}
-	
-	public int getDifficultyRank() throws RiotApiException
-	{
-		verifyDynamicState();
-		return difficultyRank;
-	}
 	
 	public boolean isActive() throws RiotApiException
 	{
@@ -263,27 +242,7 @@ public class Champion extends DynamicType
 	{
 		this.id = id;
 	}
-
-	public void setAttackRank(int attackRank)
-	{
-		this.attackRank = attackRank;
-	}
-
-	public void setMagicRank(int magicRank)
-	{
-		this.magicRank = magicRank;
-	}
-
-	public void setDefenseRank(int defenseRank)
-	{
-		this.defenseRank = defenseRank;
-	}
-
-	public void setDifficultyRank(int difficultyRank)
-	{
-		this.difficultyRank = difficultyRank;
-	}
-
+	
 	public void setActive(boolean active)
 	{
 		this.active = active;
@@ -339,6 +298,30 @@ public class Champion extends DynamicType
 	{
 		verifyStaticState(ChampionDataType.LORE);
 		return lore;
+	}
+	
+	public int getAttackRank() throws RiotApiException
+	{
+		verifyStaticState(ChampionDataType.INFO);
+		return attackRank;
+	}
+	
+	public int getMagicRank() throws RiotApiException
+	{
+		verifyStaticState(ChampionDataType.INFO);
+		return magicRank;
+	}
+	
+	public int getDefenseRank() throws RiotApiException
+	{
+		verifyStaticState(ChampionDataType.INFO);
+		return defenseRank;
+	}
+	
+	public int getDifficultyRank() throws RiotApiException
+	{
+		verifyStaticState(ChampionDataType.INFO);
+		return difficultyRank;
 	}
 	
 	public List<String> getAllyTips() throws RiotApiException
@@ -518,6 +501,14 @@ public class Champion extends DynamicType
 	public void setLore(String lore)
 	{
 		this.lore = lore;
+	}
+	
+	public void setInfo(int attackRank, int magicRank, int defenseRank, int difficultyRank)
+	{
+		this.attackRank = attackRank;
+		this.magicRank = magicRank;
+		this.defenseRank = defenseRank;
+		this.difficultyRank = difficultyRank;
 	}
 	
 	public void setAllyTips(List<String> allyTips)

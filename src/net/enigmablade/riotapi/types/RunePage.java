@@ -44,35 +44,15 @@ public class RunePage
 	public static class Rune
 	{
 		private int id;
-		private String name, description;
-		private int tier;
 		
-		public Rune(int id, String name, String description, int tier)
+		public Rune(int id)
 		{
 			this.id = id;
-			this.name = name;
-			this.description = description;
-			this.tier = tier;
 		}
 		
 		public int getId()
 		{
 			return id;
-		}
-		
-		public String getName()
-		{
-			return name;
-		}
-		
-		public String getDescription()
-		{
-			return description;
-		}
-		
-		public int getTier()
-		{
-			return tier;
 		}
 	}
 	

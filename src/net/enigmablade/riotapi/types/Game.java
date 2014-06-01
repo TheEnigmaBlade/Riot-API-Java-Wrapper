@@ -67,14 +67,14 @@ public class Game implements Comparable<Game>
 	 */
 	public Champion getChampion()
 	{
-		return new Champion(api, region, null, championId);
+		return new Champion(api, region, championId);
 	}
 	
 	/**
 	 * Returns the level of the target summoner of the request.
 	 * @return The summoner level.
 	 */
-	public int getLevel()
+	public int getSummonerLevel()
 	{
 		return level;
 	}
@@ -89,7 +89,7 @@ public class Game implements Comparable<Game>
 	}
 	
 	/**
-	 * Returns the second summoner spell used by the target summmoner of the request.
+	 * Returns the second summoner spell used by the target summoner of the request.
 	 * @return The second summoner spell.
 	 */
 	public int getSpell2()
@@ -206,6 +206,11 @@ public class Game implements Comparable<Game>
 		if(stats.containsKey(key))
 			return ((Long)stats.get(key)).intValue();
 		return 0;
+	}
+	
+	public int getLevel()
+	{
+		return getIntStat("level");
 	}
 	
 	public int getAssists()

@@ -13,7 +13,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The champion method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 1.1</li>
+ * 		<li><i>Version</i>: 1.2</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
  * 	</ul>
  * </p>
@@ -35,7 +35,7 @@ public class ChampionMethod extends Method
 	 */
 	public ChampionMethod(RiotApi api)
 	{
-		super(api, "api/lol", "champion", "1.1", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR});
+		super(api, "api/lol", "champion", "1.2", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR});
 	}
 	
 	//API-defined operation methods
@@ -60,10 +60,10 @@ public class ChampionMethod extends Method
 		{
 			//Convert Champion object
 			JsonObject cObj = csArray.getObject(n);
-			Champion c = new Champion(api, region, cObj.getString("name"), cObj.getLong("id"),
-					cObj.getInt("attackRank"), cObj.getInt("magicRank"), cObj.getInt("defenseRank"), cObj.getInt("difficultyRank"),
+			Champion c = new Champion(api, region, cObj.getLong("id"),
 					cObj.getBoolean("active"), cObj.getBoolean("freeToPlay"),
-					cObj.getBoolean("botMmEnabled"), cObj.getBoolean("botEnabled"), cObj.getBoolean("rankedPlayEnabled"));
+					cObj.getBoolean("botMmEnabled"), cObj.getBoolean("botEnabled"), cObj.getBoolean("rankedPlayEnabled"),
+					true);
 			cs.add(c);
 		}
 		return cs;
@@ -127,7 +127,7 @@ public class ChampionMethod extends Method
 		List<Champion> champions = getAllChampions(region);
 		Champion newChampion = null;
 		for(Champion c : champions)
-			if((champion.getId() >= 0 && c.getId() == champion.getId()) || c.getName().equals(champion.getName()))
+			if((champion.getId() >= 0 && c.getId() == champion.getId()) || (c.getName() != null && c.getName().equals(champion.getName())))
 			{
 				newChampion = c;
 				break;
@@ -136,12 +136,7 @@ public class ChampionMethod extends Method
 		//Fill if required
 		if(newChampion != null)
 		{
-			champion.setName(newChampion.getName());
 			champion.setId(newChampion.getId());
-			champion.setAttackRank(newChampion.getAttackRank());
-			champion.setMagicRank(newChampion.getMagicRank());
-			champion.setDefenseRank(newChampion.getDefenseRank());
-			champion.setDifficultyRank(newChampion.getDifficultyRank());
 			champion.setActive(newChampion.isActive());
 			champion.setFreeToPlay(newChampion.isFreeToPlay());
 			champion.setBotMatchMadeEnabled(newChampion.isBotMatchMadeEnabled());

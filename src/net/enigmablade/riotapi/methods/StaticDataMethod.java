@@ -18,7 +18,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The static data method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 1.0</li>
+ * 		<li><i>Version</i>: 1.2</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE, LAN, LAS, OCE, BR, TR, RU, KR</li>
  * 	</ul>
  * </p>
@@ -39,7 +39,7 @@ public class StaticDataMethod extends Method
 	 */
 	public StaticDataMethod(RiotApi api)
 	{
-		super(api, "api/lol/static-data", null, "1", new Region[]{NA, EUW, EUNE, LAN, LAS, OCE, BR, TR, RU, KR});
+		super(api, "api/lol/static-data", null, "1.2", new Region[]{NA, EUW, EUNE, LAN, LAS, OCE, BR, TR, RU, KR});
 	}
 	
 	//API-defined operation methods
@@ -96,11 +96,30 @@ public class StaticDataMethod extends Method
 		return convertChampionList((JsonObject)response.getValue(), championData, region, locale);
 	}
 	
+	/**
+	 * Gets the basic information about a champion with the specified ID in the default region and locale.
+	 * @param championId The champion's ID.
+	 * @return The basic information of the champion.
+	 * @throws RegionNotSupportedException If the region is not supported.
+	 * @throws IllegalArgumentException If any required arguments are invalid.
+	 * @throws StaticDataNotFoundException If no champion was found with the given champion ID.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
 	public Champion getChampion(long championId) throws RiotApiException
 	{
 		return getChampion(api.getDefaultRegion(), championId);
 	}
 	
+	/**
+	 * Gets the specified information about a champion with the specified ID in the default region and locale.
+	 * @param championId The champion's ID.
+	 * @param championData The specified information type.
+	 * @return The basic information of the champion.
+	 * @throws RegionNotSupportedException If the region is not supported.
+	 * @throws IllegalArgumentException If any required arguments are invalid.
+	 * @throws StaticDataNotFoundException If no champion was found with the given champion ID.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
 	public Champion getChampion(long championId, ChampionDataType championData) throws RiotApiException
 	{
 		return getChampion(api.getDefaultRegion(), championId, championData);
@@ -246,6 +265,22 @@ public class StaticDataMethod extends Method
 		return convertRealm((JsonObject)response.getValue(), region);
 	}
 	
+	////Versions
+	
+	public List<String> getVersions() throws RiotApiException
+	{
+		return getVersions(api.getDefaultRegion());
+	}
+	
+	public List<String> getVersions(Region region) throws RiotApiException
+	{
+		//Send request
+		Response response = staticGetMethodResult(region, "versions");
+		
+		//Parse response
+		return convertVersions((JsonArray)response.getValue());
+	}
+	
 	//Converter methods
 	
 	////Champion
@@ -295,6 +330,11 @@ public class StaticDataMethod extends Method
 				case LORE:
 					String lore = championObject.getString("lore");
 					c.setLore(lore);
+					if(notAll) break;
+				
+				case INFO:
+					JsonObject infoObject = championObject.getObject("info");
+					c.setInfo(infoObject.getInt("attack"), infoObject.getInt("magic"), infoObject.getInt("defense"), infoObject.getInt("difficulty"));
 					if(notAll) break;
 				
 				//Lists
@@ -581,13 +621,13 @@ public class StaticDataMethod extends Method
 	private RegionInfo convertRealm(JsonObject realmObject, Region region)
 	{
 		String cdn = realmObject.getString("cdn");
-		String css = realmObject.getString("cdn");
-		String dd = realmObject.getString("cdn");
-		String l = realmObject.getString("cdn");
-		String lg = realmObject.getString("cdn");
+		String css = realmObject.getString("css");
+		String dd = realmObject.getString("dd");
+		String l = realmObject.getString("l");
+		String lg = realmObject.getString("lg");
 		int profileIconMax = realmObject.getInt("profileiconmax");
-		String store = realmObject.getString("cdn");
-		String v = realmObject.getString("cdn");
+		String store = realmObject.getString("store");
+		String v = realmObject.getString("v");
 		
 		JsonObject nObj = realmObject.getObject("n");
 		Map<String, String> n = new HashMap<>();
@@ -595,6 +635,16 @@ public class StaticDataMethod extends Method
 			n.put(key, nObj.getString(key));
 		
 		return new RegionInfo(cdn, dd, css, l, lg, profileIconMax, store, v, n);
+	}
+	
+	////Versions
+	
+	private List<String> convertVersions(JsonArray versionsArray)
+	{
+		List<String> v = new ArrayList<>();
+		for(JsonIterator it = versionsArray.iterator(); it.hasNext();)
+			v.add(it.nextString());
+		return v;
 	}
 	
 	//Common converter methods
@@ -642,6 +692,10 @@ public class StaticDataMethod extends Method
 			
 			case LORE:
 				champion.setLore(newChampion.getLore());
+				if(notAll) break;
+				
+			case INFO:
+				champion.setInfo(newChampion.getAttackRank(), newChampion.getMagicRank(), newChampion.getDefenseRank(), newChampion.getDifficultyRank());
 				if(notAll) break;
 			
 			//Lists

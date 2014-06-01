@@ -14,7 +14,7 @@ import static net.enigmablade.riotapi.constants.Region.*;
  * <p>The summoner method and its supporting operations.<p>
  * <p>Method support information:
  * 	<ul>
- * 		<li><i>Version</i>: 1.3</li>
+ * 		<li><i>Version</i>: 1.4</li>
  * 		<li><i>Regions</i>: NA, EUW, EUNE</li>
  * 	</ul>
  * </p>
@@ -39,7 +39,7 @@ public class SummonerMethod extends Method
 	 */
 	public SummonerMethod(RiotApi api)
 	{
-		super(api, "api/lol", "summoner", "1.3", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR});
+		super(api, "api/lol", "summoner", "1.4", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR});
 	}
 	
 	//API-defined operation methods
@@ -461,7 +461,7 @@ public class SummonerMethod extends Method
 	{
 		//Convert talent list
 		JsonArray talentsArray = pageObject.getArray("talents");
-		List<MasteryPage.Talent> talents = null;
+		List<MasteryPage.Mastery> talents = null;
 		if(talentsArray != null)					//Can be null if no masteries are set in the page
 		{
 			talents = new ArrayList<>(talentsArray.size());
@@ -470,7 +470,7 @@ public class SummonerMethod extends Method
 				JsonObject talentObject = talentsArray.getObject(t);
 				
 				//Create talent object
-				MasteryPage.Talent talent = new MasteryPage.Talent(talentObject.getInt("id"), talentObject.getString("name"), talentObject.getInt("rank"));
+				MasteryPage.Mastery talent = new MasteryPage.Mastery(talentObject.getInt("id"), talentObject.getInt("rank"));
 				talents.add(talent);
 			}
 		}
@@ -501,8 +501,7 @@ public class SummonerMethod extends Method
 				JsonObject slotObject = slotsArray.getObject(t);
 				
 				//Create rune object
-				JsonObject runeObject = slotObject.getObject("rune");
-				RunePage.Rune rune = new RunePage.Rune(runeObject.getInt("id"), runeObject.getString("name"), runeObject.getString("description"), runeObject.getInt("tier"));
+				RunePage.Rune rune = new RunePage.Rune(slotObject.getInt("runeId"));
 				
 				//Create slot object
 				RunePage.Slot slot = new RunePage.Slot(slotObject.getInt("runeSlotId"), rune);

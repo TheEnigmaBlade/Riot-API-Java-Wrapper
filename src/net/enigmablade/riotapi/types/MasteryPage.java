@@ -14,27 +14,20 @@ public class MasteryPage
 	 * 
 	 * @author Enigma
 	 */
-	public static class Talent
+	public static class Mastery
 	{
 		private int id;
-		private String name;
 		private int rank;
 		
-		public Talent(int id, String name, int rank)
+		public Mastery(int id, int rank)
 		{
 			this.id = id;
-			this.name = name;
 			this.rank = rank;
 		}
 		
 		public int getId()
 		{
 			return id;
-		}
-		
-		public String getName()
-		{
-			return name;
 		}
 		
 		public int getRank()
@@ -45,10 +38,10 @@ public class MasteryPage
 	
 	private long id;
 	private String name;
-	private List<Talent> talents;
+	private List<Mastery> talents;
 	private boolean current;
 	
-	public MasteryPage(long id, String name, List<Talent> talents, boolean current)
+	public MasteryPage(long id, String name, List<Mastery> talents, boolean current)
 	{
 		this.name = name;
 		this.talents = talents;
@@ -67,7 +60,7 @@ public class MasteryPage
 		return name;
 	}
 	
-	public List<Talent> getTalents()
+	public List<Mastery> getTalents()
 	{
 		return talents;
 	}

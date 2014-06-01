@@ -15,8 +15,6 @@ import net.enigmablade.riotapi.util.*;
  */
 abstract class Method
 {
-	private static final String API_LOCATION = "prod.api.pvp.net";
-	
 	//Data
 	protected RiotApi api;
 	
@@ -115,6 +113,7 @@ abstract class Method
 		
 		//Create request URL
 		String url = buildUrl(region, operation, pathArgs, queryArgs);
+		System.out.println(url);
 		
 		//Send request
 		Response response = api.getRequester().request(url);
@@ -175,14 +174,14 @@ abstract class Method
 		
 		//Create URL and send the request
 		StringBuilder s = new StringBuilder(api.getRequester().getProtocol()).append("://");
-		s.append(API_LOCATION).append('/');					//Domain
+		s.append(region.getEndpoint()).append('/');			//Domain endpoint
 		s.append(header).append('/');						//Header
 		s.append(region.getValue());						//Region
 		s.append("/v").append(version);						//Version
 		if(method != null)
 			s.append('/').append(method);					//Method
 		if(operation != null)								//Operation (optional)
-			s.append('/').append(operation);				
+			s.append('/').append(operation);
 		s.append("?api_key=").append(api.getApiKey());		//API key
 		s.append('&').append(queryArgsStr);					//Query args
 		return s.toString();

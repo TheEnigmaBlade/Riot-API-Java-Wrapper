@@ -50,35 +50,36 @@ API Support
 
 [Full method descriptions](http://developer.riotgames.com/api/methods)
 
-| Method             | Operation                           | Supported |
-| ------------------ | ----------------------------------- | :-------: |
-| champion-v1.1      | /                                   | **Yes**   |
-| game-v1.3          | /by-summoner/{summoner_id}/recent   | **Yes**   |
-| league-v2.3        | /challenger                         | **Yes**   |
-|                    | /by-summoner/{summoner_id}          | **Yes**   |
-|                    | /by-summoner/{summoner_id}/entry    | **Yes**   |
-|                    | /by-team/{team_id}                  | **Yes**   |
-|                    | /by-team/{team_id}/entry            | **Yes**   |
-| lol-static-data-v1 | /champion                           | **Yes**   |
-|                    | /champion/{champion_id}             | **Yes**   |
-|                    | /item                               | No        |
-|                    | /item/{item_id}                     | No        |
-|                    | /mastery                            | No        |
-|                    | /mastery/{mastery_id}               | No        |
-|                    | /realm                              | No        |
-|                    | /rune                               | No        |
-|                    | /rune/{rune_id}                     | No        |
-|                    | /summoner_spell                     | No        |
-|                    | /summoner_spell/{summoner_spell_id} | No        |
-| stats-v1.2         | /by-summoner/{summoner_id}/summary  | **Yes**   |
-|                    | /by-summoner/{summoner_id}/ranked   | **Yes**   |
-| summoner-v1.3      | /by-name/{summoner_names}           | **Yes**   |
-|                    | /{summoner_ids}                     | **Yes**   |
-|                    | /{summoner_ids}/name                | **Yes**   |
-|                    | /{summoner_ids}/masteries           | **Yes**   |
-|                    | /{summoner_ids}/runes               | **Yes**   |
-| team-v2.2          | /{team_ids}                         | **Yes**   |
-|                    | /by-summoner/{summoner_id}          | **Yes**   |
+| Method               | Operation                           | Supported |
+| -------------------- | ----------------------------------- | :-------: |
+| champion-v1.2        | /                                   | **Yes**   |
+| game-v1.3            | /by-summoner/{summoner_id}/recent   | **Yes**   |
+| league-v2.3          | /challenger                         | **Yes**   |
+|                      | /by-summoner/{summoner_id}          | **Yes**   |
+|                      | /by-summoner/{summoner_id}/entry    | **Yes**   |
+|                      | /by-team/{team_id}                  | **Yes**   |
+|                      | /by-team/{team_id}/entry            | **Yes**   |
+| lol-static-data-v1.2 | /champion                           | **Yes**   |
+|                      | /champion/{champion_id}             | **Yes**   |
+|                      | /item                               | No        |
+|                      | /item/{item_id}                     | No        |
+|                      | /mastery                            | WIP       |
+|                      | /mastery/{mastery_id}               | WIP       |
+|                      | /realm                              | **Yes**   |
+|                      | /rune                               | No        |
+|                      | /rune/{rune_id}                     | No        |
+|                      | /summoner_spell                     | No        |
+|                      | /summoner_spell/{summoner_spell_id} | No        |
+|                      | /versions                           | **Yes**   |
+| stats-v1.2           | /by-summoner/{summoner_id}/summary  | **Yes**   |
+|                      | /by-summoner/{summoner_id}/ranked   | **Yes**   |
+| summoner-v1.4        | /by-name/{summoner_names}           | **Yes**   |
+|                      | /{summoner_ids}                     | **Yes**   |
+|                      | /{summoner_ids}/name                | **Yes**   |
+|                      | /{summoner_ids}/masteries           | **Yes**   |
+|                      | /{summoner_ids}/runes               | **Yes**   |
+| team-v2.2            | /{team_ids}                         | **Yes**   |
+|                      | /by-summoner/{summoner_id}          | **Yes**   |
 
 Legal stuff
 -----------
