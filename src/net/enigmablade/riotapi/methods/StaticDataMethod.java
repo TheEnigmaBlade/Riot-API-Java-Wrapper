@@ -281,6 +281,16 @@ public class StaticDataMethod extends Method
 		return convertVersions((JsonArray)response.getValue());
 	}
 	
+	public String getLatestVersion() throws RiotApiException
+	{
+		return getVersions().get(0);
+	}
+	
+	public String getLatestVersion(Region region) throws RiotApiException
+	{
+		return getVersions(region).get(0);
+	}
+	
 	//Converter methods
 	
 	////Champion
@@ -303,8 +313,8 @@ public class StaticDataMethod extends Method
 	private Champion convertChampion(JsonObject championObject, ChampionDataType loadedData, Region region, Locale locale)
 	{
 		String name = championObject.getString("name");
-		long id = Long.parseLong(championObject.getString("key"));
-		String key = championObject.getString("id");
+		long id = championObject.getLong("id");
+		String key = championObject.getString("key");
 		String title = championObject.getString("title");
 		
 		Champion c = new Champion(api, region, locale, name, id, key, title);
@@ -754,7 +764,7 @@ public class StaticDataMethod extends Method
 	{
 		boolean save = api.isRateLimitEnabled();
 		api.setRateLimitEnabled(false);
-		Response r = getMethodResult(region, operation, pathArgs, queryArgs);
+		Response r = getMethodResult(region, operation, true, pathArgs, queryArgs);
 		api.setRateLimitEnabled(save);
 		return r;
 	}
@@ -763,7 +773,7 @@ public class StaticDataMethod extends Method
 	{
 		boolean save = api.isRateLimitEnabled();
 		api.setRateLimitEnabled(false);
-		Response r = getMethodResult(region, operation);
+		Response r = getMethodResult(region, operation, true);
 		api.setRateLimitEnabled(save);
 		return r;
 	}

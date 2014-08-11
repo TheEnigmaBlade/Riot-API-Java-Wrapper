@@ -16,7 +16,8 @@ public enum Region
 	BR	("br",		"br.api.pvp.net"),
 	TR	("tr",		"tr.api.pvp.net"),
 	RU	("ru",		"ru.api.pvp.net"),
-	KR	("kr",		"kr.api.pvp.net");
+	KR	("kr",		"kr.api.pvp.net"),
+	GLOBAL("global", "global.api.pvp.net");
 	
 	//---//
 	

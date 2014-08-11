@@ -95,7 +95,7 @@ public class Summoner extends DynamicType
 	public List<League> getLeagues() throws RiotApiException
 	{
 		verifyConvenienceState();
-		return api.getLeagueApiMethod().getLeagues(region, id);
+		return api.getLeagueApiMethod().getLeagues(region, id).get(id);
 	}
 	
 	/**
@@ -108,6 +108,35 @@ public class Summoner extends DynamicType
 	public League getLeague(QueueType queue) throws RiotApiException
 	{
 		List<League> leagues = getLeagues();
+		for(League league : leagues)
+			if(league.getQueueType() == queue)
+				return league;
+		return null;
+	}
+	
+	/**
+	 * Returns the list of leagues with which the current summoner is associated,
+	 * but only contains a single entry for the summoner.
+	 * @return The list of leagues.
+	 * @throws RegionNotSupportedException If the summoner's region is not supported.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public List<League> getLeagueEntries() throws RiotApiException
+	{
+		verifyConvenienceState();
+		return api.getLeagueApiMethod().getLeagueEntries(region, id).get(id);
+	}
+	
+	/**
+	 * Returns the league and a single entry the current summoner is in for the given queue type, or null if the summoner is not in a league.
+	 * @param queue The queue type
+	 * @return The league for the given queue type.
+	 * @throws RegionNotSupportedException If the summoner's region is not supported.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	public League getLeagueEntry(QueueType queue) throws RiotApiException
+	{
+		List<League> leagues = getLeagueEntries();
 		for(League league : leagues)
 			if(league.getQueueType() == queue)
 				return league;

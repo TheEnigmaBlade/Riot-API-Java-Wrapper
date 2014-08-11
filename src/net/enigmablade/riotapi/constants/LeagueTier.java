@@ -8,7 +8,7 @@ package net.enigmablade.riotapi.constants;
 public enum LeagueTier
 {
 	TIER_CHALLENGER("Challenger"), TIER_DIAMOND("Diamond"), TIER_PLATINUM("Platinum"), TIER_GOLD("Gold"), TIER_SILVER("Silver"), TIER_BRONZE("Bronze"),
-	RANK_V("V"), RANK_IV("IV"), RANK_III("III"), RANK_II("II"), RANK_I("I"),
+	DIVISION_V("V"), DIVISION_IV("IV"), DIVISION_III("III"), DIVISION_II("II"), DIVISION_I("I"),
 	UNKNOWN("Unknown");
 	
 	/* --- */
@@ -44,11 +44,11 @@ public enum LeagueTier
 			case "silver": return TIER_SILVER;
 			case "bronze": return TIER_BRONZE;
 			
-			case "v": return RANK_V;
-			case "iv": return RANK_IV;
-			case "iii": return RANK_III;
-			case "ii": return RANK_II;
-			case "i": return RANK_I;
+			case "v": return DIVISION_V;
+			case "iv": return DIVISION_IV;
+			case "iii": return DIVISION_III;
+			case "ii": return DIVISION_II;
+			case "i": return DIVISION_I;
 			
 			default: return UNKNOWN;
 		}

@@ -48,14 +48,12 @@ public class League
 			private int targetWins;
 			private int numWins, numLosses;
 			private Progress[] progress;
-			private long timeLeftToPlayMillis;
 			
-			public Series(int targetWins, int numWins, int numLosses, String progress, long timeLeftToPlayMillis)
+			public Series(int targetWins, int numWins, int numLosses, String progress)
 			{
 				this.targetWins = targetWins;
 				this.numWins = numWins;
 				this.numLosses = numLosses;
-				this.timeLeftToPlayMillis = timeLeftToPlayMillis;
 				
 				this.progress = new Progress[progress.length()];
 				for(int n = 0; n < progress.length(); n++)
@@ -83,30 +81,18 @@ public class League
 			{
 				return progress;
 			}
-			
-			public long getTimeLeftToPlayMillis()
-			{
-				return timeLeftToPlayMillis;
-			}
 		}
 		
-		private LeagueTier tier, rank;
-		private QueueType queueType;
-		private String leagueName;
-		
+		private LeagueTier division;
 		private String playerOrTeamId, playerOrTeamName;
 		private boolean isHotStreak, isFreshBlood, isVeteran, isInactive;
 		private int wins;
 		private int leaguePoints;
 		private Series series;
-		private Date lastPlayed;
 		
-		public Entry(String tier, String rank, String queueType, String leagueName, String string, String playerOrTeamName, boolean isHotStreak, boolean isFreshBlood, boolean isVeteran, boolean isInactive, int wins, int leaguePoints, Series series, long lastPlayed)
+		public Entry(String division, String string, String playerOrTeamName, boolean isHotStreak, boolean isFreshBlood, boolean isVeteran, boolean isInactive, int wins, int leaguePoints, Series series)
 		{
-			this.tier = LeagueTier.stringToConstant(tier);
-			this.rank = LeagueTier.stringToConstant(rank);
-			this.queueType = QueueType.getFromGameValue(queueType);
-			this.leagueName = leagueName;
+			this.division = LeagueTier.stringToConstant(division);
 			this.playerOrTeamId = string;
 			this.playerOrTeamName = playerOrTeamName;
 			this.isHotStreak = isHotStreak;
@@ -116,47 +102,18 @@ public class League
 			this.wins = wins;
 			this.leaguePoints = leaguePoints;
 			this.series = series;
-			this.lastPlayed = new Date(lastPlayed);
 		}
 		
 		//Accessor methods
-		
-		/**
-		 * Returns the league's tier:
-		 * TIER_CHALLENGER, TIER_DIAMOND, TIER_PLATINUM, TIER_GOLD, TIER_SILVER, or TIER_BRONZE.
-		 * @return The league's tier.
-		 */
-		public LeagueTier getTier()
-		{
-			return tier;
-		}
 		
 		/**
 		 * Returns the league's rank:
 		 * RANK_V, RANK_IV, RANK_III, RANK_II, or RANK_I.
 		 * @return The league's rank.
 		 */
-		public LeagueTier getRank()
+		public LeagueTier getDivision()
 		{
-			return rank;
-		}
-		
-		/**
-		 * Returns the league's queue type.
-		 * @return The queue type.
-		 */
-		public QueueType getQueueType()
-		{
-			return queueType;
-		}
-		
-		/**
-		 * Returns the name of the league.
-		 * @return The league's name.
-		 */
-		public String getLeagueName()
-		{
-			return leagueName;
+			return division;
 		}
 		
 		/**
@@ -241,15 +198,6 @@ public class League
 		{
 			return series;
 		}
-		
-		/**
-		 * Returns the date on which the entry last played in the league.
-		 * @return The last played date.
-		 */
-		public Date getLastPlayed()
-		{
-			return lastPlayed;
-		}
 	}
 	
 	//Data
@@ -262,13 +210,15 @@ public class League
 	
 	//Constructors
 	
-	public League(String name, String participantId,  String queueType, String tier, Map<String, Entry> entries)
+	public League(String name, String participantId,  String queueType, String tier, List<Entry> entries)
 	{
 		this.name = name;
 		this.participantId = participantId;
 		this.queueType = QueueType.getFromGameValue(queueType);
 		this.tier = LeagueTier.stringToConstant(tier);
-		this.entries = entries;
+		this.entries = new HashMap<String, Entry>(entries.size());
+		for(Entry e : entries)
+			this.entries.put(e.getPlayerOrTeamId(), e);
 	}
 	
 	//Accessor methods
@@ -303,7 +253,7 @@ public class League
 	}
 	
 	/**
-	 * Returns the league's tier (bronze, silver, gold, etc.)
+	 * Returns the league's tier (bronze, silver, gold, etc.) as defined in the LeagueTier constants.
 	 * @return The league's tier.
 	 */
 	public LeagueTier getTier()
@@ -315,13 +265,13 @@ public class League
 	 * Returns the entries in the league. A league can consist of exclusively teams or summoners.
 	 * @return The league's entries.
 	 */
-	public Map<String, Entry> getEntries()
+	public Collection<Entry> getEntries()
 	{
-		return entries;
+		return entries.values();
 	}
 	
-	public Entry getEntry(String entryId)
+	public Entry getEntry(String id)
 	{
-		return getEntries().get(entryId);
+		return entries.get(id);
 	}
 }

@@ -95,6 +95,16 @@ abstract class Method
 		return getMethodResult(region, operation, pathArgs, null);
 	}
 	
+	protected Response getMethodResult(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs) throws RiotApiException
+	{
+		return getMethodResult(region, operation, false, pathArgs, queryArgs);
+	}
+	
+	protected Response getMethodResult(Region region, String operation, boolean isGlobal) throws RiotApiException
+	{
+		return getMethodResult(region, operation, isGlobal, null, null);
+	}
+	
 	/**
 	 * Execute a request and get the result. The response's value may be null if a method-specific error occurred.
 	 * @param region The game region (NA, EUW, EUNE, etc.)
@@ -105,15 +115,14 @@ abstract class Method
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
-	protected Response getMethodResult(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs) throws RiotApiException
+	protected Response getMethodResult(Region region, String operation, boolean isGlobal, Map<String, String> pathArgs, Map<String, String> queryArgs) throws RiotApiException
 	{
 		//Check to make sure the requested region is supported
 		if(!isRegionSupported(region))
 			throw new RegionNotSupportedException(method, region, supportedRegions);
 		
 		//Create request URL
-		String url = buildUrl(region, operation, pathArgs, queryArgs);
-		System.out.println(url);
+		String url = buildUrl(region, operation, pathArgs, queryArgs, isGlobal);
 		
 		//Send request
 		Response response = api.getRequester().request(url);
@@ -163,7 +172,7 @@ abstract class Method
 	 * @param queryArgs <i>Optional</i> - A map of query arguments.
 	 * @return The nicely formatted request URL.
 	 */
-	private String buildUrl(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs)
+	private String buildUrl(Region region, String operation, Map<String, String> pathArgs, Map<String, String> queryArgs, boolean useGlobal)
 	{
 		//Format path arguments within the operation
 		if(operation != null && pathArgs != null)
@@ -174,7 +183,7 @@ abstract class Method
 		
 		//Create URL and send the request
 		StringBuilder s = new StringBuilder(api.getRequester().getProtocol()).append("://");
-		s.append(region.getEndpoint()).append('/');			//Domain endpoint
+		s.append((useGlobal ? Region.GLOBAL.getEndpoint() : region.getEndpoint())).append('/');			//Domain endpoint
 		s.append(header).append('/');						//Header
 		s.append(region.getValue());						//Region
 		s.append("/v").append(version);						//Version
