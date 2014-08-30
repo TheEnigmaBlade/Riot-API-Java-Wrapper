@@ -23,6 +23,8 @@ abstract class Method
 	private String method;
 	private Region[] supportedRegions;
 	
+	private int maxThings = 40;
+	
 	//Constructors
 	
 	/**
@@ -138,7 +140,7 @@ abstract class Method
 		{
 			case 400: throw new RiotApiException("400: Bad request (theoretically shouldn't happen)");
 			case 401: throw new RiotApiException("401: Unauthorized");
-			case 429: throw new TooManyRequestsException((api.getTimeUntilMoreApiCalls()/1000)+" seconds until more API calls are available");
+			case 429: throw new TooManyRequestsException("");
 			
 			case 500: throw new RiotApiException("500: Internal server error");
 			case 503: throw new RiotApiException("503: Service unavailable (someone broke it)");
@@ -161,6 +163,23 @@ abstract class Method
 			if(region == r)
 				return true;
 		return false;
+	}
+	
+	protected void checkAmountOfThings(String[] a, String thingType)
+	{
+		if(a == null || a.length > maxThings)
+			throw new IllegalArgumentException("Too many "+thingType+"s, limit of "+maxThings);
+	}
+	
+	protected void checkAmountOfThings(long[] a, String thingType)
+	{
+		if(a == null || a.length > maxThings)
+			throw new IllegalArgumentException("Too many "+thingType+"s, limit of "+maxThings);
+	}
+	
+	protected void setMaxThings(int maxThings)
+	{
+		this.maxThings = maxThings;
 	}
 	
 	/**

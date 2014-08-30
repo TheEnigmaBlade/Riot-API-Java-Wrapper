@@ -39,7 +39,7 @@ public class SummonerMethod extends Method
 	 */
 	public SummonerMethod(RiotApi api)
 	{
-		super(api, "api/lol", "summoner", "1.4", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR});
+		super(api, "api/lol", "summoner", "1.4", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR, RU, TR});
 	}
 	
 	//API-defined operation methods
@@ -74,8 +74,7 @@ public class SummonerMethod extends Method
 	public Map<String, Summoner> getSummonersByName(Region region, String... summonerNames) throws RiotApiException
 	{
 		//Check argument conditions
-		if(summonerNames == null || summonerNames.length > 40)
-			throw new IllegalArgumentException("Only 40 summoner names are allowed per request");
+		checkAmountOfThings(summonerNames, "Summoner name");
 		
 		//Encode summoner names
 		for(int n = 0; n < summonerNames.length; n++)
@@ -127,8 +126,7 @@ public class SummonerMethod extends Method
 	public Map<Long, Summoner> getSummonersById(Region region, long... summonerIds) throws RiotApiException
 	{
 		//Check argument conditions
-		if(summonerIds == null || summonerIds.length > 40)
-			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
+		checkAmountOfThings(summonerIds, "Summoner ID");
 		
 		//Create arg value
 		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);
@@ -178,8 +176,7 @@ public class SummonerMethod extends Method
 	public Map<Long, String> getSummonerNames(Region region, long... summonerIds) throws RiotApiException
 	{
 		//Check argument conditions
-		if(summonerIds == null || summonerIds.length > 40)
-			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
+		checkAmountOfThings(summonerIds, "Summoner ID");
 		
 		//Create arg value
 		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);
@@ -264,8 +261,7 @@ public class SummonerMethod extends Method
 	public Map<Long, List<MasteryPage>> getSummonersMasteryPages(Region region, long... summonerIds) throws RiotApiException
 	{
 		//Check argument conditions
-		if(summonerIds == null || summonerIds.length > 40)
-			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
+		checkAmountOfThings(summonerIds, "Summoner ID");
 		
 		//Create arg value
 		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);
@@ -357,8 +353,7 @@ public class SummonerMethod extends Method
 	public Map<Long, List<RunePage>> getSummonersRunePages(Region region, long... summonerIds) throws RiotApiException
 	{
 		//Check argument conditions
-		if(summonerIds == null || summonerIds.length > 40)
-			throw new IllegalArgumentException("Only 40 summoner IDs are allowed per request");
+		checkAmountOfThings(summonerIds, "Summoner ID");
 		
 		//Create arg value
 		String idsStr = IOUtil.createCommaDelimitedString(summonerIds);

@@ -8,6 +8,7 @@
 
 package net.enigmablade.riotapi;
 
+import java.util.concurrent.*;
 import net.enigmablade.riotapi.constants.*;
 import net.enigmablade.riotapi.exceptions.*;
 import net.enigmablade.riotapi.methods.*;
@@ -15,7 +16,7 @@ import net.enigmablade.riotapi.types.*;
 
 /**
  * <p>Provides access to the Riot API though a number of methods as outlined in <a href="https://developer.riotgames.com/api/methods">the developer documentation</a>.</p>
- * <p>Rate limiting per 10 seconds is strictly enforced. With the default of 10 requests per 10 seconds, subsequent requests will be forced to wait a maximum of 1 second.</a> 
+ * <p>Rate limiting per 10 seconds is strictly enforced. With the default of 10 requests per 10 seconds, subsequent requests will be forced to wait a maximum of 1 second.</a>
  * 
  * @see <a href="https://developer.riotgames.com/">Developer site</a>
  * 
@@ -23,8 +24,10 @@ import net.enigmablade.riotapi.types.*;
  */
 public class RiotApi
 {
-	public static final int DEFAULT_RATE_LIMIT_10_SEC = 10;
-	public static final int DEFAULT_RATE_LIMIT_10_MIN = 500;
+	public static final int DEFAULT_SHORT_RATE_LIMIT = 10;
+	public static final int DEFAULT_SHORT_RATE_INTERVAL = 10;
+	public static final int DEFAULT_LONG_RATE_LIMIT = 500;
+	public static final int DEFAULT_LONG_RATE_INTERVAL = 10;
 	
 	private String apiKey;
 	private Requester requester;
@@ -34,7 +37,7 @@ public class RiotApi
 	
 	/**
 	 * Creates a new instance to access the Riot API with the given API key and no user agent.
-	 * Rate limiting is set the default of {@value RiotApi#DEFAULT_RATE_LIMIT_10_SEC} requests per 10 seconds and {@value RiotApi#DEFAULT_RATE_LIMIT_10_MIN} requests per 10 minutes.
+	 * Rate limiting is set the default of {@value RiotApi#DEFAULT_SHORT_RATE_LIMIT} requests per 10 seconds and {@value RiotApi#DEFAULT_LONG_RATE_LIMIT} requests per 10 minutes.
 	 * @param apiKey The API key to use.
 	 */
 	public RiotApi(String apiKey)
@@ -44,13 +47,13 @@ public class RiotApi
 	
 	/**
 	 * Creates a new instance to access the Riot API with the given API key and user agent.
-	 * Rate limiting is set the default of {@value RiotApi#DEFAULT_RATE_LIMIT_10_SEC} requests per 10 seconds and {@value RiotApi#DEFAULT_RATE_LIMIT_10_MIN} requests per 10 minutes.
+	 * Rate limiting is set the default of {@value RiotApi#DEFAULT_SHORT_RATE_LIMIT} requests per 10 seconds and {@value RiotApi#DEFAULT_LONG_RATE_LIMIT} requests per 10 minutes.
 	 * @param apiKey The API key to use.
 	 * @param userAgent The user agent to use.
 	 */
 	public RiotApi(String apiKey, String userAgent)
 	{
-		this(apiKey, userAgent, DEFAULT_RATE_LIMIT_10_SEC, DEFAULT_RATE_LIMIT_10_MIN);
+		this(apiKey, userAgent, DEFAULT_SHORT_RATE_LIMIT, DEFAULT_LONG_RATE_LIMIT);
 	}
 	
 	/**
@@ -64,7 +67,7 @@ public class RiotApi
 	{
 		this.apiKey = apiKey;
 		
-		requester = new Requester(userAgent, limitPer10Seconds, limitPer10Minutes);
+		requester = new Requester(userAgent, limitPer10Seconds, DEFAULT_SHORT_RATE_INTERVAL, TimeUnit.SECONDS, limitPer10Minutes, DEFAULT_LONG_RATE_INTERVAL, TimeUnit.MINUTES);
 		
 		defaultLocale = null;
 	}
@@ -230,26 +233,6 @@ public class RiotApi
 	public void clearApiCallCache()
 	{
 		requester.clearCache();
-	}
-	
-	//Data methods
-	
-	/**
-	 * Returns the number of remaining API calls before hitting the 10 minute limit.
-	 * @return The number of remaining API calls.
-	 */
-	public int getRemainingApiCalls()
-	{
-		return requester.getLimitPer10Minutes()-requester.getRequestsInPast10Minutes();
-	}
-	
-	/**
-	 * Returns the time (in milliseconds) until the oldest request is 10 minutes old.
-	 * @return The millisecond time until the oldest request.
-	 */
-	public long getTimeUntilMoreApiCalls()
-	{
-		return System.currentTimeMillis() - (requester.getRequestsInPast10Seconds() > requester.getLimitPer10Seconds() ? requester.getOldestRequestTimeByAge(10000) : requester.getOldestRequestTime());
 	}
 	
 	//Accessor methods

@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 import java.util.zip.*;
 import net.enigmablade.jsonic.*;
@@ -34,13 +35,11 @@ public class Requester
 	
 	//Rate limiting
 	private boolean limiterEnabled = true;
-	private int limitPer10Seconds;
-	private long limitWait, lastCall;
-	private Lock rateLock;
 	
-	private int limitPer10Minutes;
-	private LinkedList<Long> requestQueue;
-	private static final long REQUEST_QUEUE_TIME_LIMIT = 600000;	//10 minutes
+	private int limitShort, limitLong;
+	private long limitShortInterval, limitLongInterval;
+	private DelayQueue<RequestLock> requestQueueShort, requestQueueLong;
+	private Lock rateLock;
 	
 	//Caching
 	private boolean cacheEnabled = true;
@@ -51,12 +50,12 @@ public class Requester
 	/**
 	 * Create a new HTTPS Requester with the given user agent and rate limits.
 	 * @param userAgent The user agent for HTTP requests.
-	 * @param limitPer10Seconds The limit for the number of requests per 10 seconds. Must be greater than 0.
-	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
+	 * @param shortLimit The limit for the number of requests per 10 seconds. Must be greater than 0.
+	 * @param longLimit The limit for the number of requests per 10 minutes. Must be greater than 0.
 	 */
-	public Requester(String userAgent, int limitPer10Seconds, int limitPer10Minutes)
+	public Requester(String userAgent, int shortLimit, long shortInterval, TimeUnit shortIntervalUnit, int longLimit, long longInterval, TimeUnit longIntervalUnit)
 	{
-		this(HTTPS_PROTOCOL, userAgent, limitPer10Seconds, limitPer10Minutes);
+		this(HTTPS_PROTOCOL, userAgent, shortLimit, shortInterval, shortIntervalUnit, longLimit, longInterval, longIntervalUnit);
 	}
 	
 	/**
@@ -67,9 +66,9 @@ public class Requester
 	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
 	 * @throws IllegalArgumentException If one of the arguments is not valid.
 	 */
-	public Requester(String protocol, String userAgent, int limitPer10Seconds, int limitPer10Minutes)
+	public Requester(String protocol, String userAgent, int shortLimit, long shortInterval, TimeUnit shortIntervalUnit, int longLimit, long longInterval, TimeUnit longIntervalUnit)
 	{
-		this(protocol, GET_METHOD, userAgent, limitPer10Seconds, limitPer10Minutes);
+		this(protocol, GET_METHOD, userAgent, shortLimit, shortInterval, shortIntervalUnit, longLimit, longInterval, longIntervalUnit);
 	}
 	
 	/**
@@ -81,7 +80,7 @@ public class Requester
 	 * @param limitPer10Minutes The limit for the number of requests per 10 minutes. Must be greater than 0.
 	 * @throws IllegalArgumentException If one of the arguments is not valid.
 	 */
-	public Requester(String protocol, String method, String userAgent, int limitPer10Seconds, int limitPer10Minutes)
+	public Requester(String protocol, String method, String userAgent, int shortLimit, long shortInterval, TimeUnit shortIntervalUnit, int longLimit, long longInterval, TimeUnit longIntervalUnit)
 	{
 		if(!HTTP_PROTOCOL.equals(protocol) && !HTTPS_PROTOCOL.equals(protocol))
 			throw new IllegalArgumentException("A valid protocol must be specified.");
@@ -92,13 +91,14 @@ public class Requester
 		setHeaders(DEFAULT_HEADERS);
 		setEncoding(DEFAULT_ENCODING);
 		
-		setLimitPer10Seconds(limitPer10Seconds);
-		setLimitPer10Minutes(limitPer10Minutes);
+		setShortLimit(shortLimit, shortInterval, shortIntervalUnit);
+		setLongLimit(longLimit, longInterval, longIntervalUnit);
 		
 		rateLock = new ReentrantLock(true);
-		requestQueue = new LinkedList<>();
+		requestQueueShort = new DelayQueue<>();
+		requestQueueLong = new DelayQueue<>();
 		
-		cache = new BufferPool<>(limitPer10Minutes);
+		cache = new BufferPool<>(longLimit);
 	}
 	
 	//Functionality
@@ -180,35 +180,11 @@ public class Requester
 	}
 	
 	/**
-	 * Sends a request to the server at the given URL and returns the response, skipping the cache if specified.
-	 * @param requestUrl The request URL.
-	 * @param listener The request listener to receive the result. Leave <code>null</code> to return the value.
-	 * @return The response from the request, or <code>null</code> if a listener was given.
-	 * @throws IOException
+	 * Checks if a request response is already in the cache, otherwise sends a new request.
+	 * @param requestUrl The requests's URL
+	 * @param requestBody The requests's body
+	 * @return The response to the request (possibly from the cache)
 	 */
-	/*public Response request(final String requestUrl, final RequestListener listener)
-	{
-		//Send request to separate thread and return null
-		if(listener != null)
-		{
-			//I can't wait until this is misused and someone ends up making 50,000 threads with queued requests
-			new Thread(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					listener.requestFulfilled(requestHelper(requestUrl));
-				}
-			}).start();
-			return null;
-		}
-		//Send request directly and return the result
-		else
-		{
-			return requestHelper(requestUrl);
-		}
-	}*/
-	
 	private Response requestHelper(String requestUrl, String requestBody)
 	{
 		Response response;
@@ -246,6 +222,12 @@ public class Requester
 	
 	//Private utilities
 	
+	/**
+	 * Sends a request to the server.
+	 * @param requestUrl The requests's URL
+	 * @param requestBody The requests's body
+	 * @return The response to the request
+	 */
 	private Response sendRequest(String requestUrl, String requestBody)
 	{
 		HttpURLConnection connection = null;
@@ -255,8 +237,13 @@ public class Requester
 			URL url = new URL(requestUrl);
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestMethod(method);
+			////Set user agent
 			if(userAgent != null)
 				connection.setRequestProperty("User-Agent", userAgent);
+			////Set encoding
+			if(encoding != null)
+				connection.setRequestProperty("Accept-Encoding", encoding);
+			////Other request properties
 			for(String headerKey : headers.keySet())
 				connection.setRequestProperty(headerKey, headers.get(headerKey));
 			
@@ -281,17 +268,22 @@ public class Requester
 			else
 				in = connection.getInputStream();
 			
-			//Check for optional encoding
-			String responseEncoding = connection.getHeaderField("Content-Encoding");
-			if(GZIP_ENCODING.equalsIgnoreCase(responseEncoding))
-				in = new GZIPInputStream(in);
-			else if(DEFLATE_ENCODING.equalsIgnoreCase(responseEncoding))
-				in = new InflaterInputStream(in, new Inflater(true));
-			else if(responseEncoding != null)
-				System.err.println("Unknown HTTP encoding \""+responseEncoding+"\"");
+			String responseText = null;
 			
-			//Get response
-			String responseText = IOUtil.readInputStreamFully(in);
+			if(in != null)
+			{
+				//Check for optional encoding
+				String responseEncoding = connection.getHeaderField("Content-Encoding");
+				if(GZIP_ENCODING.equalsIgnoreCase(responseEncoding))
+					in = new GZIPInputStream(in);
+				else if(DEFLATE_ENCODING.equalsIgnoreCase(responseEncoding))
+					in = new InflaterInputStream(in, new Inflater(true));
+				else if(responseEncoding != null)
+					System.err.println("Unknown HTTP encoding \""+responseEncoding+"\"");
+				
+				//Get response
+				responseText = IOUtil.readInputStreamFully(in);
+			}
 			return new Response(responseText, responseCode);
 		}
 		catch(IOException e)
@@ -307,6 +299,12 @@ public class Requester
 		}
 	}
 	
+	/**
+	 * Sends a request to the server, enforcing rate limits if enabled.
+	 * @param requestUrl The requests's URL
+	 * @param requestBody The requests's body
+	 * @return The response to the request
+	 */
 	private Response sendLimitedRequest(String requestUrl, String requestBody)
 	{
 		//Lock to prevent multiple requests from executing at once
@@ -315,23 +313,27 @@ public class Requester
 		try
 		{
 			//Wait (if required) for the request time limit
-			long timeSinceLast = System.currentTimeMillis()-lastCall;
-			if(limiterEnabled && timeSinceLast < limitWait)
+			if(limiterEnabled)
 			{
 				try
 				{
-					Thread.sleep(limitWait-timeSinceLast);
+					if(requestQueueShort.size() == limitShort)
+						requestQueueShort.take();
+					if(requestQueueLong.size() == limitLong)
+						requestQueueLong.take();
 				}
-				catch(InterruptedException e) { /* I don't even know when this is ever thrown... */ }
+				catch(InterruptedException e)
+				{
+					// Dunno lol
+				}
 			}
 			
 			//Send request
 			Response response = sendRequest(requestUrl, requestBody);
-			lastCall = System.currentTimeMillis();
 			
-			//Manage request queue
-			trimRequestQueue();
-			requestQueue.offerLast(lastCall);
+			//Add a request locks
+			requestQueueShort.add(new RequestLock(limitShortInterval));
+			requestQueueLong.add(new RequestLock(limitLongInterval));
 			
 			return response;
 		}
@@ -342,64 +344,148 @@ public class Requester
 		}
 	}
 	
-	private void trimRequestQueue()
+	/**
+	 * Drain expired requests from the request queues.
+	 */
+	private void drainRequestQueues()
 	{
-		for(Iterator<Long> it = requestQueue.descendingIterator(); it.hasNext();)
-		{
-			if(lastCall-it.next() > REQUEST_QUEUE_TIME_LIMIT)
-				it.remove();
-			else
-				break;
-		}
+		rateLock.lock();
+		
+		Collection<RequestLock> drain = new LinkedList<>();
+		if(requestQueueShort.size() >= limitShort)
+			requestQueueShort.drainTo(drain);
+		if(requestQueueLong.size() >= limitLong)
+			requestQueueLong.drainTo(drain);
+		
+		rateLock.unlock();
 	}
 	
 	//Accessors and modifiers
 	
-	public synchronized int getLimitPer10Seconds()
+	/**
+	 * Returns the rate limit for the short time interval.
+	 * @return The short interval rate limit
+	 */
+	public synchronized int getShortLimit()
 	{
-		return limitPer10Seconds;
+		return limitShort;
 	}
 	
-	public synchronized void setLimitPer10Seconds(int limitPer10Seconds)
+	/**
+	 * Returns short time interval for rate limiting.
+	 * @return The short interval
+	 */
+	public synchronized long getShortInterval()
 	{
-		if(limitPer10Seconds < 0)
+		return limitShortInterval;
+	}
+	
+	/**
+	 * Sets the rate limiting information for the short interval.
+	 * @param limit The rate limit
+	 * @param interval The time interval
+	 * @param unit The time interval unit
+	 */
+	public synchronized void setShortLimit(int limit, long interval, TimeUnit unit)
+	{
+		if(limit < 0 || interval < 0)
 			throw new IllegalArgumentException("Rate limits must be greater than or equal to 0.");
-		limitWait = limitPer10Seconds == 0 ? 0 : 10000/(this.limitPer10Seconds = limitPer10Seconds);
+		this.limitShort = limit;
+		this.limitShortInterval = TimeUnit.NANOSECONDS.convert(interval, unit);
 	}
 	
-	public synchronized int getLimitPer10Minutes()
+	/**
+	 * Returns the rate limit for the long time interval.
+	 * @return The long interval rate limit
+	 */
+	public synchronized int getLongLimit()
 	{
-		return limitPer10Minutes;
+		return limitLong;
 	}
 	
-	public synchronized void setLimitPer10Minutes(int limitPer10Minutes)
+	/**
+	 * Returns long time interval for rate limiting.
+	 * @return The long interval
+	 */
+	public synchronized long getLongInterval()
 	{
-		if(limitPer10Minutes < 0)
+		return limitLongInterval;
+	}
+	
+	/**
+	 * Sets the rate limiting information for the long interval.
+	 * @param limit The rate limit
+	 * @param interval The time interval
+	 * @param unit The time interval unit
+	 */
+	public synchronized void setLongLimit(int limit, long interval, TimeUnit unit)
+	{
+		if(limit < 0 || interval < 0)
 			throw new IllegalArgumentException("Rate limits must be greater than or equal to 0.");
-		
-		this.limitPer10Minutes = limitPer10Minutes;
+		this.limitLong = limit;
+		this.limitLongInterval = TimeUnit.NANOSECONDS.convert(interval, unit);
 	}
 	
+	/**
+	 * Returns the user agent being sent with requests.
+	 * @return The requester user agent
+	 */
 	public synchronized String getUserAgent()
 	{
 		return userAgent;
 	}
 	
+	/**
+	 * Sets the user agent to be sent with requests.
+	 * @param userAgent
+	 */
 	public synchronized void setUserAgent(String userAgent)
 	{
 		this.userAgent = userAgent;
 	}
 	
-	public String getProtocol()
+	/**
+	 * Returns the protocol being used by the requester (HTTP or HTTPS).
+	 * @return The request protocol
+	 * @see #HTTP_PROTOCOL
+	 * @see #HTTPS_PROTOCOL
+	 */
+	public synchronized String getProtocol()
 	{
 		return protocol;
 	}
 	
+	/**
+	 * Sets the protocol being used by the requester.
+	 * @return The new request protocol
+	 * @see #HTTP_PROTOCOL
+	 * @see #HTTPS_PROTOCOL
+	 */
+	public synchronized void setProtocol(String method)
+	{
+		if(!HTTP_PROTOCOL.equals(method) && !HTTPS_PROTOCOL.equals(method))
+			throw new IllegalArgumentException("A valid protocol must be specified.");
+		
+		this.method = method;
+	}
+	
+	/**
+	 * Returns the method being used to the requester.
+	 * @return The requester method
+	 * @see #GET_METHOD
+	 * @see #POST_METHOD
+	 */
 	public synchronized String getMethod()
 	{
 		return method;
 	}
 	
+	/**
+	 * Sets the method being used by the requester.
+	 * @param method The new requester method
+	 * @see #GET_METHOD
+	 * @see #POST_METHOD
+	 */
 	public synchronized void setMethod(String method)
 	{
 		if(!GET_METHOD.equals(method) && !POST_METHOD.equals(method))
@@ -408,71 +494,86 @@ public class Requester
 		this.method = method;
 	}
 	
+	/**
+	 * Returns the encoding being used by the requester.
+	 * @return The requester encoding
+	 * @see #GZIP_ENCODING
+	 * @see #DEFLATE_ENCODING
+	 * @see #GZIP_DEFLATE_ENCODING
+	 * @see #DEFAULT_ENCODING
+	 */
 	public synchronized String getEncoding()
 	{
 		return encoding;
 	}
 	
+	/**
+	 * Returns the encoding being used by the requester.
+	 * @param encoding The new requester encoding
+	 * @see #GZIP_ENCODING
+	 * @see #DEFLATE_ENCODING
+	 * @see #GZIP_DEFLATE_ENCODING
+	 * @see #DEFAULT_ENCODING
+	 */
 	public synchronized void setEncoding(String encoding)
 	{
 		if(encoding != null && !GZIP_ENCODING.equals(encoding) && !DEFLATE_ENCODING.equals(encoding) && !GZIP_DEFLATE_ENCODING.equals(encoding))
 			throw new IllegalArgumentException("A valid encoding must be specified (or null for no encoding).");
 		
 		this.encoding = encoding;
-		
-		if(encoding != null)
-			headers.put("Accept-Encoding", encoding);
-		else
-			headers.remove("Accept-Encoding");
 	}
 	
+	/**
+	 * Returns the headers being sent with a request.
+	 * @return The request headers
+	 */
 	public synchronized Map<String, String> getHeaders()
 	{
 		return headers;
 	}
 	
+	/**
+	 * Overwrites <i>all</i> request headers being sent with a request.
+	 * @param headers The new request headers
+	 */
 	public synchronized void setHeaders(Map<String, String> headers)
 	{
 		this.headers = headers;
 	}
 	
-	public synchronized int getRequestsInPast10Seconds()
+	/**
+	 * Returns the number of requests that have been sent within the past short interval.
+	 * @return The number of short interval requests
+	 */
+	public synchronized int getRequestsInPastShortInterval()
 	{
-		int count = 0;
-		for(Long time : requestQueue)
-		{
-			if(time <= 10000)
-				count++;
-			else
-				break;
-		}
-		return count;
+		drainRequestQueues();
+		return requestQueueShort.size();
 	}
 	
-	public synchronized int getRequestsInPast10Minutes()
+	/**
+	 * Returns the number of requests that have been sent within the past long interval.
+	 * @return The number of long interval requests
+	 */
+	public synchronized int getRequestsInPastLongInterval()
 	{
-		trimRequestQueue();
-		return requestQueue.size();
+		drainRequestQueues();
+		return requestQueueLong.size();
 	}
 	
-	public synchronized long getOldestRequestTimeByAge(int age)
-	{
-		for(Long time : requestQueue)
-			if(time >= age)
-				return time;
-		return requestQueue.peekLast();
-	}
-	
-	public synchronized long getOldestRequestTime()
-	{
-		return requestQueue.isEmpty() ? -1 : requestQueue.peekLast();
-	}
-	
+	/**
+	 * Sets whether or not rate limiting is enforced.
+	 * @param enabled Whether or not rate limiting is enforced
+	 */
 	public synchronized void setRateLimitEnabled(boolean enabled)
 	{
 		limiterEnabled = enabled;
 	}
 	
+	/**
+	 * Returns whether or not rate limiting is enforced.
+	 * @return <code>true</code> if rate limiting is enforced, otherwise <code>false</code>
+	 */
 	public synchronized boolean isRateLimitEnabled()
 	{
 		return limiterEnabled;
@@ -483,8 +584,8 @@ public class Requester
 	 */
 	public synchronized void clearRateLimit()
 	{
-		requestQueue.clear();
-		lastCall = 0;
+		requestQueueShort.clear();
+		requestQueueLong.clear();
 	}
 	
 	/**
@@ -511,5 +612,39 @@ public class Requester
 	public synchronized void clearCache()
 	{
 		cache.clear();
+	}
+	
+	/**
+	 * Delayed Lock used for request limiting.
+	 * 
+	 * @author Enigma
+	 */
+	private class RequestLock implements Delayed
+	{
+		private long delay, start;
+		
+		/**
+		 * Create a new request lock with a delay in nanoseconds.
+		 * @param delay Lock delay in nanoseconds
+		 */
+		public RequestLock(long delay)
+		{
+			this.delay = delay;
+			start = System.nanoTime();
+		}
+		
+		@Override
+		public int compareTo(Delayed o)
+		{
+			if(o == null)
+				return 1;
+			return Long.compare(getDelay(TimeUnit.NANOSECONDS), o.getDelay(TimeUnit.NANOSECONDS));
+		}
+		
+		@Override
+		public long getDelay(TimeUnit unit)
+		{
+			return unit.convert(delay - (System.nanoTime() - start), TimeUnit.NANOSECONDS);
+		}
 	}
 }

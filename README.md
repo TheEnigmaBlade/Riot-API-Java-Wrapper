@@ -56,7 +56,7 @@ API Support
 | -------------------- | ----------------------------------- | :-------: |
 | champion-v1.2        | /                                   | **Yes**   |
 | game-v1.3            | /by-summoner/{summoner_id}/recent   | **Yes**   |
-| league-v2.3          | /challenger                         | **Yes**   |
+| league-v2.5          | /challenger                         | **Yes**   |
 |                      | /by-summoner/{summoner_id}          | **Yes**   |
 |                      | /by-summoner/{summoner_id}/entry    | **Yes**   |
 |                      | /by-team/{team_id}                  | **Yes**   |
@@ -73,14 +73,15 @@ API Support
 |                      | /summoner_spell                     | No        |
 |                      | /summoner_spell/{summoner_spell_id} | No        |
 |                      | /versions                           | **Yes**   |
-| stats-v1.2           | /by-summoner/{summoner_id}/summary  | **Yes**   |
+| match-v2.2           | /{matchId}                          | WIP       |
+| stats-v1.3           | /by-summoner/{summoner_id}/summary  | **Yes**   |
 |                      | /by-summoner/{summoner_id}/ranked   | **Yes**   |
 | summoner-v1.4        | /by-name/{summoner_names}           | **Yes**   |
 |                      | /{summoner_ids}                     | **Yes**   |
 |                      | /{summoner_ids}/name                | **Yes**   |
 |                      | /{summoner_ids}/masteries           | **Yes**   |
 |                      | /{summoner_ids}/runes               | **Yes**   |
-| team-v2.2            | /{team_ids}                         | **Yes**   |
+| team-v2.4            | /{team_ids}                         | **Yes**   |
 |                      | /by-summoner/{summoner_id}          | **Yes**   |
 
 Legal stuff

@@ -2,6 +2,7 @@ package net.enigmablade.riotapi.methods;
 
 import static net.enigmablade.riotapi.constants.Region.*;
 import java.util.*;
+import java.util.stream.*;
 import net.enigmablade.jsonic.*;
 import net.enigmablade.riotapi.Requester.Response;
 import net.enigmablade.riotapi.*;
@@ -35,7 +36,8 @@ public class LeagueMethod extends Method
 	 */
 	public LeagueMethod(RiotApi api)
 	{
-		super(api, "api/lol", "league", "2.4", new Region[]{NA, EUW, EUNE, LAN, LAS, OCE, BR, TR, RU, KR});
+		super(api, "api/lol", "league", "2.5", new Region[]{NA, EUW, EUNE, LAN, LAS, OCE, BR, TR, RU, KR});
+		setMaxThings(10);
 	}
 	
 	//API-defined operation methods
@@ -45,13 +47,15 @@ public class LeagueMethod extends Method
 	 * @param region The league region (NA, EUW, EUNE, etc.)
 	 * @param summonerId The ID of the summoner.
 	 * @return A list of leagues.
+	 * @throws IllegalArgumentException If there are too many IDs.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws LeagueNotFoundException If the given summoner is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public Map<String, List<League>> getLeagues(Region region, long... summonerIds) throws RiotApiException
 	{
-		return getLeaguesHelper(region, IOUtil.createCommaDelimitedString(summonerIds), "summoner");
+		String[] summonerIdStrings = Arrays.stream(summonerIds).mapToObj(String::valueOf).collect(Collectors.toList()).toArray(new String[0]);
+		return getLeaguesHelper(region, "summoner", summonerIdStrings);
 	}
 	
 	/**
@@ -59,13 +63,15 @@ public class LeagueMethod extends Method
 	 * @param region The league region (NA, EUW, EUNE, etc.)
 	 * @param summonerId The ID of the summoner.
 	 * @return A list of league entries.
+	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws LeagueNotFoundException If the given summoner is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public Map<String, List<League>> getLeagueEntries(Region region, long... summonerIds) throws RiotApiException
 	{
-		return getLeagueEntriesHelper(region, IOUtil.createCommaDelimitedString(summonerIds), "summoner");
+		String[] summonerIdStrings = Arrays.stream(summonerIds).mapToObj(String::valueOf).collect(Collectors.toList()).toArray(new String[0]);
+		return getLeagueEntriesHelper(region, "summoner", summonerIdStrings);
 	}
 	
 	/**
@@ -73,13 +79,14 @@ public class LeagueMethod extends Method
 	 * @param region The league region (NA, EUW, EUNE, etc.)
 	 * @param teamId The ID of the team.
 	 * @return A list of leagues.
+	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws LeagueNotFoundException If the given teamId is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public Map<String, List<League>> getLeagues(Region region, String... teamIds) throws RiotApiException
 	{
-		return getLeaguesHelper(region, IOUtil.createCommaDelimitedString(teamIds), "team");
+		return getLeaguesHelper(region, "team", teamIds);
 	}
 	
 	/**
@@ -87,13 +94,14 @@ public class LeagueMethod extends Method
 	 * @param region The league region (NA, EUW, EUNE, etc.)
 	 * @param teamId The ID of the team.
 	 * @return A list of league entries.
+	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws LeagueNotFoundException If the given team is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public Map<String, List<League>> getLeagueEntries(Region region, String... teamIds) throws RiotApiException
 	{
-		return getLeagueEntriesHelper(region, IOUtil.createCommaDelimitedString(teamIds), "team");
+		return getLeagueEntriesHelper(region, "team", teamIds);
 	}
 	
 	/**
@@ -101,7 +109,6 @@ public class LeagueMethod extends Method
 	 * @param region The league region (NA, EUW, EUNE, etc.)
 	 * @param queue The ranked queue.
 	 * @return The challenger league.
-	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws LeagueNotFoundException If the given summoner is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
@@ -130,19 +137,24 @@ public class LeagueMethod extends Method
 	 * @param participantId The participant's ID.
 	 * @param participantType The type of the participant ("summoner" or "team").
 	 * @return A map of leagues.
+	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws LeagueNotFoundException If the given team is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
-	private Map<String, List<League>> getLeaguesHelper(Region region, String participantIds, String participantType) throws RiotApiException
+	private Map<String, List<League>> getLeaguesHelper(Region region, String participantType, String... participantIds) throws RiotApiException
 	{
+		checkAmountOfThings(participantIds, "ID");
+		
+		String participantIdsStr = IOUtil.createCommaDelimitedString(participantIds);
+		
 		//Make request
 		Response response = getMethodResult(region,
 				"by-"+participantType+"/{id}",
-				createArgMap("id", participantIds));
+				createArgMap("id", participantIdsStr));
 		
 		//Check errors
-		checkLeagueErrors(response.getCode(), region, participantIds);
+		checkLeagueErrors(response.getCode(), region, participantIdsStr);
 		
 		//Parse response
 		return convertLeagues((JsonObject)response.getValue());
@@ -154,19 +166,24 @@ public class LeagueMethod extends Method
 	 * @param participantId The participant's ID.
 	 * @param participantType The type of the participant ("summoner" or "team").
 	 * @return A list of league entries.
+	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws LeagueNotFoundException If the given team is not in any leagues.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
-	private Map<String, List<League>> getLeagueEntriesHelper(Region region, String participantIds, String participantType) throws RiotApiException
+	private Map<String, List<League>> getLeagueEntriesHelper(Region region, String participantType, String... participantIds) throws RiotApiException
 	{
+		checkAmountOfThings(participantIds, "ID");
+		
+		String participantIdsStr = IOUtil.createCommaDelimitedString(participantIds);
+		
 		//Make request
 		Response response = getMethodResult(region,
 				"by-"+participantType+"/{id}/entry",
-				createArgMap("id", participantIds));
+				createArgMap("id", participantIdsStr));
 		
 		//Check errors
-		checkLeagueErrors(response.getCode(), region, participantIds);
+		checkLeagueErrors(response.getCode(), region, participantIdsStr);
 		
 		//Parse response
 		return convertLeagues((JsonObject)response.getValue());

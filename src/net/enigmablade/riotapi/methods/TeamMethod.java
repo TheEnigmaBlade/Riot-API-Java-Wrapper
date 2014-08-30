@@ -35,7 +35,8 @@ public class TeamMethod extends Method
 	 */
 	public TeamMethod(RiotApi api)
 	{
-		super(api, "api/lol", "team", "2.2", new Region[]{NA, EUW, EUNE, BR, TR, RU, LAN, LAS, OCE, KR});
+		super(api, "api/lol", "team", "2.4", new Region[]{NA, EUW, EUNE, BR, TR, RU, LAN, LAS, OCE, KR});
+		setMaxThings(10);
 	}
 	
 	//API-defined operation methods
@@ -43,18 +44,23 @@ public class TeamMethod extends Method
 	/**
 	 * Returns a list of teams the given summoner is in.
 	 * @param region The game region (NA, EUW, EUNE, etc.)
-	 * @param summonerId The ID of the summoner.
+	 * @param summonerIds The ID of the summoner.
 	 * @return A list of recent games (max 10).
+	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws TeamNotFoundException If the given summoner was not found, or if the summoner is not in any teams.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
-	public List<Team> getSummonerTeams(Region region, long summonerId) throws RiotApiException
+	public List<Team> getSummonerTeams(Region region, long... summonerIds) throws RiotApiException
 	{
+		checkAmountOfThings(summonerIds, "Summoner ID");
+		
+		String ids = IOUtil.createCommaDelimitedString(summonerIds);
+		
 		//Make request
 		Response response = getMethodResult(region,
 				"by-summoner/{summonerId}",
-				createArgMap("summonerId", String.valueOf(summonerId)));
+				createArgMap("summonerId", ids));
 		
 		//Check errors
 		if(response.getCode() == 404)
@@ -77,12 +83,15 @@ public class TeamMethod extends Method
 	 * @param region The game region (NA, EUW, EUNE, etc.)
 	 * @param teamIds The team IDs.
 	 * @return A map of team IDs to teams.
+	 * @throws IllegalArgumentException If the given ranked queue is not ranked.
 	 * @throws RegionNotSupportedException If the region is not supported by the method.
 	 * @throws TeamNotFoundException If the given summoner was not found, or if the summoner is not in any teams.
 	 * @throws RiotApiException If there was an exception or error from the server.
 	 */
 	public Map<String, Team> getTeams(Region region, String... teamIds) throws RiotApiException
 	{
+		checkAmountOfThings(teamIds, "team ID");
+		
 		String ids = IOUtil.createCommaDelimitedString(teamIds);
 		
 		//Make request

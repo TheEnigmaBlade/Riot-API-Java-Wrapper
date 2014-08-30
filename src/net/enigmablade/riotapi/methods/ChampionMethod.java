@@ -35,7 +35,7 @@ public class ChampionMethod extends Method
 	 */
 	public ChampionMethod(RiotApi api)
 	{
-		super(api, "api/lol", "champion", "1.2", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR});
+		super(api, "api/lol", "champion", "1.2", new Region[]{NA, EUW, EUNE, BR, LAN, LAS, OCE, KR, RU, TR});
 	}
 	
 	//API-defined operation methods

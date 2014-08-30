@@ -122,7 +122,7 @@ public class IOUtil
 	}
 	
 	/**
-	 * Read a UTF-8 formatted text input stream until a line-termination character. 
+	 * Read a UTF-8 formatted text input stream until a line-termination character.
 	 * @param in The input stream from which to read.
 	 * @return The String representation of the input stream.
 	 */

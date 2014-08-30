@@ -7,7 +7,9 @@ package net.enigmablade.riotapi.constants;
  */
 public enum Season
 {
+	PRESEASON_3("PRESEASON3"),
 	SEASON_3("SEASON3"),
+	PRESEASON_4("PRESEASON4"),
 	SEASON_4("SEASON4");
 	
 	//---//
