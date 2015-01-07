@@ -33,7 +33,9 @@ public class Game implements Comparable<Game>
 	private List<Player> players;		//fellowPlayers
 	private Map<String, Object> stats;	//statistics
 	
-	public Game(RiotApi api, Region region, int championId, int level, int spell1, int spell2, long playedDate, boolean invalid, long gameId, String gameMode, String gameType, String gameSubType, int mapId, int teamId, List<Player> players, Map<String, Object> stats)
+	private int ipEarned;				//ipEarned
+	
+	public Game(RiotApi api, Region region, int championId, int level, int spell1, int spell2, long playedDate, boolean invalid, long gameId, String gameMode, String gameType, String gameSubType, int mapId, int teamId, List<Player> players, Map<String, Object> stats, int ipEarned)
 	{
 		this.api = api;
 		this.region = region;
@@ -52,6 +54,7 @@ public class Game implements Comparable<Game>
 		this.teamId = teamId;
 		this.players = players;
 		this.stats = stats;
+		this.ipEarned = ipEarned;
 	}
 	
 	//Accessor methods
@@ -176,6 +179,15 @@ public class Game implements Comparable<Game>
 	public boolean isInvalid()
 	{
 		return invalid;
+	}
+	
+	/**
+	 * Returns the IP earned by the players.
+	 * @return The IP earned.
+	 */
+	public int getIpEarned()
+	{
+		return ipEarned;
 	}
 	
 	//Stat accessor methods
@@ -338,12 +350,12 @@ public class Game implements Comparable<Game>
 	
 	public int getTotalMinionsKilled()
 	{
-		return getIntStat("minionsKilled");
+		return getEnemyMinionsKilled()+getNeutralMinionsKilled();
 	}
 	
 	public int getEnemyMinionsKilled()
 	{
-		return getTotalMinionsKilled()-getNeutralMinionsKilled();
+		return getIntStat("minionsKilled");
 	}
 	
 	public int getNeutralMinionsKilled()

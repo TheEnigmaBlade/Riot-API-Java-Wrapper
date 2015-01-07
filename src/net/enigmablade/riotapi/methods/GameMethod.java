@@ -105,7 +105,8 @@ public class GameMethod extends Method
 					gameObject.getInt("championId"), gameObject.getInt("level"), gameObject.getInt("spell1"), gameObject.getInt("spell2"),
 					gameObject.getLong("createDate"), gameObject.getBoolean("invalid"),
 					gameObject.getLong("gameId"), gameObject.getString("gameMode"), gameObject.getString("gameType"), gameObject.getString("subType"), gameObject.getInt("mapId"),
-					gameObject.getInt("teamId"), players, stats);
+					gameObject.getInt("teamId"), players, stats,
+					gameObject.getInt("ipEarned"));
 			games.add(game);
 		}
 		return games;

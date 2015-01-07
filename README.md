@@ -73,7 +73,10 @@ API Support
 |                      | /summoner_spell                     | No        |
 |                      | /summoner_spell/{summoner_spell_id} | No        |
 |                      | /versions                           | **Yes**   |
+| lol-status-v1.0      | /shards                             | **Yes**   |
+|                      | /shards/{region}                    | **Yes**   |
 | match-v2.2           | /{matchId}                          | WIP       |
+| matchhistory-v2.2    | /{summonerId}                       | No        |
 | stats-v1.3           | /by-summoner/{summoner_id}/summary  | **Yes**   |
 |                      | /by-summoner/{summoner_id}/ranked   | **Yes**   |
 | summoner-v1.4        | /by-name/{summoner_names}           | **Yes**   |
@@ -87,7 +90,7 @@ API Support
 Legal stuff
 -----------
 
-Copyright EnigmaBlade.net, 2013
+Copyright EnigmaBlade.net, 2014
 
 Distributed under the Boost Software License, Version 1.0
 

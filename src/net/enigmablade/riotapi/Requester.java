@@ -3,6 +3,7 @@ package net.enigmablade.riotapi;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
@@ -32,6 +33,8 @@ public class Requester
 	private String userAgent;
 	private String protocol, method, encoding;
 	private Map<String, String> headers;
+	
+	private File backdoorDir = null;
 	
 	//Rate limiting
 	private boolean limiterEnabled = true;
@@ -187,7 +190,22 @@ public class Requester
 	 */
 	private Response requestHelper(String requestUrl, String requestBody)
 	{
-		Response response;
+		Response response = backdoorRequest(requestUrl);
+		if(response != null && response.getValue() != null)
+		{
+			try
+			{
+				response.value = JsonParser.parse((String)response.getValue());
+				return response;
+			}
+			catch(JsonParseException e)
+			{
+				e.printStackTrace();
+				response.value = null;
+				response.code = -1;
+				return null;
+			}
+		}
 		
 		//Check if it's in the cache
 		if(cacheEnabled)
@@ -218,6 +236,27 @@ public class Requester
 		}
 		
 		return response;
+	}
+	
+	private Response backdoorRequest(String requestUrl)
+	{
+		if(backdoorDir == null)
+			return null;
+		
+		requestUrl = requestUrl.substring(requestUrl.indexOf("//")+2).replace("/", "__");
+		Path path = Paths.get(backdoorDir.getAbsolutePath(), requestUrl);
+		
+		try
+		{
+			byte[] encoded = Files.readAllBytes(path);
+			String contents = new String(encoded, StandardCharsets.UTF_8);
+			return new Response(contents, 200);
+		}
+		catch(IOException e)
+		{
+			System.out.println("Error: File doesn't exist, returning 404");
+			return new Response(null, 404);
+		}
 	}
 	
 	//Private utilities
@@ -332,8 +371,11 @@ public class Requester
 			Response response = sendRequest(requestUrl, requestBody);
 			
 			//Add a request locks
-			requestQueueShort.add(new RequestLock(limitShortInterval));
-			requestQueueLong.add(new RequestLock(limitLongInterval));
+			if(limiterEnabled)
+			{
+				requestQueueShort.add(new RequestLock(limitShortInterval));
+				requestQueueLong.add(new RequestLock(limitLongInterval));
+			}
 			
 			return response;
 		}
@@ -612,6 +654,15 @@ public class Requester
 	public synchronized void clearCache()
 	{
 		cache.clear();
+	}
+	
+	public synchronized void setBackdoorDir(File dir)
+	{
+		if(dir == null)
+			backdoorDir = null;
+		
+		if(dir.isDirectory())
+			backdoorDir = dir;
 	}
 	
 	/**

@@ -23,6 +23,9 @@ abstract class Method
 	private String method;
 	private Region[] supportedRegions;
 	
+	private String customEndpoint;
+	private boolean useUnsecure;
+	
 	private int maxThings = 40;
 	
 	//Constructors
@@ -43,6 +46,29 @@ abstract class Method
 		this.method = method;
 		this.version = version;
 		this.supportedRegions = supportedRegions;
+	}
+	
+	protected Method(RiotApi api, String customEndpoint, boolean useUnsecure, String header, String method, String version, Region[] supportedRegions)
+	{
+		this.api = api;
+		
+		this.header = header;
+		this.method = method;
+		this.version = version;
+		this.supportedRegions = supportedRegions;
+		
+		this.customEndpoint = customEndpoint;
+		this.useUnsecure = useUnsecure;
+	}
+	
+	/**
+	 * Execute a request and get the result. The response's value may be null if a method-specific error occurred.
+	 * @return The response from the server.
+	 * @throws RiotApiException If there was an exception or error from the server.
+	 */
+	protected Response getMethodResult() throws RiotApiException
+	{
+		return getMethodResult(null, null, true);
 	}
 	
 	/**
@@ -120,14 +146,15 @@ abstract class Method
 	protected Response getMethodResult(Region region, String operation, boolean isGlobal, Map<String, String> pathArgs, Map<String, String> queryArgs) throws RiotApiException
 	{
 		//Check to make sure the requested region is supported
-		if(!isRegionSupported(region))
+		if(!isGlobal && !isRegionSupported(region))
 			throw new RegionNotSupportedException(method, region, supportedRegions);
 		
 		//Create request URL
 		String url = buildUrl(region, operation, pathArgs, queryArgs, isGlobal);
 		
 		//Send request
-		Response response = api.getRequester().request(url);
+		Requester requester = api.getRequester();
+		Response response = requester.request(url);
 		if(response == null)	//null if parse exception, highly unlikely
 			throw new RiotApiException("Uh oh, failed to parse response! That's bad!");
 		
@@ -201,17 +228,25 @@ abstract class Method
 		String queryArgsStr = IOUtil.genQueryArgs(queryArgs);
 		
 		//Create URL and send the request
-		StringBuilder s = new StringBuilder(api.getRequester().getProtocol()).append("://");
-		s.append((useGlobal ? Region.GLOBAL.getEndpoint() : region.getEndpoint())).append('/');			//Domain endpoint
-		s.append(header).append('/');						//Header
-		s.append(region.getValue());						//Region
-		s.append("/v").append(version);						//Version
+		StringBuilder s = new StringBuilder(useUnsecure ? Requester.HTTP_PROTOCOL : Requester.HTTPS_PROTOCOL).append("://");
+		if(customEndpoint != null)
+			s.append(customEndpoint).append('/');
+		else
+			s.append((useGlobal ? Region.GLOBAL.getEndpoint() : region.getEndpoint())).append('/');			//Domain endpoint
+		s.append(header);									//Header
+		if(region != null)
+			s.append('/').append(region.getValue());		//Region
+		if(version != null)
+			s.append("/v").append(version);					//Version
 		if(method != null)
 			s.append('/').append(method);					//Method
 		if(operation != null)								//Operation (optional)
 			s.append('/').append(operation);
-		s.append("?api_key=").append(api.getApiKey());		//API key
-		s.append('&').append(queryArgsStr);					//Query args
+		if(!useUnsecure)
+		{
+			s.append("?api_key=").append(api.getApiKey());		//API key
+			s.append('&').append(queryArgsStr);					//Query args
+		}
 		return s.toString();
 	}
 	

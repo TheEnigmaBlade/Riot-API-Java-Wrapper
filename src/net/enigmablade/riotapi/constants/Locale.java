@@ -8,13 +8,20 @@ package net.enigmablade.riotapi.constants;
 public enum Locale
 {
 	ENGLISH_US("en_US"),
+	ENGLISH_GB("en_GB"),
+	ENGLISH_AU("en_AU"),
 	SPANISH("es_ES"),
+	SPANISH_MX("es_MX"),
+	SPANISH_AR("es_AR"),
 	FRENCH("fr_FR"),
 	GERMAN("de_DE"),
 	ITALIAN("it_IT"),
 	POLISH("pl_PL"),
+	ENGLISH_PL("en_PL"),
 	GREEK("el_GR"),
 	ROMANIAN("ro_RO"),
+	CZECH("cs_CZ"),
+	HUNGARIAN("hu_HU"),
 	PORTUGUESE_BRAZIL("pt_BR"),
 	TURKISH("tr_TR"),
 	THAI("th_TH"),
@@ -23,7 +30,7 @@ public enum Locale
 	RUSSIAN("ru_RU"),
 	KOREAN("ko_KR"),
 	CHINESE_CHINA("zh_CN"),
-	CHINESE_TAIWAN("zh_TW"),;
+	CHINESE_TAIWAN("zh_TW");
 	
 	/* --- */
 	
@@ -41,5 +48,16 @@ public enum Locale
 	public String getValue()
 	{
 		return value;
+	}
+	
+	public static Locale getFromValue(String value)
+	{
+		if(value != null)
+		{
+			for(Locale v : values())
+				if(v.getValue().equals(value))
+					return v;
+		}
+		return null;
 	}
 }

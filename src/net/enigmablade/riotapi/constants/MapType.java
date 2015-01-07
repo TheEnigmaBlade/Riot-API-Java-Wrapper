@@ -8,15 +8,16 @@ package net.enigmablade.riotapi.constants;
  */
 public enum MapType
 {
-	//Constant				ID		Name
-	UNKNOWN					(-1,	"Unknown"),
-	SUMMONERS_RIFT			(1,		"Summoner's Rift"),
-	SUMMONERS_RIFT_AUTUMN	(2,		"Summoner's Rift Autumn"),
-	TWISTED_TREELINE		(10,	"Twisted Treeline"),
-	TWISTED_TREELINE_OLD	(4,		"Original Twisted Treeline"),
-	CRYSTAL_SCAR			(8,		"Crystal Scar"),
-	HOWLING_ABYSS			(12,	"Howling Abyss"),
-	PROVING_GROUNDS			(3,		"Proving Grounds");
+	//Constant					ID		Name
+	UNKNOWN						(-1,	"Unknown"),
+	SUMMONERS_RIFT_OLD			(1,		"Old Summoner's Rift"),
+	SUMMONERS_RIFT_AUTUMN_OLD	(2,		"Old Summoner's Rift Autumn"),
+	SUMMONERS_RIFT				(11,	"Summoner's Rift"),
+	TWISTED_TREELINE_OLD		(4,		"Old Twisted Treeline"),
+	TWISTED_TREELINE			(10,	"Twisted Treeline"),
+	CRYSTAL_SCAR				(8,		"Crystal Scar"),
+	HOWLING_ABYSS				(12,	"Howling Abyss"),
+	PROVING_GROUNDS				(3,		"Proving Grounds");
 	
 	//---//
 	

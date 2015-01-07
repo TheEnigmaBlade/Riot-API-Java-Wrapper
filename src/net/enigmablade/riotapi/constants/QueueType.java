@@ -11,39 +11,41 @@ package net.enigmablade.riotapi.constants;
  */
 public enum QueueType
 {
-	//Constant			ID		Game/League value		Stat value			Match value					Ranked	Team	Name
-	NONE				(-1,	"NONE",					"None",				"NONE",						false, 	false,	"None"),
-	NORMAL_5V5_BLIND	(2,		"NORMAL",				"Unranked",			"NORMAL_5x5_BLIND",			false,	false,	"Normal 5v5 Blind"),
-	NORMAL_5V5_DRAFT	(14,	"NORMAL",				"Unranked",			"NORMAL_5x5_DRAFT",			false,	false,	"Normal 5v5 Draft"),
-	NORMAL_5V5_BOTS		(7,		"BOT",					"CoopVsAI",			"BOT_5x5",					false,	false,	"Normal Coop vs AI"),
-	RANKED_5V5_SOLO		(4,		"RANKED_SOLO_5x5",		"RankedSolo5x5",	"RANKED_SOLO_5x5",			true,	false,	"Ranked 5v5 Solo"),
-	RANKED_5V5_PREMADE	(-1,	"RANKED_PREMADE_5x5",	"RankedPremade5x5",	"RANKED_PREMADE_5x5",		true,	false,	"Ranked 5v5 Premade"),
-	RANKED_5V5_TEAM		(42,	"RANKED_TEAM_5x5",		"RankedTeam5x5",	"RANKED_TEAM_5x5",			true,	true,	"Ranked 5v5 Team"),
-	NORMAL_3V3_BLIND	(8,		"NORMAL_3x3",			"Unranked3x3",		"NORMAL_3x3",				false,	false,	"Normal 3v3 Blind"),
-	NORMAL_3V3_BOTS		(52,	"BOT_3x3", 				"CoopVsAI3x3",		"BOT_TT_3x3",				false,	false,	"Normal 3v3 Coop vs AI"),
-	RANKED_3V3_PREMADE	(-1,	"RANKED_PREMADE_3X3",	"RankedPremade3x3",	"RANKED_TEAM_3x3",			true,	false,	"Ranked Premade 3v3"),
-	RANKED_3V3_TEAM		(41,	"RANKED_TEAM_3x3",		"RankedTeam3x3",	"RANKED_PREMADE_3x3",		true,	true,	"Ranked Team 3v3"),
-	DOMINION_5V5_BLIND	(16,	"ODIN_UNRANKED", 		"OdinUnranked",		"ODIN_5x5_BLIND",			false,	false,	"Dominion 5v5 Blind"),
-	DOMINION_5V5_DRAFT	(17,	"ODIN_UNRANKED", 		"OdinUnranked",		"ODIN_5x5_DRAFT",			false,	false,	"Dominion 5v5 Draft"),
-	DOMINION_5V5_BOTS	(25,	"ODIN_UNRANKED",		"CoopVsAI",			"BOT_ODIN_5x5",				false,	false,	"Dominion Coop vs AI"),
-	ARAM_5V5			(65,	"ARAM_UNRANKED_5x5",	"AramUnranked5x5",	"ARAM_5x5",					false,	false,	"ARAM"),
-	ARAM_5V5_BOTS		(67,	"ARAM_UNRANKED_5x5",	"AramUnranked5x5",	"ARAM_5x5",					false,	false,	"ARAM Coop vs AI"),
-	ONE_FOR_ALL_5V5		(70,	"ONEFORALL_5x5",		"OneForAll5x5",		"ONEFORALL_5x5",			false,	false,	"One-for-all 5v5"),
-	SHOWDOWN_1V1		(72,	"FIRSTBLOOD_1x1",		"FirstBlood1x1",	"FIRSTBLOOD_1x1",			false,	false,	"Snowdown Showdown 1v1"),
-	SHOWDOWN_2V2 		(73,	"FIRSTBLOOD_2x2",		"FirstBlood2x2",	"FIRSTBLOOD_2x2",			false,	false,	"Snowdown Showdown 2v2"),
-	HEXAKILL_6V6		(-1,	"SR_6x6",				"SummonersRift6x6",	"SR_6x6",					false,	false,	"Hexakill 6v6"),
-	TEAMBUILDER_5V5		(-1,	"CAP_5x5",				"CAP5x5",			"GROUP_FINDER_5x5",			false,	false,	"Team Builder 5v5"),
-	URF_5V5				(-1,	"URF",					"URF",				"URF_5x5",					false,	false,	"URF 5v5"),
-	URF_5V5_BOTS		(-1,	"URF_BOT",				"URFBots",			"BOT_URF_5x5",				false,	false,	"URF Coop vs AI"),
-	NIGHTMARE_BOTS_R1	(-1,	"NIGHTMARE_BOT",		"",					"NIGHTMARE_BOT_5x5_RANK1",	false,	false,	"Nightmare Bots, rank 1"),
-	NIGHTMARE_BOTS_R2	(-1,	"NIGHTMARE_BOT",		"",					"NIGHTMARE_BOT_5x5_RANK2",	false,	false,	"Nightmare Bots, rank 2"),
-	NIGHTMARE_BOTS_R5	(-1,	"NIGHTMARE_BOT",		"",					"NIGHTMARE_BOT_5x5_RANK5",	false,	false,	"Nightmare Bots, rank 5");
+	//Constant			Game/League value		Stat value			Match value					Ranked	Team	Name
+	NONE				("NONE",				"None",				"NONE",						false, 	false,	"None"),
+	NORMAL_5V5_BLIND	("NORMAL",				"Unranked",			"NORMAL_5x5_BLIND",			false,	false,	"Normal 5v5 Blind"),
+	NORMAL_5V5_DRAFT	("NORMAL",				"Unranked",			"NORMAL_5x5_DRAFT",			false,	false,	"Normal 5v5 Draft"),
+	NORMAL_5V5_BOTS		("BOT",					"CoopVsAI",			"BOT_5x5",					false,	false,	"Normal Coop vs AI"),
+	RANKED_5V5_SOLO		("RANKED_SOLO_5x5",		"RankedSolo5x5",	"RANKED_SOLO_5x5",			true,	false,	"Ranked 5v5 Solo"),
+	RANKED_5V5_PREMADE	("RANKED_PREMADE_5x5",	"RankedPremade5x5",	"RANKED_PREMADE_5x5",		true,	false,	"Ranked 5v5 Premade"),
+	RANKED_5V5_TEAM		("RANKED_TEAM_5x5",		"RankedTeam5x5",	"RANKED_TEAM_5x5",			true,	true,	"Ranked 5v5 Team"),
+	NORMAL_3V3_BLIND	("NORMAL_3x3",			"Unranked3x3",		"NORMAL_3x3",				false,	false,	"Normal 3v3 Blind"),
+	NORMAL_3V3_BOTS		("BOT_3x3", 			"CoopVsAI3x3",		"BOT_TT_3x3",				false,	false,	"Normal 3v3 Coop vs AI"),
+	RANKED_3V3_PREMADE	("RANKED_PREMADE_3X3",	"RankedPremade3x3",	"RANKED_TEAM_3x3",			true,	false,	"Ranked Premade 3v3"),
+	RANKED_3V3_TEAM		("RANKED_TEAM_3x3",		"RankedTeam3x3",	"RANKED_PREMADE_3x3",		true,	true,	"Ranked Team 3v3"),
+	DOMINION_5V5_BLIND	("ODIN_UNRANKED", 		"OdinUnranked",		"ODIN_5x5_BLIND",			false,	false,	"Dominion 5v5 Blind"),
+	DOMINION_5V5_DRAFT	("ODIN_UNRANKED", 		"OdinUnranked",		"ODIN_5x5_DRAFT",			false,	false,	"Dominion 5v5 Draft"),
+	DOMINION_5V5_BOTS	("ODIN_UNRANKED",		"CoopVsAI",			"BOT_ODIN_5x5",				false,	false,	"Dominion Coop vs AI"),
+	ARAM_5V5			("ARAM_UNRANKED_5x5",	"AramUnranked5x5",	"ARAM_5x5",					false,	false,	"ARAM"),
+	ARAM_5V5_BOTS		("ARAM_UNRANKED_5x5",	"AramUnranked5x5",	"ARAM_5x5",					false,	false,	"ARAM Coop vs AI"),
+	ONE_FOR_ALL_5V5		("ONEFORALL_5x5",		"OneForAll5x5",		"ONEFORALL_5x5",			false,	false,	"One-for-all 5v5"),
+	SHOWDOWN_1V1		("FIRSTBLOOD_1x1",		"FirstBlood1x1",	"FIRSTBLOOD_1x1",			false,	false,	"Snowdown Showdown 1v1"),
+	SHOWDOWN_2V2 		("FIRSTBLOOD_2x2",		"FirstBlood2x2",	"FIRSTBLOOD_2x2",			false,	false,	"Snowdown Showdown 2v2"),
+	HEXAKILL_SR			("SR_6x6",				"SummonersRift6x6",	"SR_6x6",					false,	false,	"Summoner's Rift Hexakill"),
+	HEXAKILL_TT			("HEXAKILL",			"Hexakill",			"HEXAKILL",					false,	false,	"Twisted Treeling Hexakill"),
+	TEAMBUILDER_5V5		("CAP_5x5",				"CAP5x5",			"GROUP_FINDER_5x5",			false,	false,	"Team Builder 5v5"),
+	URF_5V5				("URF",					"URF",				"URF_5x5",					false,	false,	"URF 5v5"),
+	URF_5V5_BOTS		("URF_BOT",				"URFBots",			"BOT_URF_5x5",				false,	false,	"URF Coop vs AI"),
+	NIGHTMARE_BOTS_R1	("NIGHTMARE_BOT",		"NightmareBot",		"NIGHTMARE_BOT_5x5_RANK1",	false,	false,	"Nightmare Bots, rank 1"),
+	NIGHTMARE_BOTS_R2	("NIGHTMARE_BOT",		"NightmareBot",		"NIGHTMARE_BOT_5x5_RANK2",	false,	false,	"Nightmare Bots, rank 2"),
+	NIGHTMARE_BOTS_R5	("NIGHTMARE_BOT",		"NightmareBot",		"NIGHTMARE_BOT_5x5_RANK5",	false,	false,	"Nightmare Bots, rank 5"),
+	ASCENSION_5x5		("ASCENSION", 			"Ascension",		"ASCENSION",				false, 	false,	"Ascension"),
+	KING_PORO_5x5		("KING_PORO",			"",					"KING_PORO_5x5",			false,	false,	"King Poro");
 	
 	//---//
 	
 	//Data
 	
-	private int id;
 	private String leagueValue, statsValue, matchValue;
 	private boolean ranked, team;
 	private String name;
@@ -59,9 +61,8 @@ public enum QueueType
 	 * @param team Whether or not the queue is team-based.
 	 * @param name The queue name.
 	 */
-	private QueueType(int id, String leagueValue, String statValue, String matchValue, boolean ranked, boolean team, String name)
+	private QueueType(String leagueValue, String statValue, String matchValue, boolean ranked, boolean team, String name)
 	{
-		this.id = id;
 		this.leagueValue = leagueValue;
 		this.statsValue = statValue;
 		this.matchValue = matchValue;
@@ -71,16 +72,6 @@ public enum QueueType
 	}
 	
 	//Accessor methods
-	
-	/**
-	 * Returns the queue ID to be used in API calls.
-	 * @return The queue ID.
-	 */
-	@Deprecated
-	public int getId()
-	{
-		return id;
-	}
 	
 	/**
 	 * Returns the queue value to be used in league API calls.

@@ -81,6 +81,7 @@ public class RiotApi
 	private StatsMethod statsMethod;
 	private TeamMethod teamMethod;
 	private StaticDataMethod staticDataMethod;
+	private LolStatusMethod lolStatusMethod;
 	
 	/**
 	 * Returns the champion method to use for champion operations.
@@ -157,6 +158,17 @@ public class RiotApi
 		if(staticDataMethod == null)
 			staticDataMethod = new StaticDataMethod(this);
 		return staticDataMethod;
+	}
+	
+	/**
+	 * Returns the LoL status method to retrieve server status information.
+	 * @return The static data method.
+	 */
+	public LolStatusMethod getLolStatusApiMethod()
+	{
+		if(lolStatusMethod == null)
+			lolStatusMethod = new LolStatusMethod(this);
+		return lolStatusMethod;
 	}
 	
 	//Convenience methods
@@ -238,7 +250,7 @@ public class RiotApi
 	//Accessor methods
 	
 	/**
-	 * Returns the Requester being used to send and limit API requests.
+	 * Returns the requester being used to send and limit API requests.
 	 * @return The current Requester.
 	 */
 	public Requester getRequester()

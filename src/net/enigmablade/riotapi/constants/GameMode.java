@@ -14,8 +14,10 @@ public enum GameMode
 	DOMINION	("ODIN",		"Dominion"),
 	ARAM		("ARAM",		"ARAM"),
 	TUTORIAL	("TUTORIAL",	"Tutorial"),
-	ALL_FOR_ONE	("ALLFORONE",	"All-for-one"),
-	SHOWDOWN	("FIRSTBLOOD",	"Showdown");
+	ALL_FOR_ONE	("ONEFORALL",	"One-for-all"),
+	SHOWDOWN	("FIRSTBLOOD",	"Showdown"),
+	ASCENSION	("ASCENSION",	"Ascension"),
+	KINGPORO	("KINGPORO", 	"King Poro");
 	
 	//---//
 	
